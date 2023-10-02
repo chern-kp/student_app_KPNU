@@ -3,24 +3,67 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:student_app/components/my_button.dart';
 import 'package:student_app/components/my_texfield.dart';
+import 'package:student_app/class/database_service.dart';
 
 void main() {
   runApp(PersonalInformationPage());
 }
 
-class PersonalInformationPage extends StatelessWidget {
+class PersonalInformationPage extends StatefulWidget {
   PersonalInformationPage({Key? key}) : super(key: key);
 
-  final firstNameController = TextEditingController();
-  final lastNameController = TextEditingController();
+  @override
+  State<PersonalInformationPage> createState() =>
+      _PersonalInformationPageState();
+}
+
+class _PersonalInformationPageState extends State<PersonalInformationPage> {
+  final user = FirebaseAuth.instance
+      .currentUser!; //user here is the instance of class User from firebase auth package. To get the email address itself we use "user.email".
+
   //textField controllers
-  final user = FirebaseAuth.instance.currentUser!;
+  final firstNameController = TextEditingController();
+
+  final lastNameController = TextEditingController();
+
+  //dropdown menu controllers
+  List<String> faculty = ['Fizmat', 'History', 'Economy'];
+
+  String? selectedFaculty;
+  late final tempTestString = DatabaseService.getStudentFaculty(user.email);
+
+  Widget _tempTestButton() {
+    return ElevatedButton(
+        onPressed: () {
+          print(tempTestString);
+        },
+        child: Text('test'));
+  }
 
   Future sendInformation() async {
     await FirebaseFirestore.instance.collection("student").doc(user.email).set({
       "FirstName": firstNameController.text,
       "LastName": lastNameController.text
     }, SetOptions(merge: true));
+  }
+
+  Widget _facultyDropdownMenu() {
+    return DropdownButton<String>(
+      value: selectedFaculty,
+      hint: Text(selectedFaculty ?? 'Select Faculty'),
+      onChanged: (String? newValue) {
+        //when a new value is selected dropdown menu widget gets rebuilt
+        setState(() {
+          selectedFaculty = newValue;
+        });
+      },
+      items: faculty.map<DropdownMenuItem<String>>((String value) {
+        return DropdownMenuItem<String>(
+          value: value,
+          child: Text(value),
+        );
+      }).toList(),
+    );
   }
 
   @override
@@ -45,6 +88,8 @@ class PersonalInformationPage extends StatelessWidget {
             MyTextField(controller: lastNameController),
             SizedBox(height: 25),
             MyButton(onTap: sendInformation, text: 'Send information'),
+            _facultyDropdownMenu(),
+            _tempTestButton()
           ],
         ),
       ),
