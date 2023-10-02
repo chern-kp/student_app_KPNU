@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "405140853819",
+    "project_id": "studentappkpnu",
+    "storage_bucket": "studentappkpnu.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:405140853819:android:a9ec517ad4780e4fc2381e",
+        "android_client_info": {
+          "package_name": "com.example.student_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBCUVYPgAgO51Dp7_lJlu_0Nul-W4Vy-is"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
