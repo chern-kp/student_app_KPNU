@@ -37,24 +37,46 @@ class _PersonalInformationPageState extends State<PersonalInformationPage> {
 
   Widget _facultyDropdownMenu() {
     return FutureBuilder(
-      future: DatabaseService.getFacultyList(),
+      //First future builder - until we get list of faculties, we will show CircularProgressIndicator
+      future: DatabaseService
+          .getFacultyList(), //when we get list of faculties, it will save to "snapshot" variable, and later will be used in dropdown menu
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
+          //if problems with internet connection
           return CircularProgressIndicator();
         } else if (snapshot.hasError) {
+          //todo better error handling
           return Text('Error: ${snapshot.error}');
         } else if (snapshot.hasData) {
+          //if everything is ok
           List<String>? dataList = snapshot.data;
-          return DropdownButton<String>(
-            //todo value - selected Value
-            items: dataList?.map((String value) {
-              return DropdownMenuItem<String>(
-                value: value,
-                child: Text(value),
-              );
-            }).toList(),
-            onChanged: (String? selectedValue) {
-              // Handle the selected value
+          //Second future builder - we are getting selected faculty from student document, until we get it, we will show CircularProgressIndicator
+          return FutureBuilder<String?>(
+            future: selectedFaculty,
+            builder: (BuildContext context, AsyncSnapshot<String?> snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return CircularProgressIndicator();
+              } else if (snapshot.hasError) {
+                //todo better error handling
+                return Text('Error: ${snapshot.error}');
+              } else {
+                return DropdownButton(
+                  items: dataList?.map((String item) {
+                    return DropdownMenuItem(
+                      value: item,
+                      child: Text(item.toString()),
+                    );
+                  }).toList(),
+                  onChanged: (selectedItem) {
+                    DatabaseService.setStudentFaculty(
+                        user.email, selectedItem!);
+                    setState(() {
+                      selectedFaculty = Future.value(selectedItem);
+                    });
+                  },
+                  value: snapshot.data,
+                );
+              }
             },
           );
         }

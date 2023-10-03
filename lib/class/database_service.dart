@@ -47,16 +47,29 @@ class DatabaseService {
     return facultyList;
   }
 
+//todo universal Get and Set/Update for every field of student document
   static Future<String> getStudentFaculty(var user) async {
     DocumentSnapshot snapshot =
         await FirebaseFirestore.instance.collection('student').doc(user).get();
-
     if (snapshot.exists) {
       Student student =
           Student.fromFirestore(snapshot.data() as Map<String, dynamic>);
       return student.faculty;
     } else {
       return '';
+    }
+  }
+
+  static Future<void> setStudentFaculty(var user, String faculty) async {
+    DocumentReference docRef =
+        FirebaseFirestore.instance.collection('student').doc(user);
+    DocumentSnapshot snapshot = await docRef.get();
+    await FirebaseFirestore.instance.collection('student').doc(user).get();
+    if (snapshot.exists) {
+      Student student =
+          Student.fromFirestore(snapshot.data() as Map<String, dynamic>);
+      student.faculty = faculty;
+      await docRef.set(student.toFirestore());
     }
   }
 }
