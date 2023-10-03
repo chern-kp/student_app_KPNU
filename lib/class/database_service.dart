@@ -1,10 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:student_app/class/database_data.dart';
 
 class DatabaseService {
   static Future<void> createStudentDocument(var user /* email of user */) {
     //we use static keyword so we could call this method without creating an instance
     return FirebaseFirestore.instance.collection("student").doc(user).set({
-      //*Firebase - "student" collection - "%user%" document -
+      //*Firestore - "student" collection - "%user%" document -
       "E-mail": user,
       "First Name": "",
       "Last Name": "",
@@ -19,7 +20,7 @@ class DatabaseService {
     List<Future> tasks = [];
     for (int i = 1; i <= 8; i++) {
       tasks.add(FirebaseFirestore.instance
-          //*Firebase - "student" collection - "%user%" document - "semester" collection -
+          //*Firestore - "student" collection - "%user%" document - "semester" collection -
           .collection("student")
           .doc(user)
           .collection('semester')
@@ -35,11 +36,27 @@ class DatabaseService {
     return snapshot.exists;
   }
 
+  static Future<List<String>> getFacultyList() async {
+    //*Firestore - "university" collection - "faculty" document - "Faculty List" collection - get all documents to list of strings
+    QuerySnapshot snapshot = await FirebaseFirestore.instance
+        .collection("university")
+        .doc("faculty")
+        .collection("Faculty List")
+        .get();
+    List<String> facultyList = snapshot.docs.map((doc) => doc.id).toList();
+    return facultyList;
+  }
+
   static Future<String> getStudentFaculty(var user) async {
-    //todo It returns instance of Future<String>. Make class for getting data
     DocumentSnapshot snapshot =
         await FirebaseFirestore.instance.collection('student').doc(user).get();
-    String faculty = snapshot.get('Faculty') as String;
-    return faculty;
+
+    if (snapshot.exists) {
+      Student student =
+          Student.fromFirestore(snapshot.data() as Map<String, dynamic>);
+      return student.faculty;
+    } else {
+      return '';
+    }
   }
 }

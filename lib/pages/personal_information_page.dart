@@ -1,3 +1,5 @@
+// ignore_for_file: prefer_const_constructors_in_immutables, prefer_const_constructors
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -27,17 +29,38 @@ class _PersonalInformationPageState extends State<PersonalInformationPage> {
   final lastNameController = TextEditingController();
 
   //dropdown menu controllers
-  List<String> faculty = ['Fizmat', 'History', 'Economy'];
 
-  String? selectedFaculty;
-  late final tempTestString = DatabaseService.getStudentFaculty(user.email);
+  //final Future<List<String?>> facultyList = DatabaseService.getFacultyList();
 
-  Widget _tempTestButton() {
-    return ElevatedButton(
-        onPressed: () {
-          print(tempTestString);
-        },
-        child: Text('test'));
+  late Future<String?> selectedFaculty = DatabaseService.getStudentFaculty(user
+      .email); //we are using keyword "late" here because we firstly have to wait for code to get async value "user"
+
+  Widget _facultyDropdownMenu() {
+    return FutureBuilder(
+      future: DatabaseService.getFacultyList(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return CircularProgressIndicator();
+        } else if (snapshot.hasError) {
+          return Text('Error: ${snapshot.error}');
+        } else if (snapshot.hasData) {
+          List<String>? dataList = snapshot.data;
+          return DropdownButton<String>(
+            //todo value - selected Value
+            items: dataList?.map((String value) {
+              return DropdownMenuItem<String>(
+                value: value,
+                child: Text(value),
+              );
+            }).toList(),
+            onChanged: (String? selectedValue) {
+              // Handle the selected value
+            },
+          );
+        }
+        return CircularProgressIndicator();
+      },
+    );
   }
 
   Future sendInformation() async {
@@ -45,25 +68,6 @@ class _PersonalInformationPageState extends State<PersonalInformationPage> {
       "FirstName": firstNameController.text,
       "LastName": lastNameController.text
     }, SetOptions(merge: true));
-  }
-
-  Widget _facultyDropdownMenu() {
-    return DropdownButton<String>(
-      value: selectedFaculty,
-      hint: Text(selectedFaculty ?? 'Select Faculty'),
-      onChanged: (String? newValue) {
-        //when a new value is selected dropdown menu widget gets rebuilt
-        setState(() {
-          selectedFaculty = newValue;
-        });
-      },
-      items: faculty.map<DropdownMenuItem<String>>((String value) {
-        return DropdownMenuItem<String>(
-          value: value,
-          child: Text(value),
-        );
-      }).toList(),
-    );
   }
 
   @override
@@ -89,7 +93,7 @@ class _PersonalInformationPageState extends State<PersonalInformationPage> {
             SizedBox(height: 25),
             MyButton(onTap: sendInformation, text: 'Send information'),
             _facultyDropdownMenu(),
-            _tempTestButton()
+            //_tempTestButton()
           ],
         ),
       ),
