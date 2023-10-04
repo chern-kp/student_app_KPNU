@@ -1,4 +1,4 @@
-// ignore_for_file: prefer_const_constructors_in_immutables, prefer_const_constructors
+// ignore_for_file: prefer_const_constructors_in_immutables, prefer_const_constructors, must_be_immutable
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -12,25 +12,19 @@ void main() {
   runApp(PersonalInformationPage());
 }
 
-class PersonalInformationPage extends StatefulWidget {
+class PersonalInformationPage extends StatelessWidget {
   PersonalInformationPage({Key? key}) : super(key: key);
 
-  @override
-  State<PersonalInformationPage> createState() =>
-      _PersonalInformationPageState();
-}
-
-class _PersonalInformationPageState extends State<PersonalInformationPage> {
-  final user = FirebaseAuth.instance
-      .currentUser!; //user here is the instance of class User from firebase auth package. To get the email address itself we use "user.email".
-
-  //textField controllers
+  final user = FirebaseAuth.instance.currentUser!;
+  //user here is the instance of class User from firebase auth package. To get the email address itself we use "user.email".
   final firstNameController = TextEditingController();
+
   final lastNameController = TextEditingController();
 
   //dropdown menu controllers
-  late Future<String> selectedFaculty = DatabaseService.getStudentFaculty(user
-      .email); //we are using keyword "late" here because we firstly have to wait for code to get async value "user"
+  late Future<String> selectedFaculty =
+      DatabaseService.getStudentFaculty(user.email);
+  //we are using keyword "late" here because we firstly have to wait for code to get async value "user"
   final Future<List<String>> facultyList = DatabaseService.getFacultyList();
 
   Future sendInformation() async {
