@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:student_app/components/my_button.dart';
+import 'package:student_app/components/my_dropdownmenu.dart';
 import 'package:student_app/components/my_texfield.dart';
 import 'package:student_app/class/database_service.dart';
 
@@ -25,65 +26,12 @@ class _PersonalInformationPageState extends State<PersonalInformationPage> {
 
   //textField controllers
   final firstNameController = TextEditingController();
-
   final lastNameController = TextEditingController();
 
   //dropdown menu controllers
-
-  //final Future<List<String?>> facultyList = DatabaseService.getFacultyList();
-
-  late Future<String?> selectedFaculty = DatabaseService.getStudentFaculty(user
+  late Future<String> selectedFaculty = DatabaseService.getStudentFaculty(user
       .email); //we are using keyword "late" here because we firstly have to wait for code to get async value "user"
-
-  Widget _facultyDropdownMenu() {
-    return FutureBuilder(
-      //First future builder - until we get list of faculties, we will show CircularProgressIndicator
-      future: DatabaseService
-          .getFacultyList(), //when we get list of faculties, it will save to "snapshot" variable, and later will be used in dropdown menu
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          //if problems with internet connection
-          return CircularProgressIndicator();
-        } else if (snapshot.hasError) {
-          //todo better error handling
-          return Text('Error: ${snapshot.error}');
-        } else if (snapshot.hasData) {
-          //if everything is ok
-          List<String>? dataList = snapshot.data;
-          //Second future builder - we are getting selected faculty from student document, until we get it, we will show CircularProgressIndicator
-          return FutureBuilder<String?>(
-            future: selectedFaculty,
-            builder: (BuildContext context, AsyncSnapshot<String?> snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return CircularProgressIndicator();
-              } else if (snapshot.hasError) {
-                //todo better error handling
-                return Text('Error: ${snapshot.error}');
-              } else {
-                return DropdownButton(
-                  items: dataList?.map((String item) {
-                    return DropdownMenuItem(
-                      value: item,
-                      child: Text(item.toString()),
-                    );
-                  }).toList(),
-                  onChanged: (selectedItem) {
-                    DatabaseService.setStudentFaculty(
-                        user.email, selectedItem!);
-                    setState(() {
-                      selectedFaculty = Future.value(selectedItem);
-                    });
-                  },
-                  value: snapshot.data,
-                );
-              }
-            },
-          );
-        }
-        return CircularProgressIndicator();
-      },
-    );
-  }
+  final Future<List<String>> facultyList = DatabaseService.getFacultyList();
 
   Future sendInformation() async {
     await FirebaseFirestore.instance.collection("student").doc(user.email).set({
@@ -112,10 +60,12 @@ class _PersonalInformationPageState extends State<PersonalInformationPage> {
             SizedBox(height: 25),
             Text("Your last name:"),
             MyTextField(controller: lastNameController),
-            SizedBox(height: 25),
             MyButton(onTap: sendInformation, text: 'Send information'),
-            _facultyDropdownMenu(),
-            //_tempTestButton()
+            SizedBox(height: 25),
+            MyDropdownMenu(
+              facultyList: facultyList,
+              selectedFaculty: selectedFaculty,
+            ),
           ],
         ),
       ),
