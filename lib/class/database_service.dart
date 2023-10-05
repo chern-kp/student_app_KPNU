@@ -1,5 +1,4 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'database_data.dart';
 
 class DatabaseService {
   static Future<void> createStudentDocument(var user /* email of user */) {
@@ -47,29 +46,28 @@ class DatabaseService {
     return facultyList;
   }
 
-//todo universal Get and Set/Update for every field of student document
-  static Future<String> getStudentFaculty(var user) async {
+  //*Firestore - "student" collection - get the field of the document whe pass as parameter
+  static Future<String> getStudentField(var user, String field) async {
     DocumentSnapshot snapshot =
         await FirebaseFirestore.instance.collection('student').doc(user).get();
     if (snapshot.exists) {
-      Student student =
-          Student.fromFirestore(snapshot.data() as Map<String, dynamic>);
-      return student.faculty;
+      Map<String, dynamic> data = snapshot.data() as Map<String, dynamic>;
+      return data[field];
     } else {
       return '';
     }
   }
 
-  static Future<void> setStudentFaculty(var user, String faculty) async {
+  //*Firestore - "student" collection - set/update the field of the document whe pass as parameter
+  static Future<void> setStudentField(
+      var user, String value, String field) async {
     DocumentReference docRef =
         FirebaseFirestore.instance.collection('student').doc(user);
     DocumentSnapshot snapshot = await docRef.get();
-    await FirebaseFirestore.instance.collection('student').doc(user).get();
     if (snapshot.exists) {
-      Student student =
-          Student.fromFirestore(snapshot.data() as Map<String, dynamic>);
-      student.faculty = faculty;
-      await docRef.set(student.toFirestore());
+      Map<String, dynamic> data = snapshot.data() as Map<String, dynamic>;
+      data[field] = value;
+      await docRef.set(data);
     }
   }
 }

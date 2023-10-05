@@ -18,14 +18,13 @@ class PersonalInformationPage extends StatelessWidget {
   final user = FirebaseAuth.instance.currentUser!;
   //user here is the instance of class User from firebase auth package. To get the email address itself we use "user.email".
   final firstNameController = TextEditingController();
-
   final lastNameController = TextEditingController();
 
   //dropdown menu controllers
-  late Future<String> selectedFaculty =
-      DatabaseService.getStudentFaculty(user.email);
-  //we are using keyword "late" here because we firstly have to wait for code to get async value "user"
   final Future<List<String>> facultyList = DatabaseService.getFacultyList();
+  late Future<String> selectedFaculty =
+      DatabaseService.getStudentField(user.email, 'Faculty');
+  //we are using keyword "late" here because we firstly have to wait for code to get async value "user"
 
   Future sendInformation() async {
     await FirebaseFirestore.instance.collection("student").doc(user.email).set({
@@ -57,8 +56,8 @@ class PersonalInformationPage extends StatelessWidget {
             MyButton(onTap: sendInformation, text: 'Send information'),
             SizedBox(height: 25),
             MyDropdownMenu(
-              facultyList: facultyList,
-              selectedFaculty: selectedFaculty,
+              listOfData: facultyList,
+              chosenValueInDatabase: selectedFaculty,
             ),
           ],
         ),

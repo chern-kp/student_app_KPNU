@@ -5,12 +5,14 @@ import 'package:flutter/material.dart';
 import 'package:student_app/class/database_service.dart';
 
 class MyDropdownMenu extends StatefulWidget {
-  final Future<List<String>> facultyList;
+  final Future<List<String>> listOfData;
   late Future<String>
-      selectedFaculty; //i need to pass late Future<String> selectedFaculty
+      chosenValueInDatabase; //i need to pass late Future<String> selectedFaculty
 
   MyDropdownMenu(
-      {super.key, required this.facultyList, required this.selectedFaculty});
+      {super.key,
+      required this.listOfData,
+      required this.chosenValueInDatabase});
 
   @override
   State<MyDropdownMenu> createState() => _MyDropdownMenuState();
@@ -25,7 +27,7 @@ class _MyDropdownMenuState extends State<MyDropdownMenu> {
     return FutureBuilder(
       //First future builder - until we get list of faculties, we will show CircularProgressIndicator
       future: widget
-          .facultyList, //when we get list of faculties, it will save to "snapshot" variable, and later will be used in dropdown menu
+          .listOfData, //when we get list of faculties, it will save to "snapshot" variable, and later will be used in dropdown menu
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           //if problems with internet connection
@@ -38,7 +40,7 @@ class _MyDropdownMenuState extends State<MyDropdownMenu> {
           List<String>? dataList = snapshot.data;
           //Second future builder - we are getting selected faculty from student document, until we get it, we will show CircularProgressIndicator
           return FutureBuilder<String?>(
-            future: widget.selectedFaculty,
+            future: widget.chosenValueInDatabase,
             builder: (BuildContext context, AsyncSnapshot<String?> snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
                 return CircularProgressIndicator();
@@ -54,10 +56,10 @@ class _MyDropdownMenuState extends State<MyDropdownMenu> {
                     );
                   }).toList(),
                   onChanged: (selectedItem) {
-                    DatabaseService.setStudentFaculty(
-                        user.email, selectedItem!);
+                    DatabaseService.setStudentField(
+                        user.email, selectedItem!, "Faculty");
                     setState(() {
-                      widget.selectedFaculty = Future.value(selectedItem);
+                      widget.chosenValueInDatabase = Future.value(selectedItem);
                     });
                   },
                   value: snapshot.data == "" ? null : snapshot.data,
