@@ -59,7 +59,7 @@ class DatabaseService {
   }
 
   //*Firestore - "student" collection - set/update the field of the document whe pass as parameter
-  static Future<void> setStudentField(
+  static Future<void> setStudentFields(
       var user, String value, String field) async {
     DocumentReference docRef =
         FirebaseFirestore.instance.collection('student').doc(user);

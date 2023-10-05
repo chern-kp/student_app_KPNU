@@ -56,7 +56,7 @@ class _MyDropdownMenuState extends State<MyDropdownMenu> {
                     );
                   }).toList(),
                   onChanged: (selectedItem) {
-                    DatabaseService.setStudentField(
+                    DatabaseService.setStudentFields(
                         user.email, selectedItem!, "Faculty");
                     setState(() {
                       widget.chosenValueInDatabase = Future.value(selectedItem);
