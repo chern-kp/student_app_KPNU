@@ -2,6 +2,7 @@
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:student_app/pages/courses_schedule_page.dart';
 import 'package:student_app/pages/personal_information_page.dart';
 
 class HomePage extends StatelessWidget {
@@ -15,6 +16,13 @@ class HomePage extends StatelessWidget {
     Navigator.push(
       context,
       MaterialPageRoute(builder: (context) => PersonalInformationPage()),
+    );
+  }
+
+  void coursesSchedulePageButton(BuildContext context) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => CoursesSchedulePage()),
     );
   }
 
@@ -38,6 +46,10 @@ class HomePage extends StatelessWidget {
             ElevatedButton(
               onPressed: () => tempPersonalInfoPage(context),
               child: Text('tempPersonalInfoPage'),
+            ),
+            ElevatedButton(
+              onPressed: () => coursesSchedulePageButton(context),
+              child: Text('coursesSchedulePage'),
             ),
           ],
         ),

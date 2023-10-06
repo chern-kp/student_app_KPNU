@@ -8,11 +8,13 @@ class MyDropdownMenu extends StatefulWidget {
   final Future<List<String>> listOfData;
   late Future<String>
       chosenValueInDatabase; //i need to pass late Future<String> selectedFaculty
+  final String? chosenField;
 
   MyDropdownMenu(
       {super.key,
       required this.listOfData,
-      required this.chosenValueInDatabase});
+      required this.chosenValueInDatabase,
+      required this.chosenField});
 
   @override
   State<MyDropdownMenu> createState() => _MyDropdownMenuState();
@@ -57,7 +59,7 @@ class _MyDropdownMenuState extends State<MyDropdownMenu> {
                   }).toList(),
                   onChanged: (selectedItem) {
                     DatabaseService.setStudentFields(
-                        user.email, selectedItem!, "Faculty");
+                        user.email, selectedItem!, widget.chosenField!);
                     setState(() {
                       widget.chosenValueInDatabase = Future.value(selectedItem);
                     });

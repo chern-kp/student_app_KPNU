@@ -10,6 +10,7 @@ class DatabaseService {
       "Last Name": "",
       "Faculty": "",
       "Group": "",
+      "Current Semester": "Semester 1",
     }).then((_) {
       return createSemesterCollection(user);
     });
@@ -44,6 +45,17 @@ class DatabaseService {
         .get();
     List<String> facultyList = snapshot.docs.map((doc) => doc.id).toList();
     return facultyList;
+  }
+
+  static Future<List<String>> getSemesterList(var user) async {
+    //*Firestore - "university" collection - "faculty" document - "Faculty List" collection - get all documents to list of strings
+    QuerySnapshot snapshot = await FirebaseFirestore.instance
+        .collection("student")
+        .doc(user)
+        .collection('semester')
+        .get();
+    List<String> semesterList = snapshot.docs.map((doc) => doc.id).toList();
+    return semesterList;
   }
 
   //*Firestore - "student" collection - get the field of the document whe pass as parameter

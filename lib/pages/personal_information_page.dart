@@ -19,6 +19,7 @@ class PersonalInformationPage extends StatelessWidget {
   //user here is the instance of class User from firebase auth package. To get the email address itself we use "user.email".
   final firstNameController = TextEditingController();
   final lastNameController = TextEditingController();
+  final groupController = TextEditingController();
 
   //dropdown menu controllers
   final Future<List<String>> facultyList = DatabaseService.getFacultyList();
@@ -29,7 +30,8 @@ class PersonalInformationPage extends StatelessWidget {
   Future sendInformation() async {
     await FirebaseFirestore.instance.collection("student").doc(user.email).set({
       "First Name": firstNameController.text,
-      "Last Name": lastNameController.text
+      "Last Name": lastNameController.text,
+      "Group": groupController.text,
     }, SetOptions(merge: true));
   }
 
@@ -53,11 +55,15 @@ class PersonalInformationPage extends StatelessWidget {
             SizedBox(height: 25),
             Text("Your last name:"),
             MyTextField(controller: lastNameController),
+            SizedBox(height: 25),
+            Text("Group"),
+            MyTextField(controller: groupController),
             MyButton(onTap: sendInformation, text: 'Send information'),
             SizedBox(height: 25),
             MyDropdownMenu(
               listOfData: facultyList,
               chosenValueInDatabase: selectedFaculty,
+              chosenField: 'Faculty',
             ),
           ],
         ),
