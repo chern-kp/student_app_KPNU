@@ -28,8 +28,8 @@ class PersonalInformationPage extends StatelessWidget {
 
   Future sendInformation() async {
     await FirebaseFirestore.instance.collection("student").doc(user.email).set({
-      "FirstName": firstNameController.text,
-      "LastName": lastNameController.text
+      "First Name": firstNameController.text,
+      "Last Name": lastNameController.text
     }, SetOptions(merge: true));
   }
 

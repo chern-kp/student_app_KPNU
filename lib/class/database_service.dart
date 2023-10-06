@@ -1,10 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class DatabaseService {
-  static Future<void> createStudentDocument(var user /* email of user */) {
+  static Future<void> createStudentDocument(var user) {
     //we use static keyword so we could call this method without creating an instance
     return FirebaseFirestore.instance.collection("student").doc(user).set({
-      //*Firestore - "student" collection - "%user%" document -
+      //Firestore - "student" collection - "%user%" document -
       "E-mail": user,
       "First Name": "",
       "Last Name": "",
