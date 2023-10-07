@@ -1,16 +1,16 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:student_app/class/database_data.dart';
 
 class DatabaseService {
-  static Future<void> createStudentDocument(var user /* email of user */) {
+  static Future<void> createStudentDocument(var user) {
     //we use static keyword so we could call this method without creating an instance
     return FirebaseFirestore.instance.collection("student").doc(user).set({
-      //*Firestore - "student" collection - "%user%" document -
+      //Firestore - "student" collection - "%user%" document -
       "E-mail": user,
       "First Name": "",
       "Last Name": "",
       "Faculty": "",
       "Group": "",
+      "Current Semester": "Semester 1",
     }).then((_) {
       return createSemesterCollection(user);
     });
@@ -47,16 +47,39 @@ class DatabaseService {
     return facultyList;
   }
 
-  static Future<String> getStudentFaculty(var user) async {
+  static Future<List<String>> getSemesterList(var user) async {
+    //*Firestore - "university" collection - "faculty" document - "Faculty List" collection - get all documents to list of strings
+    QuerySnapshot snapshot = await FirebaseFirestore.instance
+        .collection("student")
+        .doc(user)
+        .collection('semester')
+        .get();
+    List<String> semesterList = snapshot.docs.map((doc) => doc.id).toList();
+    return semesterList;
+  }
+
+  //*Firestore - "student" collection - get the field of the document whe pass as parameter
+  static Future<String> getStudentField(var user, String field) async {
     DocumentSnapshot snapshot =
         await FirebaseFirestore.instance.collection('student').doc(user).get();
-
     if (snapshot.exists) {
-      Student student =
-          Student.fromFirestore(snapshot.data() as Map<String, dynamic>);
-      return student.faculty;
+      Map<String, dynamic> data = snapshot.data() as Map<String, dynamic>;
+      return data[field];
     } else {
       return '';
+    }
+  }
+
+  //*Firestore - "student" collection - set/update the field of the document whe pass as parameter
+  static Future<void> setStudentFields(
+      var user, String value, String field) async {
+    DocumentReference docRef =
+        FirebaseFirestore.instance.collection('student').doc(user);
+    DocumentSnapshot snapshot = await docRef.get();
+    if (snapshot.exists) {
+      Map<String, dynamic> data = snapshot.data() as Map<String, dynamic>;
+      data[field] = value;
+      await docRef.set(data);
     }
   }
 }
