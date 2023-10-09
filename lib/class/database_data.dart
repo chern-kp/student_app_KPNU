@@ -38,3 +38,40 @@ class Student {
     currentSemesterField = json['CurrentSemester'];
   }
 }
+
+class Course {
+  String? nameField;
+  num? hoursLectionsField;
+  num? hoursPracticesField;
+  num? hoursLabsField;
+  num? hoursCourseworkField;
+  num? hoursInClassTotalField;
+  num? hoursIndividualTotalField;
+  num? hoursOverallTotalField;
+  num? creditsOverallTotalField;
+
+  Course(
+      {this.nameField,
+      this.hoursLectionsField,
+      this.hoursPracticesField,
+      this.hoursLabsField,
+      this.hoursCourseworkField,
+      this.hoursInClassTotalField,
+      this.hoursIndividualTotalField,
+      this.hoursOverallTotalField,
+      this.creditsOverallTotalField});
+
+  Map<String, dynamic> toJsonCourse() {
+    return {
+      'Name': nameField,
+      'Hours Lections': hoursLectionsField,
+      'Hours Practices': hoursPracticesField,
+      'Hours Labs': hoursLabsField,
+      'Hours Coursework': hoursCourseworkField,
+      'Hours In Class Total': hoursInClassTotalField,
+      'Hours Individual Total': hoursIndividualTotalField,
+      'Hours Overall Total': hoursOverallTotalField,
+      'Credits Overall Total': creditsOverallTotalField,
+    };
+  }
+}

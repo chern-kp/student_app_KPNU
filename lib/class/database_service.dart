@@ -84,4 +84,15 @@ class DatabaseService {
     List<String> semesterList = snapshot.docs.map((doc) => doc.id).toList();
     return semesterList;
   }
+
+  static Future<void> createNewCourse(var user) async {
+    var currentSemester = await getStudentField(user, 'Current Semester');
+    print(currentSemester);
+    final docRef = FirebaseFirestore.instance
+        .collection("student")
+        .doc(user)
+        .collection("semester")
+        .doc(currentSemester);
+  }
+  //todo
 }

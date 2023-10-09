@@ -1,9 +1,13 @@
 // ignore_for_file: prefer_const_constructors_in_immutables, prefer_const_constructors, prefer_const_literals_to_create_immutables
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:student_app/class/database_service.dart';
 
 class NewCourseDialog extends StatelessWidget {
   NewCourseDialog({super.key});
+
+  final user = FirebaseAuth.instance.currentUser!;
 
   @override
   Widget build(BuildContext context) {
@@ -35,7 +39,7 @@ class NewCourseDialog extends StatelessWidget {
         TextButton(
           child: Text('Save'),
           onPressed: () {
-            // todo saving to db
+            DatabaseService.createNewCourse(user.email);
           },
         ),
       ],
