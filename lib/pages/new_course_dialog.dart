@@ -3,11 +3,22 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:student_app/class/database_service.dart';
+import 'package:student_app/class/database_data.dart';
 
 class NewCourseDialog extends StatelessWidget {
   NewCourseDialog({super.key});
 
   final user = FirebaseAuth.instance.currentUser!;
+  final nameFieldController = TextEditingController();
+  final semesterFieldController = TextEditingController();
+  final hoursLectionsFieldController = TextEditingController();
+  final hoursPracticesFieldController = TextEditingController();
+  final hoursLabsFieldController = TextEditingController();
+  final hoursCourseworkFieldController = TextEditingController();
+  final hoursInClassTotalFieldController = TextEditingController();
+  final hoursIndividualTotalFieldController = TextEditingController();
+  final hoursOverallTotalFieldController = TextEditingController();
+  final creditsOverallTotalFieldController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -18,6 +29,7 @@ class NewCourseDialog extends StatelessWidget {
         children: <Widget>[
           Text('Content of the dialog'),
           TextField(
+            controller: nameFieldController,
             decoration: InputDecoration(
               hintText: 'Course name',
             ),
@@ -39,7 +51,10 @@ class NewCourseDialog extends StatelessWidget {
         TextButton(
           child: Text('Save'),
           onPressed: () {
-            DatabaseService.createNewCourse(user.email);
+            Course course = Course(
+              nameField: nameFieldController.text,
+            );
+            DatabaseService.createNewCourse(user.email, course);
           },
         ),
       ],

@@ -41,6 +41,7 @@ class Student {
 
 class Course {
   String? nameField;
+  String? semesterField;
   num? hoursLectionsField;
   num? hoursPracticesField;
   num? hoursLabsField;
@@ -52,6 +53,7 @@ class Course {
 
   Course(
       {this.nameField,
+      this.semesterField,
       this.hoursLectionsField,
       this.hoursPracticesField,
       this.hoursLabsField,
@@ -64,6 +66,7 @@ class Course {
   Map<String, dynamic> toJsonCourse() {
     return {
       'Name': nameField,
+      'Semester': semesterField,
       'Hours Lections': hoursLectionsField,
       'Hours Practices': hoursPracticesField,
       'Hours Labs': hoursLabsField,
