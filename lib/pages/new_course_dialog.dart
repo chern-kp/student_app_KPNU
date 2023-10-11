@@ -2,6 +2,7 @@
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:student_app/class/database_service.dart';
 import 'package:student_app/class/database_data.dart';
 
@@ -35,6 +36,17 @@ class NewCourseDialog extends StatelessWidget {
             ),
           ),
           TextField(
+            controller: hoursLectionsFieldController,
+            decoration: InputDecoration(
+              hintText: 'Lection hours',
+            ),
+            //users cannot enter anything except numbers
+            keyboardType: TextInputType.number,
+            inputFormatters: <TextInputFormatter>[
+              FilteringTextInputFormatter.digitsOnly
+            ],
+          ),
+          TextField(
             decoration: InputDecoration(
               hintText: 'Course...',
             ),
@@ -53,6 +65,8 @@ class NewCourseDialog extends StatelessWidget {
           onPressed: () {
             Course course = Course(
               nameField: nameFieldController.text,
+              hoursLectionsField: int.parse(
+                  hoursLectionsFieldController.text), //todo error checks
             );
             DatabaseService.createNewCourse(user.email, course);
           },
