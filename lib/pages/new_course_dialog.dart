@@ -40,7 +40,6 @@ class NewCourseDialog extends StatelessWidget {
             decoration: InputDecoration(
               hintText: 'Lection hours',
             ),
-            //users cannot enter anything except numbers
             keyboardType: TextInputType.number,
             inputFormatters: <TextInputFormatter>[
               FilteringTextInputFormatter.digitsOnly
