@@ -58,10 +58,18 @@ class Course {
       this.hoursPracticesField,
       this.hoursLabsField,
       this.hoursCourseworkField,
-      this.hoursInClassTotalField,
       this.hoursIndividualTotalField,
       this.hoursOverallTotalField,
-      this.creditsOverallTotalField});
+      this.creditsOverallTotalField}) {
+    hoursInClassTotalField = calculateTotalHoursInClass();
+  }
+
+  num calculateTotalHoursInClass() {
+    return (hoursLectionsField ?? 0) +
+        (hoursPracticesField ?? 0) +
+        (hoursLabsField ?? 0) +
+        (hoursCourseworkField ?? 0);
+  }
 
   Map<String, dynamic> toJsonCourse() {
     return {

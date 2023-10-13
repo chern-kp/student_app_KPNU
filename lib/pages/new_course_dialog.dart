@@ -46,10 +46,20 @@ class NewCourseDialog extends StatelessWidget {
             ],
           ),
           TextField(
-            decoration: InputDecoration(
-              hintText: 'Course...',
-            ),
-          ),
+              controller: hoursPracticesFieldController,
+              decoration: InputDecoration(
+                hintText: 'Practice hours',
+              )),
+          TextField(
+              controller: hoursLabsFieldController,
+              decoration: InputDecoration(
+                hintText: 'Lab hours',
+              )),
+          TextField(
+              controller: hoursCourseworkFieldController,
+              decoration: InputDecoration(
+                hintText: 'Coursework hours',
+              ))
         ],
       ),
       actions: <Widget>[
@@ -64,8 +74,14 @@ class NewCourseDialog extends StatelessWidget {
           onPressed: () {
             Course course = Course(
               nameField: nameFieldController.text,
-              hoursLectionsField: int.parse(
-                  hoursLectionsFieldController.text), //todo error checks
+              hoursLectionsField:
+                  int.tryParse(hoursLectionsFieldController.text) ?? 0,
+              hoursPracticesField:
+                  int.tryParse(hoursPracticesFieldController.text) ?? 0,
+              hoursLabsField: int.tryParse(hoursLabsFieldController.text) ?? 0,
+              hoursCourseworkField:
+                  int.tryParse(hoursCourseworkFieldController.text) ?? 0,
+              //todo error checks
             );
             DatabaseService.createNewCourse(user.email, course);
           },
