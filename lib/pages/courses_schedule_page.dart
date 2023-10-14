@@ -54,13 +54,18 @@ class _CoursesSchedulePageState extends State<CoursesSchedulePage> {
             child: Center(
           child: Column(
             children: [
-              //todo change the onChange
               MyDropdownMenuSemester(
                   onSelectedItemChanged: updateSelectedSemester),
               SizedBox(height: 25),
               _addNewCourseButton(context),
               SizedBox(height: 25),
-              Text(selectedSemesterPage ?? ''),
+              //todo delete - debug
+              if (selectedSemesterPage == "Semester 1")
+                Container(child: Text('Hello Semester 1')),
+              if (selectedSemesterPage == "Semester 2")
+                Container(child: Text('Hi Semester 2')),
+              if (selectedSemesterPage == "Semester 3")
+                Container(child: Center(child: Text('Hola Semester 3'))),
             ],
           ),
         )));
