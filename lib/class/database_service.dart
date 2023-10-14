@@ -75,7 +75,6 @@ class DatabaseService {
   }
 
   static Future<List<String>> getSemesterList(var user) async {
-    //*Firestore - "university" collection - "faculty" document - "Faculty List" collection - get all documents to list of strings
     QuerySnapshot snapshot = await FirebaseFirestore.instance
         .collection("student")
         .doc(user)
