@@ -61,7 +61,21 @@ class _CoursesSchedulePageState extends State<CoursesSchedulePage> {
               SizedBox(height: 25),
               //todo delete - debug
               if (selectedSemesterPage == "Semester 1")
-                Container(child: Text('Hello Semester 1')),
+                Container(
+                    decoration: BoxDecoration(color: Colors.grey[500]),
+                    padding: EdgeInsets.fromLTRB(20, 30, 20, 30),
+                    child: Column(
+                      children: [
+                        Row(children: [
+                          Text('Semester 1'),
+                          SizedBox(width: 10)
+                        ]),
+                        Row(children: [
+                          Text('Semester 2'),
+                          SizedBox(width: 10)
+                        ]),
+                      ],
+                    )),
               if (selectedSemesterPage == "Semester 2")
                 Container(child: Text('Hi Semester 2')),
               if (selectedSemesterPage == "Semester 3")
