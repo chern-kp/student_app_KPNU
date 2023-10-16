@@ -76,10 +76,6 @@ class _CoursesSchedulePageState extends State<CoursesSchedulePage> {
                         ]),
                       ],
                     )),
-              if (selectedSemesterPage == "Semester 2")
-                Container(child: Text('Hi Semester 2')),
-              if (selectedSemesterPage == "Semester 3")
-                Container(child: Center(child: Text('Hola Semester 3'))),
             ],
           ),
         )));
