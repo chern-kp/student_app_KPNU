@@ -47,7 +47,6 @@ class _MyDropdownMenuState extends State<MyDropdownMenu> {
               if (snapshot.connectionState == ConnectionState.waiting) {
                 return CircularProgressIndicator();
               } else if (snapshot.hasError) {
-                //todo better error handling
                 return Text('Error: ${snapshot.error}');
               } else {
                 return DropdownButton(
