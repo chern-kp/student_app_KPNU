@@ -44,14 +44,82 @@ class _CoursesSchedulePageState extends State<CoursesSchedulePage> {
     );
   }
 
+  Widget _coursesListView(BuildContext context) {
+    return ListView.builder(
+      itemCount: yourData.length,
+      itemBuilder: (context, index) {
+        return Card(
+          child: Column(
+            children: [
+              ListTile(
+                leading: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                    IconButton(
+                      icon: Icon(yourData[index]['isExpanded']
+                          ? Icons.expand_less
+                          : Icons.expand_more),
+                      onPressed: () {
+                        setState(() {
+                          yourData[index]['isExpanded'] =
+                              !yourData[index]['isExpanded'];
+                        });
+                      },
+                    ),
+                    Text('Title ${index + 1}'),
+                  ],
+                ),
+                trailing: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                    IconButton(
+                      icon: Icon(Icons.edit),
+                      onPressed: () {
+                        // todo edit func
+                      },
+                    ),
+                    IconButton(
+                      icon: Icon(Icons.delete),
+                      onPressed: () {
+                        // todo delete func
+                      },
+                    ),
+                  ],
+                ),
+              ),
+              if (yourData[index]['isExpanded'])
+                Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Text(
+                    'Unfolded text',
+                    style: TextStyle(fontSize: 16),
+                  ),
+                ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+//temp
+  List<Map<String, dynamic>> yourData = List.generate(5, (index) {
+    return {
+      'Item': 'Item ${index + 1}',
+      'Property 1': 'Item ${index + 1} Property 1',
+      'Property 2': 'Item ${index + 1} Property 2',
+      'isExpanded': false,
+    };
+  });
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: Text('CoursesSchedulePage'),
-        ),
-        body: Container(
-            child: Center(
+      appBar: AppBar(
+        title: Text('CoursesSchedulePage'),
+      ),
+      body: Container(
+        child: Center(
           child: Column(
             children: [
               MyDropdownMenuSemester(
@@ -59,25 +127,12 @@ class _CoursesSchedulePageState extends State<CoursesSchedulePage> {
               SizedBox(height: 25),
               _addNewCourseButton(context),
               SizedBox(height: 25),
-              //todo delete - debug
               if (selectedSemesterPage == "Semester 1")
-                Container(
-                    decoration: BoxDecoration(color: Colors.grey[500]),
-                    padding: EdgeInsets.fromLTRB(20, 30, 20, 30),
-                    child: Column(
-                      children: [
-                        Row(children: [
-                          Text('Semester 1'),
-                          SizedBox(width: 10)
-                        ]),
-                        Row(children: [
-                          Text('Semester 2'),
-                          SizedBox(width: 10)
-                        ]),
-                      ],
-                    )),
+                Expanded(child: _coursesListView(context)),
             ],
           ),
-        )));
+        ),
+      ),
+    );
   }
 }
