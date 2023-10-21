@@ -85,4 +85,17 @@ class Course {
       'Credits Overall Total': creditsOverallTotalField,
     };
   }
+
+  Course.fromJsonCourse(Map<String, dynamic> json) {
+    nameField = json['Name'];
+    semesterField = json['Semester'];
+    hoursLectionsField = json['Hours Lections'];
+    hoursPracticesField = json['Hours Practices'];
+    hoursLabsField = json['Hours Labs'];
+    hoursCourseworkField = json['Hours Coursework'];
+    hoursInClassTotalField = json['Hours In Class Total'];
+    hoursIndividualTotalField = json['Hours Individual Total'];
+    hoursOverallTotalField = json['Hours Overall Total'];
+    creditsOverallTotalField = json['Credits Overall Total'];
+  }
 }

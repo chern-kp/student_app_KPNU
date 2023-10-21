@@ -72,6 +72,7 @@ class NewCourseDialog extends StatelessWidget {
         TextButton(
           child: Text('Save'),
           onPressed: () {
+            // here we get info to course instance...
             Course course = Course(
               nameField: nameFieldController.text,
               hoursLectionsField:
@@ -83,6 +84,7 @@ class NewCourseDialog extends StatelessWidget {
                   int.tryParse(hoursCourseworkFieldController.text) ?? 0,
               //todo error checks
             );
+            // ...and here send it to database method
             DatabaseService.createNewCourse(user.email, course);
           },
         ),
