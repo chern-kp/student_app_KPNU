@@ -93,7 +93,7 @@ class DatabaseService {
         .collection("semester")
         .doc(currentSemester)
         .collection("Courses")
-        .doc();
+        .doc(course.nameField);
     return docRef.set(course.toJsonCourse());
   }
   //todo
@@ -138,6 +138,23 @@ class DatabaseService {
           .toList();
     } else {
       return [];
+    }
+  }
+
+  static Future<void> deleteCourse(var user, String courseName) async {
+    try {
+      var currentSemester = await getStudentField(user, 'Current Semester');
+      await FirebaseFirestore.instance
+          .collection("student")
+          .doc(user)
+          .collection("semester")
+          .doc(currentSemester)
+          .collection("Courses")
+          .doc(courseName) // Use course name as document ID
+          .delete();
+    } catch (e) {
+      print(e.toString());
+      throw e;
     }
   }
 }

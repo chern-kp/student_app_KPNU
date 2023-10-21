@@ -112,7 +112,11 @@ class _CoursesSchedulePageState extends State<CoursesSchedulePage> {
                           IconButton(
                             icon: Icon(Icons.delete),
                             onPressed: () {
-                              // todo delete func
+                              DatabaseService.deleteCourse(
+                                  user.email!, course.nameField!);
+                              setState(() {
+                                coursesFuture = generateCourses();
+                              });
                             },
                           ),
                         ],

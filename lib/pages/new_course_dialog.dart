@@ -30,6 +30,7 @@ class NewCourseDialog extends StatelessWidget {
         children: <Widget>[
           Text('Content of the dialog'),
           TextField(
+            // todo disallow user to create new course with the same name that exist
             controller: nameFieldController,
             decoration: InputDecoration(
               hintText: 'Course name',
