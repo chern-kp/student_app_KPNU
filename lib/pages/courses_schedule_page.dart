@@ -16,19 +16,45 @@ class CoursesSchedulePage extends StatefulWidget {
 }
 
 class _CoursesSchedulePageState extends State<CoursesSchedulePage> {
-  final user = FirebaseAuth.instance.currentUser!;
+  // Building List View
+  late Future<List<Map<String, dynamic>>> coursesFuture;
 
-  late Future<List<String>> semesterList =
-      DatabaseService.getSemesterList(user.email);
-
+  List<bool> expandedState = [];
   late Future<String> selectedSemester =
       DatabaseService.getStudentField(user.email, 'Current Semester');
 
   String? selectedSemesterPage;
+  late Future<List<String>> semesterList =
+      DatabaseService.getSemesterList(user.email);
+
+  final user = FirebaseAuth.instance.currentUser!;
+
+  @override
+  void initState() {
+    super.initState();
+    selectedSemester.then((value) {
+      setState(() {
+        selectedSemesterPage = value;
+      });
+    });
+    coursesFuture = generateCourses();
+  }
+
   void updateSelectedSemester(String selectedItem) {
     setState(() {
       selectedSemesterPage = selectedItem;
     });
+  }
+
+  Future<List<Map<String, dynamic>>> generateCourses() async {
+    List<Course> courses = await DatabaseService.getAllCourses(user.email!);
+    expandedState = List<bool>.filled(courses.length, false);
+    return courses.map((course) {
+      return {
+        'course': course,
+        'isExpanded': false,
+      };
+    }).toList();
   }
 
   Widget _addNewCourseButton(BuildContext context) {
@@ -43,28 +69,6 @@ class _CoursesSchedulePageState extends State<CoursesSchedulePage> {
       },
       child: Text("Add New Course"),
     );
-  }
-
-  // Building List View
-  late Future<List<Map<String, dynamic>>> coursesFuture;
-
-  @override
-  void initState() {
-    super.initState();
-    coursesFuture = generateCourses();
-  }
-
-  List<bool> expandedState = [];
-
-  Future<List<Map<String, dynamic>>> generateCourses() async {
-    List<Course> courses = await DatabaseService.getAllCourses(user.email!);
-    expandedState = List<bool>.filled(courses.length, false);
-    return courses.map((course) {
-      return {
-        'course': course,
-        'isExpanded': false,
-      };
-    }).toList();
   }
 
   Widget _coursesListView(BuildContext context) {

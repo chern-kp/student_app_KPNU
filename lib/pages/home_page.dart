@@ -5,8 +5,17 @@ import 'package:flutter/material.dart';
 import 'package:student_app/pages/courses_schedule_page.dart';
 import 'package:student_app/pages/personal_information_page.dart';
 
+import '../class/database_service.dart';
+import '../components/my_dropdownmenu.dart';
+
 class HomePage extends StatelessWidget {
   HomePage({super.key});
+
+  late Future<List<String>> facultyList =
+      DatabaseService.getSemesterList(user.email);
+
+  late Future<String> selectedSemester =
+      DatabaseService.getStudentField(user.email, 'Current Semester');
 
   final user = FirebaseAuth.instance
       .currentUser!; //user here is the instance of class User from firebase auth package. To get the email address itself we use "user.email".
@@ -42,6 +51,12 @@ class HomePage extends StatelessWidget {
         child: Column(
           children: [
             Text(user.email!),
+            SizedBox(height: 25),
+            Text('Choose the current semester:'),
+            MyDropdownMenu(
+                listOfData: facultyList,
+                chosenValueInDatabase: selectedSemester,
+                chosenField: 'Current Semester'),
             SizedBox(height: 25),
             ElevatedButton(
               onPressed: () => tempPersonalInfoPage(context),

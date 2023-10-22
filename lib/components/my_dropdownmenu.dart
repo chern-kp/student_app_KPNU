@@ -64,9 +64,16 @@ class _MyDropdownMenuState extends State<MyDropdownMenu> {
                     });
                   },
                   value: snapshot.data == "" ? null : snapshot.data,
-                  hint: Text(snapshot.data == ""
-                      ? "Choose the faculty"
-                      : snapshot.data!),
+                  //hint if
+                  hint: Text(widget.chosenField == 'Faculty'
+                      ? (snapshot.data == ""
+                          ? "Choose the faculty"
+                          : snapshot.data!)
+                      : (widget.chosenField == 'Current Semester'
+                          ? (snapshot.data == ""
+                              ? "Current Semester"
+                              : snapshot.data!)
+                          : '')),
                 );
               }
             },

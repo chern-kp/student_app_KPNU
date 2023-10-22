@@ -56,7 +56,6 @@ class _MyDropdownMenuSemesterState extends State<MyDropdownMenuSemester> {
                     );
                   }).toList(),
                   onChanged: (selectedItem) {
-                    print(selectedItem);
                     setState(() {
                       currentSemester = Future.value(selectedItem);
                     });
