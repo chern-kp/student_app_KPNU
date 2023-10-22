@@ -121,13 +121,13 @@ class DatabaseService {
   }
 
 // get all courses
-  static Future<List<Course>> getAllCourses(String userEmail) async {
-    var currentSemester = await getStudentField(userEmail, 'Current Semester');
+  static Future<List<Course>> getAllCourses(
+      String userEmail, String semester) async {
     QuerySnapshot querySnapshot = await FirebaseFirestore.instance
         .collection("student")
         .doc(userEmail)
         .collection("semester")
-        .doc(currentSemester)
+        .doc(semester)
         .collection("Courses")
         .get();
 

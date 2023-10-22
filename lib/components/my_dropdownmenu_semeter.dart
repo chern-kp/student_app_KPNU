@@ -58,6 +58,7 @@ class _MyDropdownMenuSemesterState extends State<MyDropdownMenuSemester> {
                   onChanged: (selectedItem) {
                     setState(() {
                       currentSemester = Future.value(selectedItem);
+                      print(selectedItem);
                     });
                     widget.onSelectedItemChanged(selectedItem!);
                   },

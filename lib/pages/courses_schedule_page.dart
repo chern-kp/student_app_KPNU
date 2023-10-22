@@ -16,18 +16,16 @@ class CoursesSchedulePage extends StatefulWidget {
 }
 
 class _CoursesSchedulePageState extends State<CoursesSchedulePage> {
-  // Building List View
-  late Future<List<Map<String, dynamic>>> coursesFuture;
-
-  List<bool> expandedState = [];
+  final user = FirebaseAuth.instance.currentUser!;
   late Future<String> selectedSemester =
       DatabaseService.getStudentField(user.email, 'Current Semester');
-
-  String? selectedSemesterPage;
   late Future<List<String>> semesterList =
       DatabaseService.getSemesterList(user.email);
 
-  final user = FirebaseAuth.instance.currentUser!;
+  String? selectedSemesterPage;
+  // Building List View
+  Future<List<Map<String, dynamic>>> coursesFuture = Future.value([]);
+  List<bool> expandedState = [];
 
   @override
   void initState() {
@@ -35,19 +33,23 @@ class _CoursesSchedulePageState extends State<CoursesSchedulePage> {
     selectedSemester.then((value) {
       setState(() {
         selectedSemesterPage = value;
+        coursesFuture = generateCourses(selectedSemesterPage!);
       });
     });
-    coursesFuture = generateCourses();
   }
 
-  void updateSelectedSemester(String selectedItem) {
+  void updateSelectedSemester(
+    String selectedItem,
+  ) {
     setState(() {
       selectedSemesterPage = selectedItem;
+      coursesFuture = generateCourses(selectedItem);
     });
   }
 
-  Future<List<Map<String, dynamic>>> generateCourses() async {
-    List<Course> courses = await DatabaseService.getAllCourses(user.email!);
+  Future<List<Map<String, dynamic>>> generateCourses(String semester) async {
+    List<Course> courses =
+        await DatabaseService.getAllCourses(user.email!, semester);
     expandedState = List<bool>.filled(courses.length, false);
     return courses.map((course) {
       return {
@@ -119,7 +121,8 @@ class _CoursesSchedulePageState extends State<CoursesSchedulePage> {
                               DatabaseService.deleteCourse(
                                   user.email!, course.nameField!);
                               setState(() {
-                                coursesFuture = generateCourses();
+                                coursesFuture =
+                                    generateCourses(selectedSemesterPage!);
                               });
                             },
                           ),
@@ -173,8 +176,7 @@ class _CoursesSchedulePageState extends State<CoursesSchedulePage> {
               SizedBox(height: 25),
               _addNewCourseButton(context),
               SizedBox(height: 25),
-              if (selectedSemesterPage == "Semester 1")
-                Expanded(child: _coursesListView(context)),
+              Expanded(child: _coursesListView(context)),
             ],
           ),
         ),
