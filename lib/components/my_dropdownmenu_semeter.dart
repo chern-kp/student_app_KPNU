@@ -33,7 +33,6 @@ class _MyDropdownMenuSemesterState extends State<MyDropdownMenuSemester> {
           //if problems with internet connection
           return CircularProgressIndicator();
         } else if (snapshot.hasError) {
-          //todo better error handling
           return Text('Error: ${snapshot.error}');
         } else if (snapshot.hasData) {
           //if everything is ok
@@ -58,7 +57,6 @@ class _MyDropdownMenuSemesterState extends State<MyDropdownMenuSemester> {
                   onChanged: (selectedItem) {
                     setState(() {
                       currentSemester = Future.value(selectedItem);
-                      print(selectedItem);
                     });
                     widget.onSelectedItemChanged(selectedItem!);
                   },
