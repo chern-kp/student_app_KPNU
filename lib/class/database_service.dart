@@ -23,7 +23,6 @@ class DatabaseService {
   //*Firestore - "student" collection - set/update the field of the document whe pass as parameter
   static Future<void> setStudentFields(
       var user, String value, String field) async {
-    //path to the document "student" - "%user%"
     final docRef = FirebaseFirestore.instance.collection('student').doc(user);
     DocumentSnapshot snapshot = await docRef.get();
     Map<String, dynamic> data = snapshot.data() as Map<String, dynamic>;
