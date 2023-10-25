@@ -95,7 +95,6 @@ class DatabaseService {
         .doc(course.nameField);
     return docRef.set(course.toJsonCourse());
   }
-  //todo
 
   // GET course by name
   static Future<Course> getCourseByName(
