@@ -83,7 +83,7 @@ class DatabaseService {
     return semesterList;
   }
 
-  // CREATE course
+  // CREATE
   static Future<void> createNewCourse(var user, Course course) async {
     var currentSemester = await getStudentField(user, 'Current Semester');
     final docRef = FirebaseFirestore.instance
