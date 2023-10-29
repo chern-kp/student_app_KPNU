@@ -25,7 +25,7 @@ class _MyDropdownMenuSemesterState extends State<MyDropdownMenuSemester> {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
-      //First future builder -until we get list of faculties, we will show CircularProgressIndicator
+      //First future builder - until we get list of faculties, we will show CircularProgressIndicator
       future:
           semesterList, //when we get list of faculties, it will save to "snapshot" variable, and later will be used in dropdown menu
       builder: (context, snapshot) {
