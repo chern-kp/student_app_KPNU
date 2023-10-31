@@ -21,7 +21,7 @@ class _MyDropdownMenuSemesterState extends State<MyDropdownMenuSemester> {
       DatabaseService.getSemesterList(user.email);
   late Future<String> currentSemester =
       DatabaseService.getStudentField(user.email, 'Current Semester');
-//todo 
+//todo
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
