@@ -6,9 +6,16 @@ import 'package:flutter/services.dart';
 import 'package:student_app/class/database_service.dart';
 import 'package:student_app/class/database_data.dart';
 
-class NewCourseDialog extends StatelessWidget {
+import '../components/my_dropdownmenu_semeter.dart';
+
+class NewCourseDialog extends StatefulWidget {
   NewCourseDialog({super.key});
 
+  @override
+  State<NewCourseDialog> createState() => _NewCourseDialogState();
+}
+
+class _NewCourseDialogState extends State<NewCourseDialog> {
   final user = FirebaseAuth.instance.currentUser!;
   final nameFieldController = TextEditingController();
   final semesterFieldController = TextEditingController();
@@ -21,6 +28,8 @@ class NewCourseDialog extends StatelessWidget {
   final hoursOverallTotalFieldController = TextEditingController();
   final creditsOverallTotalFieldController = TextEditingController();
 
+  String? selectedSemesterPage;
+
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
@@ -29,6 +38,11 @@ class NewCourseDialog extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
           Text('Content of the dialog'),
+          MyDropdownMenuSemester(onSelectedItemChanged: (selectedItem) {
+            setState(() {
+              selectedSemesterPage = selectedItem;
+            });
+          }),
           TextField(
             // todo disallow user to create new course with the same name that exist
             controller: nameFieldController,
@@ -73,7 +87,7 @@ class NewCourseDialog extends StatelessWidget {
         TextButton(
           child: Text('Save'),
           onPressed: () {
-            // here we get info to course instance...
+            // here we get info to course instance...:
             Course course = Course(
               nameField: nameFieldController.text,
               hoursLectionsField:
@@ -85,8 +99,9 @@ class NewCourseDialog extends StatelessWidget {
                   int.tryParse(hoursCourseworkFieldController.text) ?? 0,
               //todo error checks
             );
-            // ...and here send it to database method
-            DatabaseService.createNewCourse(user.email, course);
+            // ...and here send it to database method:
+            DatabaseService.createNewCourse(
+                user.email, course, selectedSemesterPage!);
           },
         ),
       ],

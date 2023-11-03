@@ -103,7 +103,8 @@ class _CoursesSchedulePageState extends State<CoursesSchedulePage> {
                               });
                             },
                           ),
-                          Text(course.nameField ?? ""),
+                          Text(course.nameField ?? "",
+                              style: TextStyle(fontSize: 16)),
                         ],
                       ),
                       trailing: Row(
@@ -143,21 +144,61 @@ class _CoursesSchedulePageState extends State<CoursesSchedulePage> {
     );
   }
 
+  //UI of items in the list
   Widget _courseDetails(Course course) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: <Widget>[
-        Text('Name: ${course.nameField}'),
-        Text('Semester: ${course.semesterField}'),
-        Text('Hours Lections: ${course.hoursLectionsField}'),
-        Text('Hours Practices: ${course.hoursPracticesField}'),
-        Text('Hours Labs: ${course.hoursLabsField}'),
-        Text('Hours Coursework: ${course.hoursCourseworkField}'),
-        Text('Hours In Class Total: ${course.hoursInClassTotalField}'),
-        Text('Hours Individual Total: ${course.hoursIndividualTotalField}'),
-        Text('Hours Overall Total: ${course.hoursOverallTotalField}'),
-        Text('Credits Overall Total: ${course.creditsOverallTotalField}'),
-      ],
+    return Align(
+      alignment: Alignment.centerLeft,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Row(
+            children: [
+              Text('Назва дисципліни: ',
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 20,
+                  )),
+              Text(course.nameField ?? '', style: TextStyle(fontSize: 20)),
+            ],
+          ),
+          SizedBox(height: 10),
+          Row(
+            children: [
+              Text('Форма підсумкового конролю: ',
+                  style: TextStyle(
+                    fontSize: 20,
+                  )),
+            ],
+          ),
+          SizedBox(height: 10),
+          Center(
+            child: Text(
+              'Навчальне навантаження',
+              style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
+            ),
+          ),
+          SizedBox(height: 10),
+          Row(
+            children: [
+              Text('Кількість кредитів: ', style: TextStyle(fontSize: 20)),
+              Text(
+                course.creditsOverallTotalField.toString(),
+                style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.red[600]),
+              ),
+            ],
+          ),
+          Text('Hours Lections: ${course.hoursLectionsField}'),
+          Text('Hours Practices: ${course.hoursPracticesField}'),
+          Text('Hours Labs: ${course.hoursLabsField}'),
+          Text('Hours Coursework: ${course.hoursCourseworkField}'),
+          Text('Hours In Class Total: ${course.hoursInClassTotalField}'),
+          Text('Hours Individual Total: ${course.hoursIndividualTotalField}'),
+          Text('Hours Overall Total: ${course.hoursOverallTotalField}'),
+        ],
+      ),
     );
   }
 
