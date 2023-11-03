@@ -190,13 +190,36 @@ class _CoursesSchedulePageState extends State<CoursesSchedulePage> {
               ),
             ],
           ),
-          Text('Hours Lections: ${course.hoursLectionsField}'),
-          Text('Hours Practices: ${course.hoursPracticesField}'),
-          Text('Hours Labs: ${course.hoursLabsField}'),
-          Text('Hours Coursework: ${course.hoursCourseworkField}'),
-          Text('Hours In Class Total: ${course.hoursInClassTotalField}'),
-          Text('Hours Individual Total: ${course.hoursIndividualTotalField}'),
-          Text('Hours Overall Total: ${course.hoursOverallTotalField}'),
+          SizedBox(height: 10),
+          Text('Години: ', style: TextStyle(fontSize: 20)),
+          SizedBox(height: 10),
+          Table(
+            border: TableBorder.all(color: Colors.black),
+            children: [
+              TableRow(
+                children: [
+                  Text('Усього'),
+                  Text('В аудиторії'),
+                  Text('Лекції'),
+                  Text('Практичні'),
+                  Text('Лабораторні'),
+                  Text('Курсові'),
+                  Text('Самостійна робота'),
+                ],
+              ),
+              TableRow(
+                children: [
+                  Text('${course.hoursOverallTotalField}'),
+                  Text('${course.hoursInClassTotalField}'),
+                  Text('${course.hoursLectionsField}'),
+                  Text('${course.hoursPracticesField}'),
+                  Text('${course.hoursLabsField}'),
+                  Text('${course.hoursCourseworkField}'),
+                  Text('${course.hoursIndividualTotalField}'),
+                ],
+              ),
+            ],
+          )
         ],
       ),
     );

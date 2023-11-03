@@ -51,17 +51,19 @@ class Course {
   num? hoursOverallTotalField;
   num? creditsOverallTotalField;
 
-  Course(
-      {this.nameField,
-      this.semesterField,
-      this.hoursLectionsField,
-      this.hoursPracticesField,
-      this.hoursLabsField,
-      this.hoursCourseworkField,
-      this.hoursIndividualTotalField,
-      this.hoursOverallTotalField,
-      this.creditsOverallTotalField}) {
+  Course({
+    this.nameField,
+    this.semesterField,
+    this.hoursLectionsField,
+    this.hoursPracticesField,
+    this.hoursLabsField,
+    this.hoursCourseworkField,
+    this.hoursIndividualTotalField,
+    this.hoursOverallTotalField,
+  }) {
     hoursInClassTotalField = calculateTotalHoursInClass();
+    hoursOverallTotalField = calculateTotalHoursOverall();
+    creditsOverallTotalField = calculateTotalCredits();
   }
 
   num calculateTotalHoursInClass() {
@@ -69,6 +71,18 @@ class Course {
         (hoursPracticesField ?? 0) +
         (hoursLabsField ?? 0) +
         (hoursCourseworkField ?? 0);
+  }
+
+  num calculateTotalHoursOverall() {
+    return (hoursInClassTotalField ?? 0) + (hoursIndividualTotalField ?? 0);
+  }
+
+  num calculateTotalCredits() {
+    if (hoursOverallTotalField != null) {
+      return 0;
+    } else {
+      return (hoursOverallTotalField! / 30);
+    }
   }
 
   Map<String, dynamic> toJsonCourse() {

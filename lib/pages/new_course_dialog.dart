@@ -29,53 +29,62 @@ class _NewCourseDialogState extends State<NewCourseDialog> {
   final creditsOverallTotalFieldController = TextEditingController();
 
   String? selectedSemesterPage;
+  late Future<String> selectedSemester =
+      DatabaseService.getStudentField(user.email, 'Current Semester');
 
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
       title: Text('New Course'),
-      content: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: <Widget>[
-          Text('Content of the dialog'),
-          MyDropdownMenuSemester(onSelectedItemChanged: (selectedItem) {
-            setState(() {
-              selectedSemesterPage = selectedItem;
-            });
-          }),
-          TextField(
-            // todo disallow user to create new course with the same name that exist
-            controller: nameFieldController,
-            decoration: InputDecoration(
-              hintText: 'Course name',
+      content: SingleChildScrollView(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            Text('Content of the dialog'),
+            MyDropdownMenuSemester(onSelectedItemChanged: (selectedItem) {
+              setState(() {
+                selectedSemesterPage = selectedItem;
+              });
+            }),
+            TextField(
+              // todo disallow user to create new course with the same name that exist
+              controller: nameFieldController,
+              decoration: InputDecoration(
+                hintText: 'Course name',
+              ),
             ),
-          ),
-          TextField(
-            controller: hoursLectionsFieldController,
-            decoration: InputDecoration(
-              hintText: 'Lection hours',
+            TextField(
+              controller: hoursLectionsFieldController,
+              decoration: InputDecoration(
+                hintText: 'Lection hours',
+              ),
+              keyboardType: TextInputType.number,
+              inputFormatters: <TextInputFormatter>[
+                FilteringTextInputFormatter.digitsOnly
+              ],
             ),
-            keyboardType: TextInputType.number,
-            inputFormatters: <TextInputFormatter>[
-              FilteringTextInputFormatter.digitsOnly
-            ],
-          ),
-          TextField(
-              controller: hoursPracticesFieldController,
-              decoration: InputDecoration(
-                hintText: 'Practice hours',
-              )),
-          TextField(
-              controller: hoursLabsFieldController,
-              decoration: InputDecoration(
-                hintText: 'Lab hours',
-              )),
-          TextField(
-              controller: hoursCourseworkFieldController,
-              decoration: InputDecoration(
-                hintText: 'Coursework hours',
-              ))
-        ],
+            TextField(
+                controller: hoursPracticesFieldController,
+                decoration: InputDecoration(
+                  hintText: 'Practice hours',
+                )),
+            TextField(
+                controller: hoursLabsFieldController,
+                decoration: InputDecoration(
+                  hintText: 'Lab hours',
+                )),
+            TextField(
+                controller: hoursCourseworkFieldController,
+                decoration: InputDecoration(
+                  hintText: 'Coursework hours',
+                )),
+            TextField(
+                controller: hoursIndividualTotalFieldController,
+                decoration: InputDecoration(
+                  hintText: 'Individual total hours',
+                ))
+          ],
+        ),
       ),
       actions: <Widget>[
         TextButton(
@@ -86,7 +95,7 @@ class _NewCourseDialogState extends State<NewCourseDialog> {
         ),
         TextButton(
           child: Text('Save'),
-          onPressed: () {
+          onPressed: () async {
             // here we get info to course instance...:
             Course course = Course(
               nameField: nameFieldController.text,
@@ -97,11 +106,17 @@ class _NewCourseDialogState extends State<NewCourseDialog> {
               hoursLabsField: int.tryParse(hoursLabsFieldController.text) ?? 0,
               hoursCourseworkField:
                   int.tryParse(hoursCourseworkFieldController.text) ?? 0,
+              hoursIndividualTotalField:
+                  int.tryParse(hoursIndividualTotalFieldController.text) ?? 0,
               //todo error checks
             );
             // ...and here send it to database method:
-            DatabaseService.createNewCourse(
-                user.email, course, selectedSemesterPage!);
+            await DatabaseService.createNewCourse(
+                user.email,
+                course,
+                selectedSemesterPage == null
+                    ? await selectedSemester
+                    : selectedSemesterPage!);
           },
         ),
       ],
