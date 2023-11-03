@@ -78,7 +78,7 @@ class Course {
   }
 
   num calculateTotalCredits() {
-    if (hoursOverallTotalField != null) {
+    if (hoursOverallTotalField == null) {
       return 0;
     } else {
       return (hoursOverallTotalField! / 30);
