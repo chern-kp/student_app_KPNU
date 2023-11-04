@@ -1,9 +1,11 @@
-// ignore_for_file: prefer_const_constructors
+// ignore_for_file: prefer_const_constructors, must_be_immutable
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:student_app/pages/courses_schedule_page.dart';
-import 'package:student_app/pages/personal_information_page.dart';
+import 'package:student_app/pages/class_schedule_page.dart';
+import 'courses_schedule_page.dart';
+import 'personal_information_page.dart';
+import 'record_book_page.dart';
 
 import '../class/database_service.dart';
 import '../components/my_dropdownmenu.dart';
@@ -32,6 +34,20 @@ class HomePage extends StatelessWidget {
     Navigator.push(
       context,
       MaterialPageRoute(builder: (context) => CoursesSchedulePage()),
+    );
+  }
+
+  void recordBookPageButton(BuildContext context) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => RecordBookPage()),
+    );
+  }
+
+  void classSchedulePageButton(BuildContext context) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => ClassSchedulePage()),
     );
   }
 
@@ -66,6 +82,14 @@ class HomePage extends StatelessWidget {
               onPressed: () => coursesSchedulePageButton(context),
               child: Text('coursesSchedulePage'),
             ),
+            ElevatedButton(
+              onPressed: () => recordBookPageButton(context),
+              child: Text('recordBookPage'),
+            ),
+            ElevatedButton(
+              onPressed: () => classSchedulePageButton(context),
+              child: Text('classSchedulePage'),
+            )
           ],
         ),
       ),
