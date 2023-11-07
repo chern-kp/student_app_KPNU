@@ -173,7 +173,7 @@ class _CoursesSchedulePageState extends State<CoursesSchedulePage> {
           SizedBox(height: 10),
           Center(
             child: Text(
-              'Навчальне навантаження',
+              'Навчальне навантаження: ',
               style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
             ),
           ),
