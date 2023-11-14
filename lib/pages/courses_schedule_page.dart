@@ -61,13 +61,18 @@ class _CoursesSchedulePageState extends State<CoursesSchedulePage> {
 
   Widget _addNewCourseButton(BuildContext context) {
     return ElevatedButton(
-      onPressed: () {
-        showDialog(
+      onPressed: () async {
+        bool? result = await showDialog(
           context: context,
           builder: (BuildContext context) {
             return NewCourseDialog();
           },
         );
+        if (result == true) {
+          setState(() {
+            coursesFuture = generateCourses(selectedSemesterPage!);
+          });
+        }
       },
       child: Text("Add New Course"),
     );
@@ -112,8 +117,8 @@ class _CoursesSchedulePageState extends State<CoursesSchedulePage> {
                         children: <Widget>[
                           IconButton(
                             icon: Icon(Icons.edit),
-                            onPressed: () {
-                              showDialog(
+                            onPressed: () async {
+                              bool? result = await showDialog(
                                 context: context,
                                 builder: (BuildContext context) {
                                   return NewCourseDialog(
@@ -122,6 +127,12 @@ class _CoursesSchedulePageState extends State<CoursesSchedulePage> {
                                   );
                                 },
                               );
+                              if (result == true) {
+                                setState(() {
+                                  coursesFuture =
+                                      generateCourses(selectedSemesterPage!);
+                                });
+                              }
                             },
                           ),
                           IconButton(

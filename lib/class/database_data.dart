@@ -61,6 +61,12 @@ class Course {
     this.hoursIndividualTotalField,
     this.hoursOverallTotalField,
   }) {
+    hoursLectionsField = hoursLectionsField ?? 0;
+    hoursPracticesField = hoursPracticesField ?? 0;
+    hoursLabsField = hoursLabsField ?? 0;
+    hoursCourseworkField = hoursCourseworkField ?? 0;
+    hoursIndividualTotalField = hoursIndividualTotalField ?? 0;
+    hoursOverallTotalField = hoursOverallTotalField ?? 0;
     hoursInClassTotalField = calculateTotalHoursInClass();
     hoursOverallTotalField = calculateTotalHoursOverall();
     creditsOverallTotalField = calculateTotalCredits();
@@ -87,7 +93,7 @@ class Course {
     if (hoursOverallTotalField == null) {
       return 0;
     } else {
-      return (hoursOverallTotalField! / 30);
+      return num.parse((hoursOverallTotalField! / 30).toStringAsFixed(2));
     }
   }
 

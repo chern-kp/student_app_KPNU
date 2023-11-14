@@ -86,6 +86,9 @@ class DatabaseService {
   // CREATE
   static Future<void> createOrUpdateCourse(
       var user, Course course, String semester) async {
+    if (course.nameField!.trim().isEmpty) {
+      throw Exception('Course name cannot be empty');
+    }
     final docRef = FirebaseFirestore.instance
         .collection("student")
         .doc(user)
