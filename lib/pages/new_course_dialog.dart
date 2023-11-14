@@ -1,4 +1,4 @@
-// ignore_for_file: prefer_const_constructors_in_immutables, prefer_const_constructors, prefer_const_literals_to_create_immutables
+// ignore_for_file: prefer_const_constructors_in_immutables, prefer_const_constructors, prefer_const_literals_to_create_immutables, must_be_immutable
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -9,13 +9,39 @@ import 'package:student_app/class/database_data.dart';
 import '../components/my_dropdownmenu_semeter.dart';
 
 class NewCourseDialog extends StatefulWidget {
-  NewCourseDialog({super.key});
+  NewCourseDialog({super.key, this.isEdit = false, this.course});
+  bool isEdit;
+  final Course? course;
 
   @override
   State<NewCourseDialog> createState() => _NewCourseDialogState();
 }
 
 class _NewCourseDialogState extends State<NewCourseDialog> {
+  @override
+  void initState() {
+    super.initState();
+    if (widget.isEdit && widget.course != null) {
+      nameFieldController.text = widget.course!.nameField ?? '';
+      hoursLectionsFieldController.text =
+          widget.course!.hoursLectionsField.toString();
+      hoursPracticesFieldController.text =
+          widget.course!.hoursPracticesField.toString();
+      hoursLabsFieldController.text = widget.course!.hoursLabsField.toString();
+      hoursCourseworkFieldController.text =
+          widget.course!.hoursCourseworkField.toString();
+      hoursInClassTotalFieldController.text =
+          widget.course!.hoursInClassTotalField.toString();
+      hoursIndividualTotalFieldController.text =
+          widget.course!.hoursIndividualTotalField.toString();
+      hoursOverallTotalFieldController.text =
+          widget.course!.hoursOverallTotalField.toString();
+      creditsOverallTotalFieldController.text =
+          widget.course!.creditsOverallTotalField.toString();
+      // Do the same for the rest of the fields
+    }
+  }
+
   final user = FirebaseAuth.instance.currentUser!;
   final nameFieldController = TextEditingController();
   final semesterFieldController = TextEditingController();
@@ -41,22 +67,25 @@ class _NewCourseDialogState extends State<NewCourseDialog> {
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
             Text('Content of the dialog'),
-            MyDropdownMenuSemester(onSelectedItemChanged: (selectedItem) {
-              setState(() {
-                selectedSemesterPage = selectedItem;
-              });
-            }),
+            Visibility(
+              visible: !widget.isEdit,
+              child:
+                  MyDropdownMenuSemester(onSelectedItemChanged: (selectedItem) {
+                setState(() {
+                  selectedSemesterPage = selectedItem;
+                });
+              }),
+            ),
             TextField(
-              // todo disallow user to create new course with the same name that exist
               controller: nameFieldController,
               decoration: InputDecoration(
-                hintText: 'Course name',
+                labelText: 'Course name',
               ),
             ),
             TextField(
               controller: hoursLectionsFieldController,
               decoration: InputDecoration(
-                hintText: 'Lection hours',
+                labelText: 'Lection hours',
               ),
               keyboardType: TextInputType.number,
               inputFormatters: <TextInputFormatter>[
@@ -64,25 +93,29 @@ class _NewCourseDialogState extends State<NewCourseDialog> {
               ],
             ),
             TextField(
-                controller: hoursPracticesFieldController,
-                decoration: InputDecoration(
-                  hintText: 'Practice hours',
-                )),
+              controller: hoursPracticesFieldController,
+              decoration: InputDecoration(
+                labelText: 'Practice hours',
+              ),
+            ),
             TextField(
-                controller: hoursLabsFieldController,
-                decoration: InputDecoration(
-                  hintText: 'Lab hours',
-                )),
+              controller: hoursLabsFieldController,
+              decoration: InputDecoration(
+                labelText: 'Lab hours',
+              ),
+            ),
             TextField(
-                controller: hoursCourseworkFieldController,
-                decoration: InputDecoration(
-                  hintText: 'Coursework hours',
-                )),
+              controller: hoursCourseworkFieldController,
+              decoration: InputDecoration(
+                labelText: 'Coursework hours',
+              ),
+            ),
             TextField(
-                controller: hoursIndividualTotalFieldController,
-                decoration: InputDecoration(
-                  hintText: 'Individual total hours',
-                ))
+              controller: hoursIndividualTotalFieldController,
+              decoration: InputDecoration(
+                labelText: 'Individual total hours',
+              ),
+            )
           ],
         ),
       ),
@@ -111,12 +144,21 @@ class _NewCourseDialogState extends State<NewCourseDialog> {
               //todo error checks
             );
             // ...and here send it to database method:
-            await DatabaseService.createNewCourse(
-                user.email,
-                course,
-                selectedSemesterPage == null
-                    ? await selectedSemester
-                    : selectedSemesterPage!);
+            if (widget.isEdit && widget.course != null) {
+              await DatabaseService.createOrUpdateCourse(
+                  user.email,
+                  course,
+                  selectedSemesterPage == null
+                      ? await selectedSemester
+                      : selectedSemesterPage!);
+            } else {
+              await DatabaseService.createOrUpdateCourse(
+                  user.email,
+                  course,
+                  selectedSemesterPage == null
+                      ? await selectedSemester
+                      : selectedSemesterPage!);
+            }
           },
         ),
       ],

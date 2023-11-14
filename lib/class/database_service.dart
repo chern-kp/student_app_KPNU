@@ -84,7 +84,7 @@ class DatabaseService {
   }
 
   // CREATE
-  static Future<void> createNewCourse(
+  static Future<void> createOrUpdateCourse(
       var user, Course course, String semester) async {
     final docRef = FirebaseFirestore.instance
         .collection("student")

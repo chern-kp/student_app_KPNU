@@ -80,11 +80,11 @@ class _RecordBookPageState extends State<RecordBookPage> {
               children: [
                 Container(
                     child: Column(
-                  children: [Text('Name of class')],
+                  children: [Text('Дисципліна')],
                 )),
                 Spacer(),
                 Text(
-                  "Teacher",
+                  "Викладач",
                   textAlign: TextAlign.end,
                 ),
               ],
@@ -99,6 +99,19 @@ class _RecordBookPageState extends State<RecordBookPage> {
                 )
               ],
             ),
+            SizedBox(
+              height: 10,
+            ),
+            Row(
+              children: [
+                Text('Форма підсумкового контролю'),
+                Spacer(),
+                Text(
+                  'Екзамен',
+                  textAlign: TextAlign.end,
+                )
+              ],
+            )
           ],
         ));
   }

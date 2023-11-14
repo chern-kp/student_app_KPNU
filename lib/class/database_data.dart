@@ -66,6 +66,12 @@ class Course {
     creditsOverallTotalField = calculateTotalCredits();
   }
 
+  void recalculateTotals() {
+    hoursInClassTotalField = calculateTotalHoursInClass();
+    hoursOverallTotalField = calculateTotalHoursOverall();
+    creditsOverallTotalField = calculateTotalCredits();
+  }
+
   num calculateTotalHoursInClass() {
     return (hoursLectionsField ?? 0) +
         (hoursPracticesField ?? 0) +

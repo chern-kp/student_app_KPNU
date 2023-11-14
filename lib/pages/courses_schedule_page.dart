@@ -113,7 +113,15 @@ class _CoursesSchedulePageState extends State<CoursesSchedulePage> {
                           IconButton(
                             icon: Icon(Icons.edit),
                             onPressed: () {
-                              // todo edit func
+                              showDialog(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return NewCourseDialog(
+                                    isEdit: true,
+                                    course: course,
+                                  );
+                                },
+                              );
                             },
                           ),
                           IconButton(
