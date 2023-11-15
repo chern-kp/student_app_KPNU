@@ -57,6 +57,65 @@ class _NewCourseDialogState extends State<NewCourseDialog> {
   late Future<String> selectedSemester =
       DatabaseService.getStudentField(user.email, 'Current Semester');
 
+  TextButton saveButton(BuildContext context) {
+    return TextButton(
+      child: Text('Save'),
+      onPressed: () async {
+        try {
+          // here we get info to course instance...:
+          Course course = Course(
+            nameField: nameFieldController.text,
+            hoursLectionsField:
+                int.tryParse(hoursLectionsFieldController.text) ?? 0,
+            hoursPracticesField:
+                int.tryParse(hoursPracticesFieldController.text) ?? 0,
+            hoursLabsField: int.tryParse(hoursLabsFieldController.text) ?? 0,
+            hoursCourseworkField:
+                int.tryParse(hoursCourseworkFieldController.text) ?? 0,
+            hoursIndividualTotalField:
+                int.tryParse(hoursIndividualTotalFieldController.text) ?? 0,
+            //todo error checks
+          );
+          // ...and here send it to database method:
+          if (widget.isEdit && widget.course != null) {
+            await DatabaseService.createOrUpdateCourse(
+                user.email,
+                course,
+                selectedSemesterPage == null
+                    ? await selectedSemester
+                    : selectedSemesterPage!);
+          } else {
+            await DatabaseService.createOrUpdateCourse(
+                user.email,
+                course,
+                selectedSemesterPage == null
+                    ? await selectedSemester
+                    : selectedSemesterPage!);
+          }
+          Navigator.of(context).pop(true);
+        } catch (e) {
+          showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return AlertDialog(
+                title: Text('Error'),
+                content: Text(e.toString()),
+                actions: <Widget>[
+                  TextButton(
+                    child: Text('Close'),
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                  ),
+                ],
+              );
+            },
+          );
+        }
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
@@ -125,63 +184,7 @@ class _NewCourseDialogState extends State<NewCourseDialog> {
             Navigator.of(context).pop();
           },
         ),
-        TextButton(
-          child: Text('Save'),
-          onPressed: () async {
-            try {
-              // here we get info to course instance...:
-              Course course = Course(
-                nameField: nameFieldController.text,
-                hoursLectionsField:
-                    int.tryParse(hoursLectionsFieldController.text) ?? 0,
-                hoursPracticesField:
-                    int.tryParse(hoursPracticesFieldController.text) ?? 0,
-                hoursLabsField:
-                    int.tryParse(hoursLabsFieldController.text) ?? 0,
-                hoursCourseworkField:
-                    int.tryParse(hoursCourseworkFieldController.text) ?? 0,
-                hoursIndividualTotalField:
-                    int.tryParse(hoursIndividualTotalFieldController.text) ?? 0,
-                //todo error checks
-              );
-              // ...and here send it to database method:
-              if (widget.isEdit && widget.course != null) {
-                await DatabaseService.createOrUpdateCourse(
-                    user.email,
-                    course,
-                    selectedSemesterPage == null
-                        ? await selectedSemester
-                        : selectedSemesterPage!);
-              } else {
-                await DatabaseService.createOrUpdateCourse(
-                    user.email,
-                    course,
-                    selectedSemesterPage == null
-                        ? await selectedSemester
-                        : selectedSemesterPage!);
-              }
-              Navigator.of(context).pop(true);
-            } catch (e) {
-              showDialog(
-                context: context,
-                builder: (BuildContext context) {
-                  return AlertDialog(
-                    title: Text('Error'),
-                    content: Text(e.toString()),
-                    actions: <Widget>[
-                      TextButton(
-                        child: Text('Close'),
-                        onPressed: () {
-                          Navigator.of(context).pop();
-                        },
-                      ),
-                    ],
-                  );
-                },
-              );
-            }
-          },
-        ),
+        saveButton(context),
       ],
     );
   }
