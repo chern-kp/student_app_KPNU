@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:student_app/class/course_class.dart';
 
-import 'database_data.dart';
+import 'student_class.dart';
 
 class DatabaseService {
   static Future<void> createStudentDocument(var user) {

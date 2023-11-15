@@ -2,10 +2,10 @@
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:student_app/class/database_data.dart';
 import 'package:student_app/class/database_service.dart';
 import 'package:student_app/components/my_dropdownmenu_semeter.dart';
 
+import '../class/course_class.dart';
 import 'new_course_dialog.dart';
 
 class CoursesSchedulePage extends StatefulWidget {
