@@ -187,6 +187,10 @@ class _CoursesSchedulePageState extends State<CoursesSchedulePage> {
                   style: TextStyle(
                     fontSize: 20,
                   )),
+              Text(course.scoringTypeField ?? '',
+                  style: TextStyle(
+                    fontSize: 20,
+                  ))
             ],
           ),
           SizedBox(height: 10),

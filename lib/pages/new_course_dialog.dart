@@ -38,6 +38,7 @@ class _NewCourseDialogState extends State<NewCourseDialog> {
           widget.course!.hoursOverallTotalField.toString();
       creditsOverallTotalFieldController.text =
           widget.course!.creditsOverallTotalField.toString();
+      scoringTypeController.text = widget.course!.scoringTypeField.toString();
     }
   }
 
@@ -52,6 +53,7 @@ class _NewCourseDialogState extends State<NewCourseDialog> {
   final hoursIndividualTotalFieldController = TextEditingController();
   final hoursOverallTotalFieldController = TextEditingController();
   final creditsOverallTotalFieldController = TextEditingController();
+  final scoringTypeController = TextEditingController();
 
   String? selectedSemesterPage;
   late Future<String> selectedSemester =
@@ -74,6 +76,7 @@ class _NewCourseDialogState extends State<NewCourseDialog> {
                 int.tryParse(hoursCourseworkFieldController.text) ?? 0,
             hoursIndividualTotalField:
                 int.tryParse(hoursIndividualTotalFieldController.text) ?? 0,
+            scoringTypeField: scoringTypeController.text,
             //todo error checks
           );
           // ...and here send it to database method:
@@ -173,7 +176,12 @@ class _NewCourseDialogState extends State<NewCourseDialog> {
               decoration: InputDecoration(
                 labelText: 'Individual total hours',
               ),
-            )
+            ),
+            TextField(
+                controller: scoringTypeController,
+                decoration: InputDecoration(
+                  labelText: 'Scoring type',
+                ))
           ],
         ),
       ),

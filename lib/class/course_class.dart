@@ -9,6 +9,7 @@ class Course {
   num? hoursIndividualTotalField;
   num? hoursOverallTotalField;
   num? creditsOverallTotalField;
+  String? scoringTypeField;
 
   Course({
     this.nameField,
@@ -19,6 +20,7 @@ class Course {
     this.hoursCourseworkField,
     this.hoursIndividualTotalField,
     this.hoursOverallTotalField,
+    this.scoringTypeField,
   }) {
     hoursLectionsField = hoursLectionsField ?? 0;
     hoursPracticesField = hoursPracticesField ?? 0;
@@ -29,6 +31,7 @@ class Course {
     hoursInClassTotalField = calculateTotalHoursInClass();
     hoursOverallTotalField = calculateTotalHoursOverall();
     creditsOverallTotalField = calculateTotalCredits();
+    scoringTypeField = scoringTypeField ?? 'Залік';
   }
 
   void recalculateTotals() {
@@ -68,6 +71,7 @@ class Course {
       'Hours Individual Total': hoursIndividualTotalField,
       'Hours Overall Total': hoursOverallTotalField,
       'Credits Overall Total': creditsOverallTotalField,
+      'Scoring Type': scoringTypeField,
     };
   }
 
@@ -82,5 +86,6 @@ class Course {
     hoursIndividualTotalField = json['Hours Individual Total'];
     hoursOverallTotalField = json['Hours Overall Total'];
     creditsOverallTotalField = json['Credits Overall Total'];
+    scoringTypeField = json['Scoring Type'];
   }
 }
