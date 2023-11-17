@@ -55,6 +55,40 @@ class _RecordBookPageState extends State<RecordBookPage> {
     }).toList();
   }
 
+  String? selectedCourse;
+
+  late Future<List<Course>> coursesListFuture =
+      DatabaseService.getAllCourses(user.email!, selectedSemesterPage!);
+
+  Widget _currentCoursesDropdownMenu() {
+    return FutureBuilder<List<Course>>(
+      future: coursesListFuture,
+      builder: (BuildContext context, AsyncSnapshot<List<Course>> snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return CircularProgressIndicator();
+        } else if (snapshot.hasError) {
+          return Text('Error: ${snapshot.error}');
+        } else {
+          return DropdownButton<String>(
+            value: selectedCourse,
+            onChanged: (String? newValue) {
+              setState(() {
+                selectedCourse = newValue!;
+              });
+            },
+            items:
+                snapshot.data!.map<DropdownMenuItem<String>>((Course course) {
+              return DropdownMenuItem<String>(
+                value: course.nameField,
+                child: Text(course.nameField!),
+              );
+            }).toList(),
+          );
+        }
+      },
+    );
+  }
+
   Widget _addScoresButton() {
     return ElevatedButton(
       child: Text('Add Scores'),
@@ -136,7 +170,7 @@ class _RecordBookPageState extends State<RecordBookPage> {
                   Text('Форма підсумкового контролю'),
                   Spacer(),
                   Text(
-                    'Екзамен',
+                    course.scoringTypeField ?? "",
                     textAlign: TextAlign.end,
                   )
                 ],
@@ -158,9 +192,8 @@ class _RecordBookPageState extends State<RecordBookPage> {
           Center(
               child: MyDropdownMenuSemester(
                   onSelectedItemChanged: updateSelectedSemester)),
-          SizedBox(height: 40),
           _addScoresButton(),
-          SizedBox(height: 40),
+          _currentCoursesDropdownMenu(),
           _recordBookListView(),
         ],
       ),
