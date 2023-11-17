@@ -2,6 +2,7 @@
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:student_app/pages/new_course_dialog.dart';
 
 import '../class/database_service.dart';
 import '../components/my_dropdownmenu_semeter.dart';
@@ -68,6 +69,22 @@ class _RecordBookPageState extends State<RecordBookPage> {
     setState(() {
       selectedSemesterPage = selectedItem;
     });
+  }
+
+  Widget _addScoresButton() {
+    return TextButton(
+      child: Text('Add Scores'),
+      onPressed: () {
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return NewCourseDialog(
+              isRecordBook: true,
+            );
+          },
+        );
+      },
+    );
   }
 
   Widget _recordBookCell() {
@@ -189,7 +206,9 @@ class _RecordBookPageState extends State<RecordBookPage> {
               child: MyDropdownMenuSemester(
                   onSelectedItemChanged: updateSelectedSemester)),
           _recordBookTable(),
-          SizedBox(height: 100),
+          SizedBox(height: 40),
+          _addScoresButton(),
+          SizedBox(height: 40),
           _recordBookCell(),
         ],
       ),

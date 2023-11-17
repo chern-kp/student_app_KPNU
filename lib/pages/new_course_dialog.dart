@@ -9,8 +9,10 @@ import '../class/course_class.dart';
 import '../components/my_dropdownmenu_semeter.dart';
 
 class NewCourseDialog extends StatefulWidget {
-  NewCourseDialog({super.key, this.isEdit = false, this.course});
+  NewCourseDialog(
+      {super.key, this.isEdit = false, this.course, this.isRecordBook = false});
   bool isEdit;
+  bool isRecordBook;
   final Course? course;
 
   @override
@@ -39,6 +41,8 @@ class _NewCourseDialogState extends State<NewCourseDialog> {
       creditsOverallTotalFieldController.text =
           widget.course!.creditsOverallTotalField.toString();
       scoringTypeController.text = widget.course!.scoringTypeField.toString();
+    } else {
+      scoringTypeController.text = 'Exam';
     }
   }
 
@@ -59,7 +63,7 @@ class _NewCourseDialogState extends State<NewCourseDialog> {
   late Future<String> selectedSemester =
       DatabaseService.getStudentField(user.email, 'Current Semester');
 
-  TextButton saveButton(BuildContext context) {
+  TextButton _saveButton(BuildContext context) {
     return TextButton(
       child: Text('Save'),
       onPressed: () async {
@@ -119,6 +123,47 @@ class _NewCourseDialogState extends State<NewCourseDialog> {
     );
   }
 
+  Widget _coursesScheduleFields() {
+    return Column(
+      children: <Widget>[
+        TextField(
+          controller: hoursLectionsFieldController,
+          decoration: InputDecoration(
+            labelText: 'Lection hours',
+          ),
+          keyboardType: TextInputType.number,
+          inputFormatters: <TextInputFormatter>[
+            FilteringTextInputFormatter.digitsOnly
+          ],
+        ),
+        TextField(
+          controller: hoursPracticesFieldController,
+          decoration: InputDecoration(
+            labelText: 'Practice hours',
+          ),
+        ),
+        TextField(
+          controller: hoursLabsFieldController,
+          decoration: InputDecoration(
+            labelText: 'Lab hours',
+          ),
+        ),
+        TextField(
+          controller: hoursCourseworkFieldController,
+          decoration: InputDecoration(
+            labelText: 'Coursework hours',
+          ),
+        ),
+        TextField(
+          controller: hoursIndividualTotalFieldController,
+          decoration: InputDecoration(
+            labelText: 'Individual total hours',
+          ),
+        ),
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
@@ -143,45 +188,27 @@ class _NewCourseDialogState extends State<NewCourseDialog> {
                 labelText: 'Course name',
               ),
             ),
-            TextField(
-              controller: hoursLectionsFieldController,
-              decoration: InputDecoration(
-                labelText: 'Lection hours',
-              ),
-              keyboardType: TextInputType.number,
-              inputFormatters: <TextInputFormatter>[
-                FilteringTextInputFormatter.digitsOnly
-              ],
+            Visibility(
+              visible: !widget.isRecordBook,
+              child: _coursesScheduleFields(),
             ),
-            TextField(
-              controller: hoursPracticesFieldController,
-              decoration: InputDecoration(
-                labelText: 'Practice hours',
-              ),
+            DropdownButton<String>(
+              value: scoringTypeController.text.isEmpty
+                  ? null
+                  : scoringTypeController.text,
+              onChanged: (String? newValue) {
+                setState(() {
+                  scoringTypeController.text = newValue!;
+                });
+              },
+              items: <String>['Exam', 'Scoring', 'Other']
+                  .map<DropdownMenuItem<String>>((String value) {
+                return DropdownMenuItem<String>(
+                  value: value,
+                  child: Text(value),
+                );
+              }).toList(),
             ),
-            TextField(
-              controller: hoursLabsFieldController,
-              decoration: InputDecoration(
-                labelText: 'Lab hours',
-              ),
-            ),
-            TextField(
-              controller: hoursCourseworkFieldController,
-              decoration: InputDecoration(
-                labelText: 'Coursework hours',
-              ),
-            ),
-            TextField(
-              controller: hoursIndividualTotalFieldController,
-              decoration: InputDecoration(
-                labelText: 'Individual total hours',
-              ),
-            ),
-            TextField(
-                controller: scoringTypeController,
-                decoration: InputDecoration(
-                  labelText: 'Scoring type',
-                ))
           ],
         ),
       ),
@@ -192,7 +219,7 @@ class _NewCourseDialogState extends State<NewCourseDialog> {
             Navigator.of(context).pop();
           },
         ),
-        saveButton(context),
+        _saveButton(context),
       ],
     );
   }
