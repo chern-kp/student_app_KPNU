@@ -1,9 +1,10 @@
-// ignore_for_file: prefer_const_literals_to_create_immutables, prefer_const_constructors
+// ignore_for_file: prefer_const_literals_to_create_immutables, prefer_const_constructors, prefer_const_constructors_in_immutables
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:student_app/pages/new_course_dialog.dart';
 
+import '../class/course_class.dart';
 import '../class/database_service.dart';
 import '../components/my_dropdownmenu_semeter.dart';
 
@@ -15,16 +16,17 @@ class RecordBookPage extends StatefulWidget {
 }
 
 class _RecordBookPageState extends State<RecordBookPage> {
+  final user = FirebaseAuth.instance.currentUser!;
   late Future<String> selectedSemester =
       DatabaseService.getStudentField(user.email, 'Current Semester');
-
-  String? selectedSemesterPage;
   late Future<List<String>> semesterList =
       DatabaseService.getSemesterList(user.email);
 
-  final user = FirebaseAuth.instance.currentUser!;
+  String? selectedSemesterPage;
 
-  List<Map<String, dynamic>> sampleData = [
+  Future<List<Map<String, dynamic>>> coursesFuture = Future.value([]);
+
+/*   List<Map<String, dynamic>> sampleData = [
     {
       'nameOfClass': 'Mathematics',
       'hours': 5,
@@ -54,86 +56,19 @@ class _RecordBookPageState extends State<RecordBookPage> {
     },
     // Add more rows as needed
   ];
-
+ */
   @override
   void initState() {
     super.initState();
     selectedSemester.then((value) {
       setState(() {
         selectedSemesterPage = value;
+        coursesFuture = generateCourses(selectedSemesterPage!);
       });
     });
   }
 
-  void updateSelectedSemester(String selectedItem) {
-    setState(() {
-      selectedSemesterPage = selectedItem;
-    });
-  }
-
-  Widget _addScoresButton() {
-    return TextButton(
-      child: Text('Add Scores'),
-      onPressed: () {
-        showDialog(
-          context: context,
-          builder: (BuildContext context) {
-            return NewCourseDialog(
-              isRecordBook: true,
-            );
-          },
-        );
-      },
-    );
-  }
-
-  Widget _recordBookCell() {
-    return Container(
-        padding: EdgeInsets.all(10),
-        color: Colors.grey[200],
-        child: Column(
-          children: [
-            Row(
-              children: [
-                Container(
-                    child: Column(
-                  children: [Text('Дисципліна')],
-                )),
-                Spacer(),
-                Text(
-                  "Викладач",
-                  textAlign: TextAlign.end,
-                ),
-              ],
-            ),
-            Row(
-              children: [
-                Text('NAME'),
-                Spacer(),
-                Text(
-                  'TEACHER',
-                  textAlign: TextAlign.end,
-                )
-              ],
-            ),
-            SizedBox(
-              height: 10,
-            ),
-            Row(
-              children: [
-                Text('Форма підсумкового контролю'),
-                Spacer(),
-                Text(
-                  'Екзамен',
-                  textAlign: TextAlign.end,
-                )
-              ],
-            )
-          ],
-        ));
-  }
-
-  Widget _recordBookTable() {
+/*   Widget _recordBookTableTEMP() {
     return Table(
       border: TableBorder.all(),
       columnWidths: {
@@ -191,6 +126,110 @@ class _RecordBookPageState extends State<RecordBookPage> {
         }).toList(),
       ],
     );
+  } */
+
+  void updateSelectedSemester(String selectedItem) {
+    setState(() {
+      selectedSemesterPage = selectedItem;
+      coursesFuture = generateCourses(selectedItem);
+    });
+  }
+
+  Future<List<Map<String, dynamic>>> generateCourses(String semester) async {
+    List<Course> courses =
+        await DatabaseService.getAllCourses(user.email!, semester);
+    return courses.map((course) {
+      return {
+        'course': course,
+        'isExpanded': false,
+      };
+    }).toList();
+  }
+
+  Widget _addScoresButton() {
+    return TextButton(
+      child: Text('Add Scores'),
+      onPressed: () {
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return NewCourseDialog(
+              isRecordBook: true,
+            );
+          },
+        );
+      },
+    );
+  }
+
+  Widget _recordBookListView() {
+    return FutureBuilder<List<Map<String, dynamic>>>(
+      future: coursesFuture,
+      builder: (BuildContext context,
+          AsyncSnapshot<List<Map<String, dynamic>>> snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return CircularProgressIndicator();
+        } else if (snapshot.hasError) {
+          return Text('Error: ${snapshot.error}');
+        } else {
+          return Expanded(
+            child: ListView.builder(
+              itemCount: snapshot.data!.length,
+              itemBuilder: (context, index) {
+                Course course = snapshot.data![index]['course'];
+                return _recordBookCell(course);
+              },
+            ),
+          );
+        }
+      },
+    );
+  }
+
+  Widget _recordBookCell(Course course) {
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Container(
+          padding: EdgeInsets.all(10),
+          color: Colors.grey[200],
+          child: Column(
+            children: [
+              Row(
+                children: [
+                  Container(
+                      child: Column(
+                    children: [Text('Дисципліна')],
+                  )),
+                  Spacer(),
+                  Text(
+                    "Викладач",
+                    textAlign: TextAlign.end,
+                  ),
+                ],
+              ),
+              Row(
+                children: [
+                  Text('NAME'),
+                  Spacer(),
+                  Text('${course.recordBookTeacherField}'),
+                ],
+              ),
+              SizedBox(
+                height: 10,
+              ),
+              Row(
+                children: [
+                  Text('Форма підсумкового контролю'),
+                  Spacer(),
+                  Text(
+                    'Екзамен',
+                    textAlign: TextAlign.end,
+                  )
+                ],
+              )
+            ],
+          )),
+    );
   }
 
   @override
@@ -205,11 +244,11 @@ class _RecordBookPageState extends State<RecordBookPage> {
           Center(
               child: MyDropdownMenuSemester(
                   onSelectedItemChanged: updateSelectedSemester)),
-          _recordBookTable(),
+/*           _recordBookTableTEMP(), */
           SizedBox(height: 40),
           _addScoresButton(),
           SizedBox(height: 40),
-          _recordBookCell(),
+          _recordBookListView(),
         ],
       ),
     );
