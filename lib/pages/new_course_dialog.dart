@@ -41,6 +41,8 @@ class _NewCourseDialogState extends State<NewCourseDialog> {
       creditsOverallTotalFieldController.text =
           widget.course!.creditsOverallTotalField.toString();
       scoringTypeController.text = widget.course!.scoringTypeField.toString();
+      recordBookTeacherController.text =
+          widget.course!.recordBookTeacherField.toString();
     } else {
       scoringTypeController.text = 'Exam';
     }
@@ -58,6 +60,7 @@ class _NewCourseDialogState extends State<NewCourseDialog> {
   final hoursOverallTotalFieldController = TextEditingController();
   final creditsOverallTotalFieldController = TextEditingController();
   final scoringTypeController = TextEditingController();
+  final recordBookTeacherController = TextEditingController();
 
   String? selectedSemesterPage;
   late Future<String> selectedSemester =
@@ -81,6 +84,7 @@ class _NewCourseDialogState extends State<NewCourseDialog> {
             hoursIndividualTotalField:
                 int.tryParse(hoursIndividualTotalFieldController.text) ?? 0,
             scoringTypeField: scoringTypeController.text,
+            recordBookTeacherField: recordBookTeacherController.text,
             //todo error checks
           );
           // ...and here send it to database method:
@@ -164,6 +168,16 @@ class _NewCourseDialogState extends State<NewCourseDialog> {
     );
   }
 
+  Widget _recordBookFields() {
+    return Column(children: <Widget>[
+      TextField(
+          controller: recordBookTeacherController,
+          decoration: InputDecoration(
+            labelText: 'Teacher',
+          ))
+    ]);
+  }
+
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
@@ -209,6 +223,10 @@ class _NewCourseDialogState extends State<NewCourseDialog> {
                 );
               }).toList(),
             ),
+            Visibility(
+              visible: widget.isRecordBook,
+              child: _recordBookFields(),
+            )
           ],
         ),
       ),
