@@ -70,9 +70,16 @@ class _RecordBookPageState extends State<RecordBookPage> {
           return DropdownButton<String>(
             value: selectedCourse,
             onChanged: (String? newValue) {
-              setState(() {
-                selectedCourse = newValue!;
-              });
+              if (snapshot.data!.any(
+                  (courseMap) => courseMap['course'].nameField == newValue)) {
+                setState(() {
+                  selectedCourse = newValue!;
+                });
+              } else {
+                setState(() {
+                  selectedCourse = null;
+                });
+              }
             },
             items: snapshot.data!.map<DropdownMenuItem<String>>(
                 (Map<String, dynamic> courseMap) {
@@ -109,6 +116,16 @@ class _RecordBookPageState extends State<RecordBookPage> {
     );
   }
 
+  Widget _categoryTitle(String title) {
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Text(
+        title,
+        style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+      ),
+    );
+  }
+
   Widget _recordBookListView() {
     return FutureBuilder<List<Map<String, dynamic>>>(
       future: coursesFuture,
@@ -119,12 +136,49 @@ class _RecordBookPageState extends State<RecordBookPage> {
         } else if (snapshot.hasError) {
           return Text('Error: ${snapshot.error}');
         } else {
+          snapshot.data!.sort((a, b) {
+            int aValue = a['course'].scoringTypeField == 'Exam'
+                ? 1
+                : a['course'].scoringTypeField == 'Scoring'
+                    ? 2
+                    : 3;
+            int bValue = b['course'].scoringTypeField == 'Exam'
+                ? 1
+                : b['course'].scoringTypeField == 'Scoring'
+                    ? 2
+                    : 3;
+            return aValue.compareTo(bValue);
+          });
           return Expanded(
             child: ListView.builder(
               itemCount: snapshot.data!.length,
               itemBuilder: (context, index) {
                 Course course = snapshot.data![index]['course'];
-                return _recordBookCell(course);
+                String category = course.scoringTypeField == 'Exam'
+                    ? 'Exam'
+                    : course.scoringTypeField == 'Scoring'
+                        ? 'Scoring'
+                        : 'Others';
+                if (index == 0 ||
+                    (index > 0 &&
+                        (snapshot.data![index - 1]['course'].scoringTypeField ==
+                                    'Exam'
+                                ? 'Exam'
+                                : snapshot.data![index - 1]['course']
+                                            .scoringTypeField ==
+                                        'Scoring'
+                                    ? 'Scoring'
+                                    : 'Others') !=
+                            category)) {
+                  return Column(
+                    children: [
+                      _categoryTitle(category),
+                      _recordBookCell(course),
+                    ],
+                  );
+                } else {
+                  return _recordBookCell(course);
+                }
               },
             ),
           );
@@ -134,11 +188,16 @@ class _RecordBookPageState extends State<RecordBookPage> {
   }
 
   Widget _recordBookCell(Course course) {
+    Color backgroundColor = course.scoringTypeField == 'Exam'
+        ? Colors.red
+        : course.scoringTypeField == 'Scoring'
+            ? Colors.yellow
+            : Colors.green;
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: Container(
           padding: EdgeInsets.all(10),
-          color: Colors.grey[200],
+          color: backgroundColor,
           child: Column(
             children: [
               Row(
@@ -172,6 +231,20 @@ class _RecordBookPageState extends State<RecordBookPage> {
                     course.scoringTypeField ?? "",
                     textAlign: TextAlign.end,
                   )
+                ],
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  Expanded(
+                    child: Container(),
+                  ),
+                  IconButton(
+                    icon: Icon(Icons.edit),
+                    onPressed: () {
+                      //todo
+                    },
+                  ),
                 ],
               )
             ],
