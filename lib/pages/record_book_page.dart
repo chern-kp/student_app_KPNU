@@ -23,8 +23,9 @@ class _RecordBookPageState extends State<RecordBookPage> {
       DatabaseService.getSemesterList(user.email);
 
   String? selectedSemesterPage;
-
+  String? selectedCourse;
   Future<List<Map<String, dynamic>>> coursesFuture = Future.value([]);
+  List<bool> expandedState = [];
 
   @override
   void initState() {
@@ -47,6 +48,7 @@ class _RecordBookPageState extends State<RecordBookPage> {
   Future<List<Map<String, dynamic>>> generateCourses(String semester) async {
     List<Course> courses =
         await DatabaseService.getAllCourses(user.email!, semester);
+    expandedState = List<bool>.filled(courses.length, false);
     return courses.map((course) {
       return {
         'course': course,
@@ -55,15 +57,11 @@ class _RecordBookPageState extends State<RecordBookPage> {
     }).toList();
   }
 
-  String? selectedCourse;
-
-  late Future<List<Course>> coursesListFuture =
-      DatabaseService.getAllCourses(user.email!, selectedSemesterPage!);
-
   Widget _currentCoursesDropdownMenu() {
-    return FutureBuilder<List<Course>>(
-      future: coursesListFuture,
-      builder: (BuildContext context, AsyncSnapshot<List<Course>> snapshot) {
+    return FutureBuilder<List<Map<String, dynamic>>>(
+      future: coursesFuture,
+      builder: (BuildContext context,
+          AsyncSnapshot<List<Map<String, dynamic>>> snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return CircularProgressIndicator();
         } else if (snapshot.hasError) {
@@ -76,8 +74,9 @@ class _RecordBookPageState extends State<RecordBookPage> {
                 selectedCourse = newValue!;
               });
             },
-            items:
-                snapshot.data!.map<DropdownMenuItem<String>>((Course course) {
+            items: snapshot.data!.map<DropdownMenuItem<String>>(
+                (Map<String, dynamic> courseMap) {
+              Course course = courseMap['course'];
               return DropdownMenuItem<String>(
                 value: course.nameField,
                 child: Text(course.nameField!),

@@ -38,9 +38,7 @@ class _CoursesSchedulePageState extends State<CoursesSchedulePage> {
     });
   }
 
-  void updateSelectedSemester(
-    String selectedItem,
-  ) {
+  void updateSelectedSemester(String selectedItem) {
     setState(() {
       selectedSemesterPage = selectedItem;
       coursesFuture = generateCourses(selectedItem);
