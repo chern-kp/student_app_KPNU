@@ -40,11 +40,14 @@ class _NewCourseDialogState extends State<NewCourseDialog> {
           widget.course!.hoursOverallTotalField.toString();
       creditsOverallTotalFieldController.text =
           widget.course!.creditsOverallTotalField.toString();
-      scoringTypeController.text = widget.course!.scoringTypeField.toString();
-      recordBookTeacherController.text =
+      scoringTypeFieldController.text =
+          widget.course!.scoringTypeField.toString();
+      recordBookTeacherFieldController.text =
           widget.course!.recordBookTeacherField.toString();
+      recordBookScoreFieldController.text =
+          widget.course!.recordBookScoreField.toString();
     } else {
-      scoringTypeController.text = 'Exam';
+      scoringTypeFieldController.text = 'Exam';
     }
   }
 
@@ -59,8 +62,9 @@ class _NewCourseDialogState extends State<NewCourseDialog> {
   final hoursIndividualTotalFieldController = TextEditingController();
   final hoursOverallTotalFieldController = TextEditingController();
   final creditsOverallTotalFieldController = TextEditingController();
-  final scoringTypeController = TextEditingController();
-  final recordBookTeacherController = TextEditingController();
+  final scoringTypeFieldController = TextEditingController();
+  final recordBookTeacherFieldController = TextEditingController();
+  final recordBookScoreFieldController = TextEditingController();
 
   String? selectedSemesterPage;
   late Future<String> selectedSemester =
@@ -83,8 +87,8 @@ class _NewCourseDialogState extends State<NewCourseDialog> {
                 int.tryParse(hoursCourseworkFieldController.text) ?? 0,
             hoursIndividualTotalField:
                 int.tryParse(hoursIndividualTotalFieldController.text) ?? 0,
-            scoringTypeField: scoringTypeController.text,
-            recordBookTeacherField: recordBookTeacherController.text,
+            scoringTypeField: scoringTypeFieldController.text,
+            recordBookTeacherField: recordBookTeacherFieldController.text,
             //todo error checks
           );
           // ...and here send it to database method:
@@ -171,9 +175,14 @@ class _NewCourseDialogState extends State<NewCourseDialog> {
   Widget _recordBookFields() {
     return Column(children: <Widget>[
       TextField(
-          controller: recordBookTeacherController,
+          controller: recordBookTeacherFieldController,
           decoration: InputDecoration(
             labelText: 'Teacher',
+          )),
+      TextField(
+          controller: recordBookScoreFieldController,
+          decoration: InputDecoration(
+            labelText: 'Score',
           ))
     ]);
   }
@@ -207,12 +216,12 @@ class _NewCourseDialogState extends State<NewCourseDialog> {
               child: _coursesScheduleFields(),
             ),
             DropdownButton<String>(
-              value: scoringTypeController.text.isEmpty
+              value: scoringTypeFieldController.text.isEmpty
                   ? null
-                  : scoringTypeController.text,
+                  : scoringTypeFieldController.text,
               onChanged: (String? newValue) {
                 setState(() {
-                  scoringTypeController.text = newValue!;
+                  scoringTypeFieldController.text = newValue!;
                 });
               },
               items: <String>['Exam', 'Scoring', 'Other']

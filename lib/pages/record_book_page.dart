@@ -234,6 +234,16 @@ class _RecordBookPageState extends State<RecordBookPage> {
                 ],
               ),
               Row(
+                children: [
+                  Text('Оцінка'),
+                  Spacer(),
+                  Text(
+                    course.recordBookScoreField.toString(),
+                    textAlign: TextAlign.end,
+                  )
+                ],
+              ),
+              Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                   Expanded(
