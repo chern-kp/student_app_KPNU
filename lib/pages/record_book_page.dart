@@ -258,6 +258,8 @@ class _RecordBookPageState extends State<RecordBookPage> {
                                 course: course,
                                 isRecordBook: true,
                                 filledNewRecordBook: true,
+                                filledCourseSchedule: course.isScheduleFilled ??
+                                    false, // pass the current value of filledNewRecordBook
                               );
                             },
                           );

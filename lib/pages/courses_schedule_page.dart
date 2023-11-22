@@ -163,7 +163,6 @@ class _CoursesSchedulePageState extends State<CoursesSchedulePage> {
 
   //UI of items in the list
   Widget _courseDetails(Course course) {
-    // Widget for course name display
     Widget courseName = Row(
       children: [
         Text(
@@ -176,9 +175,7 @@ class _CoursesSchedulePageState extends State<CoursesSchedulePage> {
         Text(course.nameField ?? '', style: TextStyle(fontSize: 20)),
       ],
     );
-
-    // Conditional rendering based on course.isScheduleFilled
-    if (!course.isScheduleFilled!) {
+    if (!(course.isScheduleFilled ?? false)) {
       return Align(
         alignment: Alignment.centerLeft,
         child: Column(
@@ -186,8 +183,24 @@ class _CoursesSchedulePageState extends State<CoursesSchedulePage> {
           children: <Widget>[
             courseName,
             ElevatedButton(
-              onPressed: () {
-                // Add your button functionality here
+              onPressed: () async {
+                bool? result = await showDialog(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return NewCourseDialog(
+                      isEdit: true,
+                      course: course,
+                      filledCourseSchedule: true,
+                      filledNewRecordBook: course.isRecordBookFilled ??
+                          false, // pass the current value of filledNewRecordBook
+                    );
+                  },
+                );
+                if (result == true) {
+                  setState(() {
+                    coursesFuture = generateCourses(selectedSemesterPage!);
+                  });
+                }
               },
               child: Text('Button Text'),
             ),
