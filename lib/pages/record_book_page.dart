@@ -248,8 +248,25 @@ class _RecordBookPageState extends State<RecordBookPage> {
                       padding: EdgeInsets.all(10),
                       color: backgroundColor,
                       child: ElevatedButton(
-                        onPressed: () {
-                          // handle button press
+                        onPressed: () async {
+                          //i need to pass isRecordBookFilled = true from here
+                          bool? result = await showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return NewCourseDialog(
+                                isEdit: true,
+                                course: course,
+                                isRecordBook: true,
+                                filledNewRecordBook: true,
+                              );
+                            },
+                          );
+                          if (result == true) {
+                            setState(() {
+                              coursesFuture =
+                                  generateCourses(selectedSemesterPage!);
+                            });
+                          }
                         },
                         child: Text('Edit Scores'),
                       ),

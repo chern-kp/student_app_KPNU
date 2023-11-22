@@ -10,9 +10,14 @@ import '../components/my_dropdownmenu_semeter.dart';
 
 class NewCourseDialog extends StatefulWidget {
   NewCourseDialog(
-      {super.key, this.isEdit = false, this.course, this.isRecordBook = false});
+      {super.key,
+      this.isEdit = false,
+      this.course,
+      this.isRecordBook = false,
+      this.filledNewRecordBook = false});
   bool isEdit;
   bool isRecordBook;
+  bool filledNewRecordBook;
   final Course? course;
 
   @override
@@ -78,7 +83,8 @@ class _NewCourseDialogState extends State<NewCourseDialog> {
         try {
           Course course = Course(
             isScheduleFilled: !widget.isEdit && !widget.isRecordBook,
-            isRecordBookFilled: !widget.isEdit && widget.isRecordBook,
+            isRecordBookFilled: (!widget.isEdit && widget.isRecordBook) ||
+                widget.filledNewRecordBook,
             nameField: nameFieldController.text,
             hoursLectionsField:
                 int.tryParse(hoursLectionsFieldController.text) ?? 0,
