@@ -15,6 +15,8 @@ class Course {
   String? recordBookTeacherField;
   num? recordBookScoreField;
   DateTime? selectedDateField;
+  bool? isScheduleFilled;
+  bool? isRecordBookFilled;
 
   Course({
     this.nameField,
@@ -29,6 +31,8 @@ class Course {
     this.recordBookTeacherField,
     this.recordBookScoreField,
     this.selectedDateField,
+    this.isScheduleFilled,
+    this.isRecordBookFilled,
   }) {
     hoursLectionsField = hoursLectionsField ?? 0;
     hoursPracticesField = hoursPracticesField ?? 0;
@@ -43,6 +47,8 @@ class Course {
     recordBookTeacherField = recordBookTeacherField ?? '';
     recordBookScoreField = recordBookScoreField ?? 0;
     selectedDateField = selectedDateField ?? DateTime.now();
+    isScheduleFilled = isScheduleFilled ?? false;
+    isRecordBookFilled = isRecordBookFilled ?? false;
   }
 
   void recalculateTotals() {
@@ -85,7 +91,9 @@ class Course {
       'Scoring Type': scoringTypeField,
       '(Record Book) Teacher': recordBookTeacherField,
       '(Record Book) Score': recordBookScoreField,
-      '(Record Book) Date': selectedDateField
+      '(Record Book) Date': selectedDateField,
+      '(app) isScheduleFilled': isScheduleFilled,
+      '(app) isRecordBookFilled': isRecordBookFilled,
     };
   }
 
@@ -106,5 +114,7 @@ class Course {
     selectedDateField = json['(Record Book) Date'] != null
         ? (json['(Record Book) Date'] as Timestamp).toDate()
         : null;
+    isScheduleFilled = json['(app) isScheduleFilled'];
+    isRecordBookFilled = json['(app) isRecordBookFilled'];
   }
 }

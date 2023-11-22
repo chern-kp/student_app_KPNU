@@ -77,6 +77,8 @@ class _NewCourseDialogState extends State<NewCourseDialog> {
       onPressed: () async {
         try {
           Course course = Course(
+            isScheduleFilled: !widget.isEdit && !widget.isRecordBook,
+            isRecordBookFilled: !widget.isEdit && widget.isRecordBook,
             nameField: nameFieldController.text,
             hoursLectionsField:
                 int.tryParse(hoursLectionsFieldController.text) ?? 0,

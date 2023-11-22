@@ -57,44 +57,6 @@ class _RecordBookPageState extends State<RecordBookPage> {
     }).toList();
   }
 
-  Widget _currentCoursesDropdownMenu() {
-    return FutureBuilder<List<Map<String, dynamic>>>(
-      future: coursesFuture,
-      builder: (BuildContext context,
-          AsyncSnapshot<List<Map<String, dynamic>>> snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return CircularProgressIndicator();
-        } else if (snapshot.hasError) {
-          return Text('Error: ${snapshot.error}');
-        } else {
-          return DropdownButton<String>(
-            value: selectedCourse,
-            onChanged: (String? newValue) {
-              if (snapshot.data!.any(
-                  (courseMap) => courseMap['course'].nameField == newValue)) {
-                setState(() {
-                  selectedCourse = newValue!;
-                });
-              } else {
-                setState(() {
-                  selectedCourse = null;
-                });
-              }
-            },
-            items: snapshot.data!.map<DropdownMenuItem<String>>(
-                (Map<String, dynamic> courseMap) {
-              Course course = courseMap['course'];
-              return DropdownMenuItem<String>(
-                value: course.nameField,
-                child: Text(course.nameField!),
-              );
-            }).toList(),
-          );
-        }
-      },
-    );
-  }
-
   Widget _addScoresButton() {
     return ElevatedButton(
       child: Text('Add Scores'),
@@ -159,26 +121,24 @@ class _RecordBookPageState extends State<RecordBookPage> {
                     : course.scoringTypeField == 'Scoring'
                         ? 'Scoring'
                         : 'Others';
-                if (index == 0 ||
-                    (index > 0 &&
-                        (snapshot.data![index - 1]['course'].scoringTypeField ==
-                                    'Exam'
-                                ? 'Exam'
-                                : snapshot.data![index - 1]['course']
+                return Column(
+                  children: [
+                    if (index == 0 ||
+                        (index > 0 &&
+                            (snapshot.data![index - 1]['course']
                                             .scoringTypeField ==
-                                        'Scoring'
-                                    ? 'Scoring'
-                                    : 'Others') !=
-                            category)) {
-                  return Column(
-                    children: [
+                                        'Exam'
+                                    ? 'Exam'
+                                    : snapshot.data![index - 1]['course']
+                                                .scoringTypeField ==
+                                            'Scoring'
+                                        ? 'Scoring'
+                                        : 'Others') !=
+                                category))
                       _categoryTitle(category),
-                      _recordBookCell(course),
-                    ],
-                  );
-                } else {
-                  return _recordBookCell(course);
-                }
+                    _recordBookCell(course),
+                  ],
+                );
               },
             ),
           );
@@ -196,84 +156,108 @@ class _RecordBookPageState extends State<RecordBookPage> {
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: Container(
-          padding: EdgeInsets.all(10),
-          color: backgroundColor,
+        padding: EdgeInsets.all(10),
+        color: backgroundColor,
+        child: SingleChildScrollView(
           child: Column(
             children: [
-              Row(
-                children: [
-                  Container(
-                      child: Column(
-                    children: [Text('Дисципліна')],
-                  )),
-                  Spacer(),
-                  Text(
-                    "Викладач",
-                    textAlign: TextAlign.end,
-                  ),
-                ],
-              ),
-              Row(
-                children: [
-                  Text(course.nameField!),
-                  Spacer(),
-                  Text(course.recordBookTeacherField ?? ''),
-                ],
-              ),
-              SizedBox(
-                height: 10,
-              ),
-              Row(
-                children: [
-                  Text('Форма підсумкового контролю'),
-                  Spacer(),
-                  Text(
-                    course.scoringTypeField ?? "",
-                    textAlign: TextAlign.end,
-                  )
-                ],
-              ),
-              Row(
-                children: [
-                  Text('Оцінка'),
-                  Spacer(),
-                  Text(
-                    course.recordBookScoreField.toString(),
-                    textAlign: TextAlign.end,
-                  )
-                ],
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  Expanded(
-                    child: Container(),
-                  ),
-                  IconButton(
-                    icon: Icon(Icons.edit),
-                    onPressed: () async {
-                      bool? result = await showDialog(
-                        context: context,
-                        builder: (BuildContext context) {
-                          return NewCourseDialog(
-                            isEdit: true,
-                            course: course,
-                            isRecordBook: true,
-                          );
+              Center(child: Text(course.nameField!)),
+              course.isRecordBookFilled ?? false
+                  ? Column(
+                      children: [
+                        Row(
+                          children: [
+                            Spacer(),
+                            Text(
+                              "Викладач",
+                              textAlign: TextAlign.end,
+                            ),
+                          ],
+                        ),
+                        Row(
+                          children: [
+                            Spacer(),
+                            Text(course.recordBookTeacherField ?? ''),
+                          ],
+                        ),
+                        SizedBox(
+                          height: 10,
+                        ),
+                        Row(
+                          children: [
+                            Text('Форма підсумкового контролю'),
+                            Spacer(),
+                            Text(
+                              course.scoringTypeField ?? "",
+                              textAlign: TextAlign.end,
+                            )
+                          ],
+                        ),
+                        Row(
+                          children: [
+                            Text('Оцінка'),
+                            Spacer(),
+                            Text(
+                              course.recordBookScoreField.toString(),
+                              textAlign: TextAlign.end,
+                            )
+                          ],
+                        ),
+                        Row(
+                          children: [
+                            Text('Дата'),
+                            Spacer(),
+                            Text(
+                              "${course.selectedDateField?.year.toString().padLeft(4, '0')}-${course.selectedDateField?.month.toString().padLeft(2, '0')}-${course.selectedDateField?.day.toString().padLeft(2, '0')} ${course.selectedDateField?.hour.toString().padLeft(2, '0')}:${course.selectedDateField?.minute.toString().padLeft(2, '0')}",
+                              textAlign: TextAlign.end,
+                            )
+                          ],
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            Expanded(
+                              child: Container(),
+                            ),
+                            IconButton(
+                              icon: Icon(Icons.edit),
+                              onPressed: () async {
+                                bool? result = await showDialog(
+                                  context: context,
+                                  builder: (BuildContext context) {
+                                    return NewCourseDialog(
+                                      isEdit: true,
+                                      course: course,
+                                      isRecordBook: true,
+                                    );
+                                  },
+                                );
+                                if (result == true) {
+                                  setState(() {
+                                    coursesFuture =
+                                        generateCourses(selectedSemesterPage!);
+                                  });
+                                }
+                              },
+                            ),
+                          ],
+                        )
+                      ],
+                    )
+                  : Container(
+                      padding: EdgeInsets.all(10),
+                      color: backgroundColor,
+                      child: ElevatedButton(
+                        onPressed: () {
+                          // handle button press
                         },
-                      );
-                      if (result == true) {
-                        setState(() {
-                          coursesFuture =
-                              generateCourses(selectedSemesterPage!);
-                        });
-                      }
-                    },
-                  ),
-                ],
-              )
+                        child: Text('Edit Scores'),
+                      ),
+                    ),
             ],
-          )),
+          ),
+        ),
+      ),
     );
   }
 
@@ -290,7 +274,6 @@ class _RecordBookPageState extends State<RecordBookPage> {
               child: MyDropdownMenuSemester(
                   onSelectedItemChanged: updateSelectedSemester)),
           _addScoresButton(),
-          _currentCoursesDropdownMenu(),
           _recordBookListView(),
         ],
       ),
