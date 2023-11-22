@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 class Course {
   String? nameField;
   String? semesterField;
@@ -12,6 +14,7 @@ class Course {
   String? scoringTypeField;
   String? recordBookTeacherField;
   num? recordBookScoreField;
+  DateTime? selectedDateField;
 
   Course({
     this.nameField,
@@ -25,6 +28,7 @@ class Course {
     this.scoringTypeField,
     this.recordBookTeacherField,
     this.recordBookScoreField,
+    this.selectedDateField,
   }) {
     hoursLectionsField = hoursLectionsField ?? 0;
     hoursPracticesField = hoursPracticesField ?? 0;
@@ -38,6 +42,7 @@ class Course {
     scoringTypeField = scoringTypeField ?? 'Залік';
     recordBookTeacherField = recordBookTeacherField ?? '';
     recordBookScoreField = recordBookScoreField ?? 0;
+    selectedDateField = selectedDateField ?? DateTime.now();
   }
 
   void recalculateTotals() {
@@ -79,7 +84,8 @@ class Course {
       'Credits Overall Total': creditsOverallTotalField,
       'Scoring Type': scoringTypeField,
       '(Record Book) Teacher': recordBookTeacherField,
-      '(Record Book) Score': recordBookScoreField
+      '(Record Book) Score': recordBookScoreField,
+      '(Record Book) Date': selectedDateField
     };
   }
 
@@ -97,5 +103,8 @@ class Course {
     scoringTypeField = json['Scoring Type'];
     recordBookTeacherField = json['(Record Book) Teacher'];
     recordBookScoreField = json['(Record Book) Score'];
+    selectedDateField = json['(Record Book) Date'] != null
+        ? (json['(Record Book) Date'] as Timestamp).toDate()
+        : null;
   }
 }

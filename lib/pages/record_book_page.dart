@@ -251,8 +251,23 @@ class _RecordBookPageState extends State<RecordBookPage> {
                   ),
                   IconButton(
                     icon: Icon(Icons.edit),
-                    onPressed: () {
-                      //todo
+                    onPressed: () async {
+                      bool? result = await showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return NewCourseDialog(
+                            isEdit: true,
+                            course: course,
+                            isRecordBook: true,
+                          );
+                        },
+                      );
+                      if (result == true) {
+                        setState(() {
+                          coursesFuture =
+                              generateCourses(selectedSemesterPage!);
+                        });
+                      }
                     },
                   ),
                 ],

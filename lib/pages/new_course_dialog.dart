@@ -4,8 +4,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:student_app/class/database_service.dart';
-
 import '../class/course_class.dart';
+import '../components/my_datepicker.dart';
 import '../components/my_dropdownmenu_semeter.dart';
 
 class NewCourseDialog extends StatefulWidget {
@@ -66,6 +66,7 @@ class _NewCourseDialogState extends State<NewCourseDialog> {
   final recordBookTeacherFieldController = TextEditingController();
   final recordBookScoreFieldController = TextEditingController();
 
+  DateTime? selectedDate;
   String? selectedSemesterPage;
   late Future<String> selectedSemester =
       DatabaseService.getStudentField(user.email, 'Current Semester');
@@ -75,7 +76,6 @@ class _NewCourseDialogState extends State<NewCourseDialog> {
       child: Text('Save'),
       onPressed: () async {
         try {
-          // here we get info to course instance...:
           Course course = Course(
             nameField: nameFieldController.text,
             hoursLectionsField:
@@ -89,23 +89,26 @@ class _NewCourseDialogState extends State<NewCourseDialog> {
                 int.tryParse(hoursIndividualTotalFieldController.text) ?? 0,
             scoringTypeField: scoringTypeFieldController.text,
             recordBookTeacherField: recordBookTeacherFieldController.text,
-            //todo error checks
+            recordBookScoreField:
+                int.tryParse(recordBookScoreFieldController.text) ?? 0,
+            selectedDateField: selectedDate,
           );
-          // ...and here send it to database method:
           if (widget.isEdit && widget.course != null) {
             await DatabaseService.createOrUpdateCourse(
-                user.email,
-                course,
-                selectedSemesterPage == null
-                    ? await selectedSemester
-                    : selectedSemesterPage!);
+              user.email,
+              course,
+              selectedSemesterPage == null
+                  ? await selectedSemester
+                  : selectedSemesterPage!,
+            );
           } else {
             await DatabaseService.createOrUpdateCourse(
-                user.email,
-                course,
-                selectedSemesterPage == null
-                    ? await selectedSemester
-                    : selectedSemesterPage!);
+              user.email,
+              course,
+              selectedSemesterPage == null
+                  ? await selectedSemester
+                  : selectedSemesterPage!,
+            );
           }
           Navigator.of(context).pop(true);
         } catch (e) {
@@ -183,7 +186,20 @@ class _NewCourseDialogState extends State<NewCourseDialog> {
           controller: recordBookScoreFieldController,
           decoration: InputDecoration(
             labelText: 'Score',
-          ))
+          )),
+      ElevatedButton(
+        onPressed: () async {
+          DateTime? date = await selectDate(context);
+          setState(() {
+            selectedDate = date;
+          });
+        },
+        child: Text('Select date'),
+      ),
+      //display date in "YYYY-MM-DD HH:MM" format
+      Text(selectedDate != null
+          ? '${selectedDate!.year.toString().padLeft(4, '0')}-${selectedDate!.month.toString().padLeft(2, '0')}-${selectedDate!.day.toString().padLeft(2, '0')} ${selectedDate!.hour.toString().padLeft(2, '0')}:${selectedDate!.minute.toString().padLeft(2, '0')}'
+          : ''),
     ]);
   }
 
