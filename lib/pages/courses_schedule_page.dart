@@ -163,87 +163,107 @@ class _CoursesSchedulePageState extends State<CoursesSchedulePage> {
 
   //UI of items in the list
   Widget _courseDetails(Course course) {
-    return Align(
-      alignment: Alignment.centerLeft,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          Row(
-            children: [
-              Text('Назва дисципліни: ',
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 20,
-                  )),
-              Text(course.nameField ?? '', style: TextStyle(fontSize: 20)),
-            ],
+    // Widget for course name display
+    Widget courseName = Row(
+      children: [
+        Text(
+          'Назва дисципліни: ',
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 20,
           ),
-          SizedBox(height: 10),
-          Row(
-            children: [
-              Text('Форма підсумкового конролю: ',
-                  style: TextStyle(
-                    fontSize: 20,
-                  )),
-              Text(course.scoringTypeField ?? '',
-                  style: TextStyle(
-                    fontSize: 20,
-                  ))
-            ],
-          ),
-          SizedBox(height: 10),
-          Center(
-            child: Text(
-              'Навчальне навантаження: ',
-              style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
-            ),
-          ),
-          SizedBox(height: 10),
-          Row(
-            children: [
-              Text('Кількість кредитів: ', style: TextStyle(fontSize: 20)),
-              Text(
-                course.creditsOverallTotalField.toString(),
-                style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.red[600]),
-              ),
-            ],
-          ),
-          SizedBox(height: 10),
-          Text('Години: ', style: TextStyle(fontSize: 20)),
-          SizedBox(height: 10),
-          Table(
-            border: TableBorder.all(color: Colors.black),
-            children: [
-              TableRow(
-                children: [
-                  Text('Усього'),
-                  Text('В аудиторії'),
-                  Text('Лекції'),
-                  Text('Практичні'),
-                  Text('Лабораторні'),
-                  Text('Курсові'),
-                  Text('Самостійна робота'),
-                ],
-              ),
-              TableRow(
-                children: [
-                  Text('${course.hoursOverallTotalField}'),
-                  Text('${course.hoursInClassTotalField}'),
-                  Text('${course.hoursLectionsField}'),
-                  Text('${course.hoursPracticesField}'),
-                  Text('${course.hoursLabsField}'),
-                  Text('${course.hoursCourseworkField}'),
-                  Text('${course.hoursIndividualTotalField}'),
-                ],
-              ),
-            ],
-          )
-        ],
-      ),
+        ),
+        Text(course.nameField ?? '', style: TextStyle(fontSize: 20)),
+      ],
     );
+
+    // Conditional rendering based on course.isScheduleFilled
+    if (!course.isScheduleFilled!) {
+      return Align(
+        alignment: Alignment.centerLeft,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            courseName,
+            ElevatedButton(
+              onPressed: () {
+                // Add your button functionality here
+              },
+              child: Text('Button Text'),
+            ),
+          ],
+        ),
+      );
+    } else {
+      return Align(
+        alignment: Alignment.centerLeft,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            courseName,
+            SizedBox(height: 10),
+            Row(
+              children: [
+                Text('Форма підсумкового конролю: ',
+                    style: TextStyle(fontSize: 20)),
+                Text(course.scoringTypeField ?? '',
+                    style: TextStyle(fontSize: 20))
+              ],
+            ),
+            SizedBox(height: 10),
+            Center(
+              child: Text(
+                'Навчальне навантаження: ',
+                style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
+              ),
+            ),
+            SizedBox(height: 10),
+            Row(
+              children: [
+                Text('Кількість кредитів: ', style: TextStyle(fontSize: 20)),
+                Text(
+                  course.creditsOverallTotalField.toString(),
+                  style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.red[600]),
+                ),
+              ],
+            ),
+            SizedBox(height: 10),
+            Text('Години: ', style: TextStyle(fontSize: 20)),
+            SizedBox(height: 10),
+            Table(
+              border: TableBorder.all(color: Colors.black),
+              children: [
+                TableRow(
+                  children: [
+                    Text('Усього'),
+                    Text('В аудиторії'),
+                    Text('Лекції'),
+                    Text('Практичні'),
+                    Text('Лабораторні'),
+                    Text('Курсові'),
+                    Text('Самостійна робота'),
+                  ],
+                ),
+                TableRow(
+                  children: [
+                    Text('${course.hoursOverallTotalField}'),
+                    Text('${course.hoursInClassTotalField}'),
+                    Text('${course.hoursLectionsField}'),
+                    Text('${course.hoursPracticesField}'),
+                    Text('${course.hoursLabsField}'),
+                    Text('${course.hoursCourseworkField}'),
+                    Text('${course.hoursIndividualTotalField}'),
+                  ],
+                ),
+              ],
+            )
+          ],
+        ),
+      );
+    }
   }
 
   @override
