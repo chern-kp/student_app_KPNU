@@ -191,8 +191,7 @@ class _CoursesSchedulePageState extends State<CoursesSchedulePage> {
                       isEdit: true,
                       course: course,
                       filledCourseSchedule: true,
-                      filledNewRecordBook: course.isRecordBookFilled ??
-                          false, // pass the current value of filledNewRecordBook
+                      filledNewRecordBook: course.isRecordBookFilled ?? false,
                     );
                   },
                 );

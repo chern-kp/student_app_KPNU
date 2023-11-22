@@ -249,7 +249,6 @@ class _RecordBookPageState extends State<RecordBookPage> {
                       color: backgroundColor,
                       child: ElevatedButton(
                         onPressed: () async {
-                          //i need to pass isRecordBookFilled = true from here
                           bool? result = await showDialog(
                             context: context,
                             builder: (BuildContext context) {
@@ -258,8 +257,8 @@ class _RecordBookPageState extends State<RecordBookPage> {
                                 course: course,
                                 isRecordBook: true,
                                 filledNewRecordBook: true,
-                                filledCourseSchedule: course.isScheduleFilled ??
-                                    false, // pass the current value of filledNewRecordBook
+                                filledCourseSchedule:
+                                    course.isScheduleFilled ?? false,
                               );
                             },
                           );
