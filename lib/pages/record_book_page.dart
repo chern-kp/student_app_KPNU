@@ -28,6 +28,7 @@ class _RecordBookPageState extends State<RecordBookPage> {
   List<bool> expandedState = [];
   bool isSortedByDate = false;
   SortOption sortOption = SortOption.alphabeticalAsc;
+  bool isGroupedByScoringType = false;
 
   @override
   void initState() {
@@ -88,6 +89,28 @@ class _RecordBookPageState extends State<RecordBookPage> {
           return b.recordBookTeacherField!.compareTo(a.recordBookTeacherField!);
         }
       });
+      if (isGroupedByScoringType) {
+        courses.sort((a, b) {
+          int aValue = a.scoringTypeField == 'Exam'
+              ? 1
+              : a.scoringTypeField == 'Scoring'
+                  ? 2
+                  : 3;
+          int bValue = b.scoringTypeField == 'Exam'
+              ? 1
+              : b.scoringTypeField == 'Scoring'
+                  ? 2
+                  : 3;
+          return aValue.compareTo(bValue);
+        });
+      }
+
+      return courses.map((course) {
+        return {
+          'course': course,
+          'isExpanded': false,
+        };
+      }).toList();
     }
 
     return courses.map((course) {
@@ -158,6 +181,19 @@ class _RecordBookPageState extends State<RecordBookPage> {
     );
   }
 
+  Widget _groupByScoringTypeCheckbox() {
+    return CheckboxListTile(
+      title: Text('Group by Scoring Type'),
+      value: isGroupedByScoringType,
+      onChanged: (bool? value) {
+        setState(() {
+          isGroupedByScoringType = value!;
+          coursesFuture = generateCourses(selectedSemesterPage!);
+        });
+      },
+    );
+  }
+
   Widget _categoryTitle(String title) {
     return Padding(
       padding: const EdgeInsets.all(8.0),
@@ -178,53 +214,50 @@ class _RecordBookPageState extends State<RecordBookPage> {
         } else if (snapshot.hasError) {
           return Text('Error: ${snapshot.error}');
         } else {
-          snapshot.data!.sort((a, b) {
-            int aValue = a['course'].scoringTypeField == 'Exam'
-                ? 1
-                : a['course'].scoringTypeField == 'Scoring'
-                    ? 2
-                    : 3;
-            int bValue = b['course'].scoringTypeField == 'Exam'
-                ? 1
-                : b['course'].scoringTypeField == 'Scoring'
-                    ? 2
-                    : 3;
-            return aValue.compareTo(bValue);
-          });
+          List<Map<String, dynamic>> examCourses = [];
+          List<Map<String, dynamic>> scoringCourses = [];
+          List<Map<String, dynamic>> otherCourses = [];
+
+          for (var courseMap in snapshot.data!) {
+            Course course = courseMap['course'];
+            if (course.scoringTypeField == 'Exam') {
+              examCourses.add(courseMap);
+            } else if (course.scoringTypeField == 'Scoring') {
+              scoringCourses.add(courseMap);
+            } else {
+              otherCourses.add(courseMap);
+            }
+          }
+
           return Expanded(
-            child: ListView.builder(
-              itemCount: snapshot.data!.length,
-              itemBuilder: (context, index) {
-                Course course = snapshot.data![index]['course'];
-                String category = course.scoringTypeField == 'Exam'
-                    ? 'Exam'
-                    : course.scoringTypeField == 'Scoring'
-                        ? 'Scoring'
-                        : 'Others';
-                return Column(
-                  children: [
-                    if (index == 0 ||
-                        (index > 0 &&
-                            (snapshot.data![index - 1]['course']
-                                            .scoringTypeField ==
-                                        'Exam'
-                                    ? 'Exam'
-                                    : snapshot.data![index - 1]['course']
-                                                .scoringTypeField ==
-                                            'Scoring'
-                                        ? 'Scoring'
-                                        : 'Others') !=
-                                category))
-                      _categoryTitle(category),
-                    _recordBookCell(course),
-                  ],
-                );
-              },
+            child: ListView(
+              children: [
+                if (isGroupedByScoringType)
+                  ..._buildCategory('Exam', examCourses),
+                if (isGroupedByScoringType)
+                  ..._buildCategory('Scoring', scoringCourses),
+                if (isGroupedByScoringType)
+                  ..._buildCategory('Others', otherCourses),
+                if (!isGroupedByScoringType)
+                  ...snapshot.data!
+                      .map((courseMap) => _recordBookCell(courseMap['course']))
+                      .toList(),
+              ],
             ),
           );
         }
       },
     );
+  }
+
+  List<Widget> _buildCategory(
+      String title, List<Map<String, dynamic>> courses) {
+    return [
+      _categoryTitle(title),
+      ...courses
+          .map((courseMap) => _recordBookCell(courseMap['course']))
+          .toList(),
+    ];
   }
 
   Widget _recordBookCell(Course course) {
@@ -373,6 +406,7 @@ class _RecordBookPageState extends State<RecordBookPage> {
                   onSelectedItemChanged: updateSelectedSemester)),
           _addScoresButton(),
           _sortDropDownMenu(),
+          _groupByScoringTypeCheckbox(),
           _recordBookListView(),
         ],
       ),
@@ -388,3 +422,5 @@ enum SortOption {
   teacherAsc,
   teacherDesc
 }
+
+enum ScoringType { Exam, Scoring, Others }
