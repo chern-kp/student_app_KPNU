@@ -26,6 +26,8 @@ class _RecordBookPageState extends State<RecordBookPage> {
   String? selectedCourse;
   Future<List<Map<String, dynamic>>> coursesFuture = Future.value([]);
   List<bool> expandedState = [];
+  bool isSortedByDate = false;
+  SortOption sortOption = SortOption.alphabeticalAsc;
 
   @override
   void initState() {
@@ -49,6 +51,45 @@ class _RecordBookPageState extends State<RecordBookPage> {
     List<Course> courses =
         await DatabaseService.getAllCourses(user.email!, semester);
     expandedState = List<bool>.filled(courses.length, false);
+
+    if (sortOption == SortOption.dateAsc) {
+      courses.sort((a, b) => a.recordBookSelectedDateField!
+          .compareTo(b.recordBookSelectedDateField!));
+    } else if (sortOption == SortOption.dateDesc) {
+      courses.sort((a, b) => b.recordBookSelectedDateField!
+          .compareTo(a.recordBookSelectedDateField!));
+    } else if (sortOption == SortOption.alphabeticalAsc) {
+      courses.sort((a, b) => a.nameField!.compareTo(b.nameField!));
+    } else if (sortOption == SortOption.alphabeticalDesc) {
+      courses.sort((a, b) => b.nameField!.compareTo(a.nameField!));
+    } else if (sortOption == SortOption.teacherAsc) {
+      courses.sort((a, b) {
+        if (a.recordBookTeacherField!.isEmpty &&
+            b.recordBookTeacherField!.isEmpty) {
+          return 0;
+        } else if (a.recordBookTeacherField!.isEmpty) {
+          return 1;
+        } else if (b.recordBookTeacherField!.isEmpty) {
+          return -1;
+        } else {
+          return a.recordBookTeacherField!.compareTo(b.recordBookTeacherField!);
+        }
+      });
+    } else if (sortOption == SortOption.teacherDesc) {
+      courses.sort((a, b) {
+        if (a.recordBookTeacherField!.isEmpty &&
+            b.recordBookTeacherField!.isEmpty) {
+          return 0;
+        } else if (a.recordBookTeacherField!.isEmpty) {
+          return 1;
+        } else if (b.recordBookTeacherField!.isEmpty) {
+          return -1;
+        } else {
+          return b.recordBookTeacherField!.compareTo(a.recordBookTeacherField!);
+        }
+      });
+    }
+
     return courses.map((course) {
       return {
         'course': course,
@@ -75,6 +116,45 @@ class _RecordBookPageState extends State<RecordBookPage> {
           });
         }
       },
+    );
+  }
+
+  Widget _sortDropDownMenu() {
+    return DropdownButton<SortOption>(
+      value: sortOption,
+      icon: const Icon(Icons.arrow_downward),
+      onChanged: (SortOption? newValue) {
+        setState(() {
+          sortOption = newValue!;
+          coursesFuture = generateCourses(selectedSemesterPage!);
+        });
+      },
+      items: <DropdownMenuItem<SortOption>>[
+        DropdownMenuItem<SortOption>(
+          value: SortOption.alphabeticalAsc,
+          child: Text('Alphabetical (A to Z)'),
+        ),
+        DropdownMenuItem<SortOption>(
+          value: SortOption.alphabeticalDesc,
+          child: Text('Alphabetical (Z to A)'),
+        ),
+        DropdownMenuItem<SortOption>(
+          value: SortOption.dateAsc,
+          child: Text('Sort by Date (Oldest to Newest)'),
+        ),
+        DropdownMenuItem<SortOption>(
+          value: SortOption.dateDesc,
+          child: Text('Sort by Date (Newest to Oldest)'),
+        ),
+        DropdownMenuItem<SortOption>(
+          value: SortOption.teacherAsc,
+          child: Text('Sort by Teacher (A to Z)'),
+        ),
+        DropdownMenuItem<SortOption>(
+          value: SortOption.teacherDesc,
+          child: Text('Sort by Teacher (Z to A)'),
+        ),
+      ],
     );
   }
 
@@ -208,7 +288,7 @@ class _RecordBookPageState extends State<RecordBookPage> {
                             Text('Дата'),
                             Spacer(),
                             Text(
-                              "${course.selectedDateField?.year.toString().padLeft(4, '0')}-${course.selectedDateField?.month.toString().padLeft(2, '0')}-${course.selectedDateField?.day.toString().padLeft(2, '0')} ${course.selectedDateField?.hour.toString().padLeft(2, '0')}:${course.selectedDateField?.minute.toString().padLeft(2, '0')}",
+                              "${course.recordBookSelectedDateField?.year.toString().padLeft(4, '0')}-${course.recordBookSelectedDateField?.month.toString().padLeft(2, '0')}-${course.recordBookSelectedDateField?.day.toString().padLeft(2, '0')} ${course.recordBookSelectedDateField?.hour.toString().padLeft(2, '0')}:${course.recordBookSelectedDateField?.minute.toString().padLeft(2, '0')}",
                               textAlign: TextAlign.end,
                             )
                           ],
@@ -292,9 +372,19 @@ class _RecordBookPageState extends State<RecordBookPage> {
               child: MyDropdownMenuSemester(
                   onSelectedItemChanged: updateSelectedSemester)),
           _addScoresButton(),
+          _sortDropDownMenu(),
           _recordBookListView(),
         ],
       ),
     );
   }
+}
+
+enum SortOption {
+  dateAsc,
+  dateDesc,
+  alphabeticalAsc,
+  alphabeticalDesc,
+  teacherAsc,
+  teacherDesc
 }

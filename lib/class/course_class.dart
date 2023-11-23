@@ -14,7 +14,7 @@ class Course {
   String? scoringTypeField;
   String? recordBookTeacherField;
   num? recordBookScoreField;
-  DateTime? selectedDateField;
+  DateTime? recordBookSelectedDateField;
   bool? isScheduleFilled;
   bool? isRecordBookFilled;
 
@@ -30,7 +30,7 @@ class Course {
     this.scoringTypeField,
     this.recordBookTeacherField,
     this.recordBookScoreField,
-    this.selectedDateField,
+    this.recordBookSelectedDateField,
     this.isScheduleFilled,
     this.isRecordBookFilled,
   }) {
@@ -46,7 +46,7 @@ class Course {
     scoringTypeField = scoringTypeField ?? 'Залік';
     recordBookTeacherField = recordBookTeacherField ?? '';
     recordBookScoreField = recordBookScoreField ?? 0;
-    selectedDateField = selectedDateField ?? DateTime.now();
+    recordBookSelectedDateField = recordBookSelectedDateField ?? DateTime.now();
     isScheduleFilled = isScheduleFilled ?? false;
     isRecordBookFilled = isRecordBookFilled ?? false;
   }
@@ -91,7 +91,7 @@ class Course {
       'Scoring Type': scoringTypeField,
       '(Record Book) Teacher': recordBookTeacherField,
       '(Record Book) Score': recordBookScoreField,
-      '(Record Book) Date': selectedDateField,
+      '(Record Book) Date': recordBookSelectedDateField,
       '(app) isScheduleFilled': isScheduleFilled,
       '(app) isRecordBookFilled': isRecordBookFilled,
     };
@@ -111,7 +111,7 @@ class Course {
     scoringTypeField = json['Scoring Type'];
     recordBookTeacherField = json['(Record Book) Teacher'];
     recordBookScoreField = json['(Record Book) Score'];
-    selectedDateField = json['(Record Book) Date'] != null
+    recordBookSelectedDateField = json['(Record Book) Date'] != null
         ? (json['(Record Book) Date'] as Timestamp).toDate()
         : null;
     isScheduleFilled = json['(app) isScheduleFilled'];

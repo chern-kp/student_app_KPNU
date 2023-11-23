@@ -103,7 +103,7 @@ class _NewCourseDialogState extends State<NewCourseDialog> {
             recordBookTeacherField: recordBookTeacherFieldController.text,
             recordBookScoreField:
                 int.tryParse(recordBookScoreFieldController.text) ?? 0,
-            selectedDateField: selectedDate,
+            recordBookSelectedDateField: selectedDate,
           );
           if (widget.isEdit && widget.course != null) {
             await DatabaseService.createOrUpdateCourse(
