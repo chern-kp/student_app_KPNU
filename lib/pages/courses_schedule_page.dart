@@ -63,7 +63,9 @@ class _CoursesSchedulePageState extends State<CoursesSchedulePage> {
         bool? result = await showDialog(
           context: context,
           builder: (BuildContext context) {
-            return NewCourseDialog();
+            return NewCourseDialog(
+              currentSemester: selectedSemesterPage,
+            );
           },
         );
         if (result == true) {
@@ -122,6 +124,7 @@ class _CoursesSchedulePageState extends State<CoursesSchedulePage> {
                                   return NewCourseDialog(
                                     isEdit: true,
                                     course: course,
+                                    currentSemester: selectedSemesterPage,
                                   );
                                 },
                               );
@@ -192,6 +195,7 @@ class _CoursesSchedulePageState extends State<CoursesSchedulePage> {
                       course: course,
                       filledCourseSchedule: true,
                       filledNewRecordBook: course.isRecordBookFilled ?? false,
+                      currentSemester: selectedSemesterPage,
                     );
                   },
                 );

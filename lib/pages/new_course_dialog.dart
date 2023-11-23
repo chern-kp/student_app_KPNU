@@ -10,27 +10,49 @@ import '../components/my_dropdownmenu_semeter.dart';
 
 class NewCourseDialog extends StatefulWidget {
   NewCourseDialog({
-    super.key,
     this.isEdit = false,
     this.course,
     this.isRecordBook = false,
     this.filledNewRecordBook = false,
     this.filledCourseSchedule = false,
-  });
+    this.currentSemester,
+    Key? key,
+  }) : super(key: key);
+
   bool isEdit;
   bool isRecordBook;
   bool filledNewRecordBook;
   bool filledCourseSchedule;
   final Course? course;
+  final String? currentSemester;
 
   @override
   State<NewCourseDialog> createState() => _NewCourseDialogState();
 }
 
 class _NewCourseDialogState extends State<NewCourseDialog> {
+  final user = FirebaseAuth.instance.currentUser!;
+  final nameFieldController = TextEditingController();
+  final semesterFieldController = TextEditingController();
+  final hoursLectionsFieldController = TextEditingController();
+  final hoursPracticesFieldController = TextEditingController();
+  final hoursLabsFieldController = TextEditingController();
+  final hoursCourseworkFieldController = TextEditingController();
+  final hoursInClassTotalFieldController = TextEditingController();
+  final hoursIndividualTotalFieldController = TextEditingController();
+  final hoursOverallTotalFieldController = TextEditingController();
+  final creditsOverallTotalFieldController = TextEditingController();
+  final scoringTypeFieldController = TextEditingController();
+  final recordBookTeacherFieldController = TextEditingController();
+  final recordBookScoreFieldController = TextEditingController();
+
+  DateTime? selectedDate;
+  String? selectedSemesterPage;
+
   @override
   void initState() {
     super.initState();
+    selectedSemesterPage = widget.currentSemester;
     if (widget.isEdit && widget.course != null) {
       nameFieldController.text = widget.course!.nameField ?? '';
       hoursLectionsFieldController.text =
@@ -59,26 +81,6 @@ class _NewCourseDialogState extends State<NewCourseDialog> {
     }
   }
 
-  final user = FirebaseAuth.instance.currentUser!;
-  final nameFieldController = TextEditingController();
-  final semesterFieldController = TextEditingController();
-  final hoursLectionsFieldController = TextEditingController();
-  final hoursPracticesFieldController = TextEditingController();
-  final hoursLabsFieldController = TextEditingController();
-  final hoursCourseworkFieldController = TextEditingController();
-  final hoursInClassTotalFieldController = TextEditingController();
-  final hoursIndividualTotalFieldController = TextEditingController();
-  final hoursOverallTotalFieldController = TextEditingController();
-  final creditsOverallTotalFieldController = TextEditingController();
-  final scoringTypeFieldController = TextEditingController();
-  final recordBookTeacherFieldController = TextEditingController();
-  final recordBookScoreFieldController = TextEditingController();
-
-  DateTime? selectedDate;
-  String? selectedSemesterPage;
-  late Future<String> selectedSemester =
-      DatabaseService.getStudentField(user.email, 'Current Semester');
-
   TextButton _saveButton(BuildContext context) {
     return TextButton(
       child: Text('Save'),
@@ -105,23 +107,11 @@ class _NewCourseDialogState extends State<NewCourseDialog> {
                 int.tryParse(recordBookScoreFieldController.text) ?? 0,
             recordBookSelectedDateField: selectedDate,
           );
-          if (widget.isEdit && widget.course != null) {
-            await DatabaseService.createOrUpdateCourse(
-              user.email,
-              course,
-              selectedSemesterPage == null
-                  ? await selectedSemester
-                  : selectedSemesterPage!,
-            );
-          } else {
-            await DatabaseService.createOrUpdateCourse(
-              user.email,
-              course,
-              selectedSemesterPage == null
-                  ? await selectedSemester
-                  : selectedSemesterPage!,
-            );
-          }
+          await DatabaseService.createOrUpdateCourse(
+            user.email,
+            course,
+            selectedSemesterPage!,
+          );
           Navigator.of(context).pop(true);
         } catch (e) {
           showDialog(
@@ -226,17 +216,20 @@ class _NewCourseDialogState extends State<NewCourseDialog> {
             Text('Content of the dialog'),
             Visibility(
               visible: !widget.isEdit,
-              child:
-                  MyDropdownMenuSemester(onSelectedItemChanged: (selectedItem) {
-                setState(() {
-                  selectedSemesterPage = selectedItem;
-                });
-              }),
+              child: MyDropdownMenuSemester(
+                initialSemester: widget.currentSemester,
+                onSelectedItemChanged: (selectedItem) {
+                  setState(() {
+                    selectedSemesterPage = selectedItem;
+                  });
+                },
+              ),
             ),
             TextField(
               controller: nameFieldController,
               decoration: InputDecoration(
                 labelText: 'Course name',
+                //todo if edited it creates new course - to fix
               ),
             ),
             Visibility(

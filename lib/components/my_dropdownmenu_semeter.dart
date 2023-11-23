@@ -8,8 +8,13 @@ import 'package:student_app/class/database_service.dart';
 
 class MyDropdownMenuSemester extends StatefulWidget {
   final Function(String) onSelectedItemChanged;
+  final String? initialSemester;
 
-  MyDropdownMenuSemester({super.key, required this.onSelectedItemChanged});
+  MyDropdownMenuSemester({
+    Key? key,
+    required this.onSelectedItemChanged,
+    this.initialSemester,
+  }) : super(key: key);
 
   @override
   State<MyDropdownMenuSemester> createState() => _MyDropdownMenuSemesterState();
@@ -19,32 +24,27 @@ class _MyDropdownMenuSemesterState extends State<MyDropdownMenuSemester> {
   final user = FirebaseAuth.instance.currentUser!;
   late Future<List<String>> semesterList =
       DatabaseService.getSemesterList(user.email);
-  late Future<String> currentSemester =
-      DatabaseService.getStudentField(user.email, 'Current Semester');
-//todo
+  late Future<String> currentSemester = widget.initialSemester != null
+      ? Future.value(widget.initialSemester)
+      : DatabaseService.getStudentField(user.email, 'Current Semester');
+
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
-      //First future builder - until we get list of faculties, we will show CircularProgressIndicator
-      future:
-          semesterList, //when we get list of faculties, it will save to "snapshot" variable, and later will be used in dropdown menu
+      future: semesterList,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          //if problems with internet connection
           return CircularProgressIndicator();
         } else if (snapshot.hasError) {
           return Text('Error: ${snapshot.error}');
         } else if (snapshot.hasData) {
-          //if everything is ok
           List<String>? dataList = snapshot.data;
-          //Second future builder - we are getting selected faculty from student document, until we get it, we will show CircularProgressIndicator
           return FutureBuilder<String?>(
             future: currentSemester,
             builder: (BuildContext context, AsyncSnapshot<String?> snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
                 return CircularProgressIndicator();
               } else if (snapshot.hasError) {
-                //todo better error handling 
                 return Text('Error: ${snapshot.error}');
               } else {
                 return DropdownButton(
