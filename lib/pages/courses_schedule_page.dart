@@ -26,6 +26,7 @@ class _CoursesSchedulePageState extends State<CoursesSchedulePage> {
   // Building List View
   Future<List<Map<String, dynamic>>> coursesFuture = Future.value([]);
   List<bool> expandedState = [];
+  SortOption sortOption = SortOption.alphabeticalAsc;
 
   @override
   void initState() {
@@ -42,17 +43,95 @@ class _CoursesSchedulePageState extends State<CoursesSchedulePage> {
     setState(() {
       selectedSemesterPage = selectedItem;
       coursesFuture = generateCourses(selectedItem);
+      coursesFuture.then((courses) {
+        setState(() {
+          expandedState = courses
+              .map((course) => !(course['course'].isScheduleFilled ?? false))
+              .toList();
+        });
+      });
     });
+  }
+
+  Widget _sortDropDownMenu() {
+    return DropdownButton<SortOption>(
+      value: sortOption,
+      icon: const Icon(Icons.arrow_downward),
+      onChanged: (SortOption? newValue) {
+        setState(() {
+          sortOption = newValue!;
+          coursesFuture = generateCourses(selectedSemesterPage!);
+          coursesFuture.then((courses) {
+            setState(() {
+              expandedState = courses
+                  .map(
+                      (course) => !(course['course'].isScheduleFilled ?? false))
+                  .toList();
+            });
+          });
+        });
+      },
+      items: <DropdownMenuItem<SortOption>>[
+        DropdownMenuItem<SortOption>(
+          value: SortOption.alphabeticalAsc,
+          child: Text('Alphabetical (A to Z)'),
+        ),
+        DropdownMenuItem<SortOption>(
+          value: SortOption.alphabeticalDesc,
+          child: Text('Alphabetical (Z to A)'),
+        ),
+        DropdownMenuItem<SortOption>(
+          value: SortOption.hoursInClassDesc,
+          child: Text('By Hours In Class'),
+        ),
+        DropdownMenuItem<SortOption>(
+          value: SortOption.hoursIndividualDesc,
+          child: Text('By Hours Individual'),
+        ),
+        DropdownMenuItem<SortOption>(
+          value: SortOption.hoursOverallDesc,
+          child: Text('By Hours Overall'),
+        ),
+      ],
+    );
   }
 
   Future<List<Map<String, dynamic>>> generateCourses(String semester) async {
     List<Course> courses =
         await DatabaseService.getAllCourses(user.email!, semester);
-    expandedState = List<bool>.filled(courses.length, false);
+    expandedState =
+        courses.map((course) => !(course.isScheduleFilled ?? false)).toList();
+
+    // Sort courses based on isScheduleFilled
+    courses.sort((a, b) {
+      if (a.isScheduleFilled == true && b.isScheduleFilled != true) {
+        return -1;
+      } else if (b.isScheduleFilled == true && a.isScheduleFilled != true) {
+        return 1;
+      } else {
+        return 0;
+      }
+    });
+
+    if (sortOption == SortOption.alphabeticalAsc) {
+      courses.sort((a, b) => (a.nameField ?? "").compareTo(b.nameField ?? ""));
+    } else if (sortOption == SortOption.alphabeticalDesc) {
+      courses.sort((a, b) => (b.nameField ?? "").compareTo(a.nameField ?? ""));
+    } else if (sortOption == SortOption.hoursInClassDesc) {
+      courses.sort((a, b) => (b.hoursInClassTotalField?.toInt() ?? 0)
+          .compareTo(a.hoursInClassTotalField?.toInt() ?? 0));
+    } else if (sortOption == SortOption.hoursIndividualDesc) {
+      courses.sort((a, b) => (b.hoursIndividualTotalField?.toInt() ?? 0)
+          .compareTo(a.hoursIndividualTotalField?.toInt() ?? 0));
+    } else if (sortOption == SortOption.hoursOverallDesc) {
+      courses.sort((a, b) => (b.hoursOverallTotalField?.toInt() ?? 0)
+          .compareTo(a.hoursOverallTotalField?.toInt() ?? 0));
+    }
+
     return courses.map((course) {
       return {
         'course': course,
-        'isExpanded': false,
+        'isExpanded': !(course.isScheduleFilled ?? false),
       };
     }).toList();
   }
@@ -116,7 +195,9 @@ class _CoursesSchedulePageState extends State<CoursesSchedulePage> {
                         mainAxisSize: MainAxisSize.min,
                         children: <Widget>[
                           IconButton(
-                            icon: Icon(Icons.edit),
+                            icon: course.isScheduleFilled != false
+                                ? Icon(Icons.edit)
+                                : Container(),
                             onPressed: () async {
                               bool? result = await showDialog(
                                 context: context,
@@ -297,6 +378,8 @@ class _CoursesSchedulePageState extends State<CoursesSchedulePage> {
               SizedBox(height: 25),
               _addNewCourseButton(context),
               SizedBox(height: 25),
+              _sortDropDownMenu(),
+              SizedBox(height: 25),
               Expanded(child: _coursesListView(context)),
             ],
           ),
@@ -304,4 +387,12 @@ class _CoursesSchedulePageState extends State<CoursesSchedulePage> {
       ),
     );
   }
+}
+
+enum SortOption {
+  alphabeticalAsc,
+  alphabeticalDesc,
+  hoursInClassDesc,
+  hoursIndividualDesc,
+  hoursOverallDesc,
 }
