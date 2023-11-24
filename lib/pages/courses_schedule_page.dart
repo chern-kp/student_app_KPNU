@@ -283,6 +283,14 @@ class _CoursesSchedulePageState extends State<CoursesSchedulePage> {
                 if (result == true) {
                   setState(() {
                     coursesFuture = generateCourses(selectedSemesterPage!);
+                    coursesFuture.then((courses) {
+                      setState(() {
+                        expandedState = courses
+                            .map((course) =>
+                                !(course['course'].isScheduleFilled ?? false))
+                            .toList();
+                      });
+                    });
                   });
                 }
               },
@@ -377,9 +385,9 @@ class _CoursesSchedulePageState extends State<CoursesSchedulePage> {
                   onSelectedItemChanged: updateSelectedSemester),
               SizedBox(height: 25),
               _addNewCourseButton(context),
-              SizedBox(height: 25),
+              SizedBox(height: 5),
               _sortDropDownMenu(),
-              SizedBox(height: 25),
+              SizedBox(height: 5),
               Expanded(child: _coursesListView(context)),
             ],
           ),
