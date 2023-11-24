@@ -138,8 +138,8 @@ class _CoursesSchedulePageState extends State<CoursesSchedulePage> {
                           ),
                           IconButton(
                             icon: Icon(Icons.delete),
-                            onPressed: () {
-                              DatabaseService.deleteCourse(
+                            onPressed: () async {
+                              await DatabaseService.deleteCourse(
                                   user.email!, course.nameField!);
                               setState(() {
                                 coursesFuture =

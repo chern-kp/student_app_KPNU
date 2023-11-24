@@ -86,7 +86,7 @@ class _NewCourseDialogState extends State<NewCourseDialog> {
       child: Text('Save'),
       onPressed: () async {
         try {
-          Course course = Course(
+          Course newCourse = Course(
             isScheduleFilled: (!widget.isEdit && !widget.isRecordBook) ||
                 widget.filledCourseSchedule,
             isRecordBookFilled: (!widget.isEdit && widget.isRecordBook) ||
@@ -107,9 +107,17 @@ class _NewCourseDialogState extends State<NewCourseDialog> {
                 int.tryParse(recordBookScoreFieldController.text) ?? 0,
             recordBookSelectedDateField: selectedDate,
           );
+          if (widget.isEdit &&
+              widget.course != null &&
+              widget.course!.nameField != nameFieldController.text) {
+            // If the course name has been changed, delete the old course
+            await DatabaseService.deleteCourse(
+                user.email!, widget.course!.nameField!);
+          }
+          // Create or update the course
           await DatabaseService.createOrUpdateCourse(
             user.email,
-            course,
+            newCourse,
             selectedSemesterPage!,
           );
           Navigator.of(context).pop(true);
@@ -229,7 +237,6 @@ class _NewCourseDialogState extends State<NewCourseDialog> {
               controller: nameFieldController,
               decoration: InputDecoration(
                 labelText: 'Course name',
-                //todo if edited it creates new course - to fix
               ),
             ),
             Visibility(
