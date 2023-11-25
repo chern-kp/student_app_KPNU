@@ -48,11 +48,15 @@ class _RecordBookPageState extends State<RecordBookPage> {
     });
   }
 
-  Future<List<Map<String, dynamic>>> generateCourses(String semester) async {
-    List<Course> courses =
-        await DatabaseService.getAllCourses(user.email!, semester);
-    expandedState = List<bool>.filled(courses.length, false);
+  Future<List<Course>> fetchCourses(String semester) async {
+    return await DatabaseService.getAllCourses(user.email!, semester);
+  }
 
+  List<bool> setExpandedState(List<Course> courses) {
+    return List<bool>.filled(courses.length, false);
+  }
+
+  List<Course> sortCourses(List<Course> courses) {
     if (sortOption == SortOption.dateAsc) {
       courses.sort((a, b) => a.recordBookSelectedDateField!
           .compareTo(b.recordBookSelectedDateField!));
@@ -89,29 +93,30 @@ class _RecordBookPageState extends State<RecordBookPage> {
           return b.recordBookTeacherField!.compareTo(a.recordBookTeacherField!);
         }
       });
-      if (isGroupedByScoringType) {
-        courses.sort((a, b) {
-          int aValue = a.scoringTypeField == 'Exam'
-              ? 1
-              : a.scoringTypeField == 'Scoring'
-                  ? 2
-                  : 3;
-          int bValue = b.scoringTypeField == 'Exam'
-              ? 1
-              : b.scoringTypeField == 'Scoring'
-                  ? 2
-                  : 3;
-          return aValue.compareTo(bValue);
-        });
-      }
-
-      return courses.map((course) {
-        return {
-          'course': course,
-          'isExpanded': false,
-        };
-      }).toList();
     }
+
+    if (isGroupedByScoringType) {
+      courses.sort((a, b) {
+        int aValue = a.scoringTypeField == 'Exam'
+            ? 1
+            : a.scoringTypeField == 'Scoring'
+                ? 2
+                : 3;
+        int bValue = b.scoringTypeField == 'Exam'
+            ? 1
+            : b.scoringTypeField == 'Scoring'
+                ? 2
+                : 3;
+        return aValue.compareTo(bValue);
+      });
+    }
+    return courses;
+  }
+
+  Future<List<Map<String, dynamic>>> generateCourses(String semester) async {
+    List<Course> courses = await fetchCourses(semester);
+    expandedState = setExpandedState(courses);
+    courses = sortCourses(courses);
 
     return courses.map((course) {
       return {

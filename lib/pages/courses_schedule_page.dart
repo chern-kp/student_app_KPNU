@@ -22,11 +22,11 @@ class _CoursesSchedulePageState extends State<CoursesSchedulePage> {
   late Future<List<String>> semesterList =
       DatabaseService.getSemesterList(user.email);
 
+  SortOption sortOption = SortOption.alphabeticalAsc;
   String? selectedSemesterPage;
   // Building List View
   Future<List<Map<String, dynamic>>> coursesFuture = Future.value([]);
   List<bool> expandedState = [];
-  SortOption sortOption = SortOption.alphabeticalAsc;
 
   @override
   void initState() {
@@ -96,37 +96,63 @@ class _CoursesSchedulePageState extends State<CoursesSchedulePage> {
     );
   }
 
-  Future<List<Map<String, dynamic>>> generateCourses(String semester) async {
-    List<Course> courses =
-        await DatabaseService.getAllCourses(user.email!, semester);
-    expandedState =
-        courses.map((course) => !(course.isScheduleFilled ?? false)).toList();
+  Future<List<Course>> fetchCourses(String semester) async {
+    return await DatabaseService.getAllCourses(user.email!, semester);
+  }
 
-    // Sort courses based on isScheduleFilled
+  List<bool> setExpandedState(List<Course> courses) {
+    return courses
+        .map((course) => !(course.isScheduleFilled ?? false))
+        .toList();
+  }
+
+  List<Course> sortCourses(List<Course> courses) {
     courses.sort((a, b) {
       if (a.isScheduleFilled == true && b.isScheduleFilled != true) {
         return -1;
       } else if (b.isScheduleFilled == true && a.isScheduleFilled != true) {
         return 1;
       } else {
-        return 0;
+        if (sortOption == SortOption.alphabeticalAsc) {
+          return (a.nameField ?? "").compareTo(b.nameField ?? "");
+        } else if (sortOption == SortOption.alphabeticalDesc) {
+          return (b.nameField ?? "").compareTo(a.nameField ?? "");
+        } else if (sortOption == SortOption.hoursInClassDesc) {
+          return (b.hoursInClassTotalField?.toInt() ?? 0)
+              .compareTo(a.hoursInClassTotalField?.toInt() ?? 0);
+        } else if (sortOption == SortOption.hoursIndividualDesc) {
+          return (b.hoursIndividualTotalField?.toInt() ?? 0)
+              .compareTo(a.hoursIndividualTotalField?.toInt() ?? 0);
+        } else if (sortOption == SortOption.hoursOverallDesc) {
+          return (b.hoursOverallTotalField?.toInt() ?? 0)
+              .compareTo(a.hoursOverallTotalField?.toInt() ?? 0);
+        } else {
+          return 0;
+        }
       }
     });
 
-    if (sortOption == SortOption.alphabeticalAsc) {
-      courses.sort((a, b) => (a.nameField ?? "").compareTo(b.nameField ?? ""));
-    } else if (sortOption == SortOption.alphabeticalDesc) {
-      courses.sort((a, b) => (b.nameField ?? "").compareTo(a.nameField ?? ""));
-    } else if (sortOption == SortOption.hoursInClassDesc) {
-      courses.sort((a, b) => (b.hoursInClassTotalField?.toInt() ?? 0)
-          .compareTo(a.hoursInClassTotalField?.toInt() ?? 0));
-    } else if (sortOption == SortOption.hoursIndividualDesc) {
-      courses.sort((a, b) => (b.hoursIndividualTotalField?.toInt() ?? 0)
-          .compareTo(a.hoursIndividualTotalField?.toInt() ?? 0));
-    } else if (sortOption == SortOption.hoursOverallDesc) {
-      courses.sort((a, b) => (b.hoursOverallTotalField?.toInt() ?? 0)
-          .compareTo(a.hoursOverallTotalField?.toInt() ?? 0));
+    return courses;
+  }
+
+  Future<List<Map<String, dynamic>>> generateCourses(String semester) async {
+    List<Course> courses = await fetchCourses(semester);
+    List<Course> filledCourses = [];
+    List<Course> unfilledCourses = [];
+
+    for (var course in courses) {
+      if (course.isScheduleFilled == true) {
+        filledCourses.add(course);
+      } else {
+        unfilledCourses.add(course);
+      }
     }
+
+    filledCourses = sortCourses(filledCourses);
+    unfilledCourses = sortCourses(unfilledCourses);
+
+    courses = [...filledCourses, ...unfilledCourses];
+    expandedState = setExpandedState(courses);
 
     return courses.map((course) {
       return {
@@ -170,73 +196,90 @@ class _CoursesSchedulePageState extends State<CoursesSchedulePage> {
             itemCount: snapshot.data.length,
             itemBuilder: (context, index) {
               Course course = snapshot.data[index]['course'];
-              return Card(
-                child: Column(
-                  children: [
-                    ListTile(
-                      leading: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: <Widget>[
-                          IconButton(
-                            icon: Icon(expandedState[index]
-                                ? Icons.expand_less
-                                : Icons.expand_more),
-                            onPressed: () {
-                              setState(() {
-                                expandedState[index] = !expandedState[index];
-                              });
-                            },
-                          ),
-                          Text(course.nameField ?? "",
-                              style: TextStyle(fontSize: 16)),
-                        ],
-                      ),
-                      trailing: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: <Widget>[
-                          IconButton(
-                            icon: course.isScheduleFilled != false
-                                ? Icon(Icons.edit)
-                                : Container(),
-                            onPressed: () async {
-                              bool? result = await showDialog(
-                                context: context,
-                                builder: (BuildContext context) {
-                                  return NewCourseDialog(
-                                    isEdit: true,
-                                    course: course,
-                                    currentSemester: selectedSemesterPage,
-                                  );
-                                },
-                              );
-                              if (result == true) {
-                                setState(() {
-                                  coursesFuture =
-                                      generateCourses(selectedSemesterPage!);
-                                });
-                              }
-                            },
-                          ),
-                          IconButton(
-                            icon: Icon(Icons.delete),
-                            onPressed: () async {
-                              await DatabaseService.deleteCourse(
-                                  user.email!, course.nameField!);
-                              setState(() {
-                                coursesFuture =
-                                    generateCourses(selectedSemesterPage!);
-                              });
-                            },
-                          ),
-                        ],
+              bool isNotFilledTitle = index > 0 &&
+                  snapshot.data[index - 1]['course'].isScheduleFilled == true &&
+                  course.isScheduleFilled == false;
+              return Column(
+                children: [
+                  if (isNotFilledTitle)
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Text(
+                        'Not Filled Courses',
+                        style: TextStyle(
+                            fontSize: 20, fontWeight: FontWeight.bold),
                       ),
                     ),
-                    if (expandedState[index])
-                      Padding(
-                          padding: const EdgeInsets.all(16.0),
-                          child: _courseDetails(course))
-                  ],
-                ),
+                  Card(
+                    child: Column(
+                      children: [
+                        ListTile(
+                          leading: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: <Widget>[
+                              IconButton(
+                                icon: Icon(expandedState[index]
+                                    ? Icons.expand_less
+                                    : Icons.expand_more),
+                                onPressed: () {
+                                  setState(() {
+                                    expandedState[index] =
+                                        !expandedState[index];
+                                  });
+                                },
+                              ),
+                              Text(course.nameField ?? "",
+                                  style: TextStyle(fontSize: 16)),
+                            ],
+                          ),
+                          trailing: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: <Widget>[
+                              IconButton(
+                                icon: course.isScheduleFilled != false
+                                    ? Icon(Icons.edit)
+                                    : Container(),
+                                onPressed: () async {
+                                  bool? result = await showDialog(
+                                    context: context,
+                                    builder: (BuildContext context) {
+                                      return NewCourseDialog(
+                                        isEdit: true,
+                                        course: course,
+                                        currentSemester: selectedSemesterPage,
+                                      );
+                                    },
+                                  );
+                                  if (result == true) {
+                                    setState(() {
+                                      coursesFuture = generateCourses(
+                                          selectedSemesterPage!);
+                                    });
+                                  }
+                                },
+                              ),
+                              IconButton(
+                                icon: Icon(Icons.delete),
+                                onPressed: () async {
+                                  await DatabaseService.deleteCourse(
+                                      user.email!, course.nameField!);
+                                  setState(() {
+                                    coursesFuture =
+                                        generateCourses(selectedSemesterPage!);
+                                  });
+                                },
+                              ),
+                            ],
+                          ),
+                        ),
+                        if (expandedState[index])
+                          Padding(
+                              padding: const EdgeInsets.all(16.0),
+                              child: _courseDetails(course))
+                      ],
+                    ),
+                  ),
+                ],
               );
             },
           );
