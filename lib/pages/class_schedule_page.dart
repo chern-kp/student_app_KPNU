@@ -3,6 +3,8 @@ import 'package:student_app/class/course_class.dart';
 import 'package:student_app/class/database_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:student_app/components/my_dropdownmenu_semeter.dart';
+import 'package:student_app/components/my_callendar.dart';
+import 'package:intl/intl.dart'; // Import this package to format the date
 
 class ClassSchedulePage extends StatefulWidget {
   const ClassSchedulePage({Key? key}) : super(key: key);
@@ -45,9 +47,24 @@ class _ClassSchedulePageState extends State<ClassSchedulePage> {
       appBar: AppBar(
         title: Text('ClassSchedulePage'),
       ),
-      body: Center(
+      body: SingleChildScrollView(
         child: Column(
           children: [
+            FutureBuilder<List<Course>>(
+              future: coursesFuture,
+              builder:
+                  (BuildContext context, AsyncSnapshot<List<Course>> snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return CircularProgressIndicator();
+                } else if (snapshot.hasError) {
+                  return Text('Error: ${snapshot.error}');
+                } else {
+                  return MyCalendar(
+                      courses: snapshot
+                          .data!); // Pass the list of courses to the MyCalendar widget
+                }
+              },
+            ),
             MyDropdownMenuSemester(
               onSelectedItemChanged: (selectedItem) {
                 setState(() {
@@ -65,16 +82,19 @@ class _ClassSchedulePageState extends State<ClassSchedulePage> {
                 } else if (snapshot.hasError) {
                   return Text('Error: ${snapshot.error}');
                 } else {
-                  return Expanded(
-                    child: ListView.builder(
-                      itemCount: snapshot.data!.length,
-                      itemBuilder: (context, index) {
-                        Course course = snapshot.data![index];
-                        return ListTile(
-                          title: Text(course.nameField!),
-                        );
-                      },
-                    ),
+                  return ListView.builder(
+                    shrinkWrap: true,
+                    physics: NeverScrollableScrollPhysics(), // Add this line
+                    itemCount: snapshot.data!.length,
+                    itemBuilder: (context, index) {
+                      Course course = snapshot.data![index];
+                      return ListTile(
+                        title: Text(course.nameField!),
+                        subtitle: Text('Record Book Selected Date: ' +
+                            DateFormat.yMMMd().format(course
+                                .recordBookSelectedDateField!)), // Display the recordBookSelectedDateField
+                      );
+                    },
                   );
                 }
               },
