@@ -17,6 +17,7 @@ class Course {
   DateTime? recordBookSelectedDateField;
   bool? isScheduleFilled;
   bool? isRecordBookFilled;
+  bool? isClassScheduleOnly;
 
   Course({
     this.nameField,
@@ -33,6 +34,7 @@ class Course {
     this.recordBookSelectedDateField,
     this.isScheduleFilled,
     this.isRecordBookFilled,
+    this.isClassScheduleOnly,
   }) {
     hoursLectionsField = hoursLectionsField ?? 0;
     hoursPracticesField = hoursPracticesField ?? 0;
@@ -49,6 +51,51 @@ class Course {
     recordBookSelectedDateField = recordBookSelectedDateField ?? DateTime.now();
     isScheduleFilled = isScheduleFilled ?? false;
     isRecordBookFilled = isRecordBookFilled ?? false;
+    isClassScheduleOnly = isClassScheduleOnly ?? false;
+  }
+
+  Map<String, dynamic> toJsonCourse() {
+    return {
+      'Name': nameField,
+      'Semester': semesterField,
+      'Hours Lections': hoursLectionsField,
+      'Hours Practices': hoursPracticesField,
+      'Hours Labs': hoursLabsField,
+      'Hours Coursework': hoursCourseworkField,
+      'Hours In Class Total': hoursInClassTotalField,
+      'Hours Individual Total': hoursIndividualTotalField,
+      'Hours Overall Total': hoursOverallTotalField,
+      'Credits Overall Total': creditsOverallTotalField,
+      'Scoring Type': scoringTypeField,
+      '(Record Book) Teacher': recordBookTeacherField,
+      '(Record Book) Score': recordBookScoreField,
+      '(Record Book) Date': recordBookSelectedDateField,
+      '(app) isScheduleFilled': isScheduleFilled,
+      '(app) isRecordBookFilled': isRecordBookFilled,
+      '(app) isClassScheduleOnly': isClassScheduleOnly,
+    };
+  }
+
+  Course.fromJsonCourse(Map<String, dynamic> json) {
+    nameField = json['Name'];
+    semesterField = json['Semester'];
+    hoursLectionsField = json['Hours Lections'];
+    hoursPracticesField = json['Hours Practices'];
+    hoursLabsField = json['Hours Labs'];
+    hoursCourseworkField = json['Hours Coursework'];
+    hoursInClassTotalField = json['Hours In Class Total'];
+    hoursIndividualTotalField = json['Hours Individual Total'];
+    hoursOverallTotalField = json['Hours Overall Total'];
+    creditsOverallTotalField = json['Credits Overall Total'];
+    scoringTypeField = json['Scoring Type'];
+    recordBookTeacherField = json['(Record Book) Teacher'];
+    recordBookScoreField = json['(Record Book) Score'];
+    recordBookSelectedDateField = json['(Record Book) Date'] != null
+        ? (json['(Record Book) Date'] as Timestamp).toDate()
+        : null;
+    isScheduleFilled = json['(app) isScheduleFilled'];
+    isRecordBookFilled = json['(app) isRecordBookFilled'];
+    isClassScheduleOnly = json['(app) isClassScheduleOnly'];
   }
 
   void recalculateTotals() {
@@ -74,47 +121,5 @@ class Course {
     } else {
       return num.parse((hoursOverallTotalField! / 30).toStringAsFixed(2));
     }
-  }
-
-  Map<String, dynamic> toJsonCourse() {
-    return {
-      'Name': nameField,
-      'Semester': semesterField,
-      'Hours Lections': hoursLectionsField,
-      'Hours Practices': hoursPracticesField,
-      'Hours Labs': hoursLabsField,
-      'Hours Coursework': hoursCourseworkField,
-      'Hours In Class Total': hoursInClassTotalField,
-      'Hours Individual Total': hoursIndividualTotalField,
-      'Hours Overall Total': hoursOverallTotalField,
-      'Credits Overall Total': creditsOverallTotalField,
-      'Scoring Type': scoringTypeField,
-      '(Record Book) Teacher': recordBookTeacherField,
-      '(Record Book) Score': recordBookScoreField,
-      '(Record Book) Date': recordBookSelectedDateField,
-      '(app) isScheduleFilled': isScheduleFilled,
-      '(app) isRecordBookFilled': isRecordBookFilled,
-    };
-  }
-
-  Course.fromJsonCourse(Map<String, dynamic> json) {
-    nameField = json['Name'];
-    semesterField = json['Semester'];
-    hoursLectionsField = json['Hours Lections'];
-    hoursPracticesField = json['Hours Practices'];
-    hoursLabsField = json['Hours Labs'];
-    hoursCourseworkField = json['Hours Coursework'];
-    hoursInClassTotalField = json['Hours In Class Total'];
-    hoursIndividualTotalField = json['Hours Individual Total'];
-    hoursOverallTotalField = json['Hours Overall Total'];
-    creditsOverallTotalField = json['Credits Overall Total'];
-    scoringTypeField = json['Scoring Type'];
-    recordBookTeacherField = json['(Record Book) Teacher'];
-    recordBookScoreField = json['(Record Book) Score'];
-    recordBookSelectedDateField = json['(Record Book) Date'] != null
-        ? (json['(Record Book) Date'] as Timestamp).toDate()
-        : null;
-    isScheduleFilled = json['(app) isScheduleFilled'];
-    isRecordBookFilled = json['(app) isRecordBookFilled'];
   }
 }
