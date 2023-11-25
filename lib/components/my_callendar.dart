@@ -16,6 +16,36 @@ class _MyCalendarState extends State<MyCalendar> {
   DateTime _focusedDay = DateTime.now();
   DateTime? _selectedDay;
 
+  Color getHighlightColor(DateTime date) {
+    Color highlightColor = Colors.transparent;
+
+    for (var course in widget.courses) {
+      if (isSameDay(course.recordBookSelectedDateField!, date)) {
+        switch (course.scoringTypeField) {
+          case 'Exam':
+            return Colors.red; // Highest priority, no need to check further
+          case 'Scoring':
+            if (highlightColor != Colors.red) {
+              highlightColor = Colors.yellow;
+            }
+            break;
+          case 'Other':
+            if (highlightColor != Colors.red &&
+                highlightColor != Colors.yellow) {
+              highlightColor = Colors.green;
+            }
+            break;
+          default:
+            if (highlightColor == Colors.transparent) {
+              highlightColor = Colors.blue;
+            }
+        }
+      }
+    }
+
+    return highlightColor;
+  }
+
   @override
   Widget build(BuildContext context) {
     List<DateTime> highlightedDates = widget.courses
@@ -46,13 +76,15 @@ class _MyCalendarState extends State<MyCalendar> {
       },
       calendarBuilders: CalendarBuilders(
         defaultBuilder: (context, date, events) {
-          if (highlightedDates.any((d) => isSameDay(d, date))) {
+          Color highlightColor = getHighlightColor(date);
+
+          if (highlightColor != Colors.transparent) {
             return Center(
               child: Container(
                 width: 30,
                 height: 30,
                 decoration: BoxDecoration(
-                  color: Colors.red,
+                  color: highlightColor,
                   shape: BoxShape.circle,
                 ),
                 alignment: Alignment.center,

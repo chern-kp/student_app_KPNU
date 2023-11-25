@@ -91,8 +91,12 @@ class _ClassSchedulePageState extends State<ClassSchedulePage> {
                       return ListTile(
                         title: Text(course.nameField!),
                         subtitle: Text('Record Book Selected Date: ' +
-                            DateFormat.yMMMd().format(course
-                                .recordBookSelectedDateField!)), // Display the recordBookSelectedDateField
+                                DateFormat.yMMMd().format(
+                                    course.recordBookSelectedDateField!) +
+                                '\nScoring Type: ' +
+                                course
+                                    .scoringTypeField! // Display the scoringTypeField
+                            ),
                       );
                     },
                   );
