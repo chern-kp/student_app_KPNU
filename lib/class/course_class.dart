@@ -18,6 +18,7 @@ class Course {
   bool? isScheduleFilled;
   bool? isRecordBookFilled;
   bool? isClassScheduleOnly;
+  bool? isEvent;
 
   Course({
     this.nameField,
@@ -35,6 +36,7 @@ class Course {
     this.isScheduleFilled,
     this.isRecordBookFilled,
     this.isClassScheduleOnly,
+    this.isEvent,
   }) {
     hoursLectionsField = hoursLectionsField ?? 0;
     hoursPracticesField = hoursPracticesField ?? 0;
@@ -52,6 +54,7 @@ class Course {
     isScheduleFilled = isScheduleFilled ?? false;
     isRecordBookFilled = isRecordBookFilled ?? false;
     isClassScheduleOnly = isClassScheduleOnly ?? false;
+    isEvent = isEvent ?? false;
   }
 
   Map<String, dynamic> toJsonCourse() {
@@ -73,6 +76,7 @@ class Course {
       '(app) isScheduleFilled': isScheduleFilled,
       '(app) isRecordBookFilled': isRecordBookFilled,
       '(app) isClassScheduleOnly': isClassScheduleOnly,
+      '(app) isEvent': isEvent,
     };
   }
 
@@ -96,6 +100,7 @@ class Course {
     isScheduleFilled = json['(app) isScheduleFilled'];
     isRecordBookFilled = json['(app) isRecordBookFilled'];
     isClassScheduleOnly = json['(app) isClassScheduleOnly'];
+    isEvent = json['(app) isEvent'];
   }
 
   void recalculateTotals() {

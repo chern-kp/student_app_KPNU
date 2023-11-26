@@ -2,6 +2,7 @@
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:student_app/class/course_class.dart';
+import 'package:student_app/class/event_class.dart';
 
 import 'student_class.dart';
 
@@ -159,6 +160,41 @@ class DatabaseService {
     } catch (e) {
       print(e.toString());
       throw e;
+    }
+  }
+
+  static Future<void> createOrUpdateEvent(
+      var user, EventSchedule event, String semester) async {
+    if (event.eventName!.trim().isEmpty) {
+      throw Exception('Event name cannot be empty');
+    }
+    final docRef = FirebaseFirestore.instance
+        .collection("student")
+        .doc(user)
+        .collection("semester")
+        .doc(semester)
+        .collection("Events")
+        .doc(event.eventName);
+    return docRef.set(event.toJsonEvent());
+  }
+
+  static Future<List<EventSchedule>> getAllEvents(
+      String userEmail, String semester) async {
+    QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+        .collection("student")
+        .doc(userEmail)
+        .collection("semester")
+        .doc(semester)
+        .collection("Events")
+        .get();
+
+    if (querySnapshot.docs.isNotEmpty) {
+      return querySnapshot.docs
+          .map((doc) =>
+              EventSchedule.fromJsonEvent(doc.data() as Map<String, dynamic>))
+          .toList();
+    } else {
+      return [];
     }
   }
 }

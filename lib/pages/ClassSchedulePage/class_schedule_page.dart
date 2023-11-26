@@ -3,8 +3,9 @@ import 'package:student_app/class/course_class.dart';
 import 'package:student_app/class/database_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:student_app/components/my_dropdownmenu_semeter.dart';
-import 'package:student_app/components/my_callendar.dart';
-import 'package:intl/intl.dart'; // Import this package to format the date
+import 'package:student_app/pages/ClassSchedulePage/my_callendar.dart';
+import 'package:intl/intl.dart';
+import 'package:student_app/pages/ClassSchedulePage/new_event_dialog.dart'; // Import this package to format the date
 
 class ClassSchedulePage extends StatefulWidget {
   const ClassSchedulePage({Key? key}) : super(key: key);
@@ -41,6 +42,20 @@ class _ClassSchedulePageState extends State<ClassSchedulePage> {
     });
   }
 
+  Widget _addNewEventButton(BuildContext context) {
+    return ElevatedButton(
+      onPressed: () {
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return NewEventDialog();
+          },
+        );
+      },
+      child: Text('Add New Event'),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -59,9 +74,7 @@ class _ClassSchedulePageState extends State<ClassSchedulePage> {
                 } else if (snapshot.hasError) {
                   return Text('Error: ${snapshot.error}');
                 } else {
-                  return MyCalendar(
-                      courses: snapshot
-                          .data!); // Pass the list of courses to the MyCalendar widget
+                  return MyCalendar(courses: snapshot.data!);
                 }
               },
             ),
@@ -73,6 +86,7 @@ class _ClassSchedulePageState extends State<ClassSchedulePage> {
                 });
               },
             ),
+            _addNewEventButton(context),
             FutureBuilder<List<Course>>(
               future: coursesFuture,
               builder:
@@ -91,12 +105,10 @@ class _ClassSchedulePageState extends State<ClassSchedulePage> {
                       return ListTile(
                         title: Text(course.nameField!),
                         subtitle: Text('Record Book Selected Date: ' +
-                                DateFormat.yMMMd().format(
-                                    course.recordBookSelectedDateField!) +
-                                '\nScoring Type: ' +
-                                course
-                                    .scoringTypeField! // Display the scoringTypeField
-                            ),
+                            DateFormat.yMMMd()
+                                .format(course.recordBookSelectedDateField!) +
+                            '\nScoring Type: ' +
+                            course.scoringTypeField!),
                       );
                     },
                   );

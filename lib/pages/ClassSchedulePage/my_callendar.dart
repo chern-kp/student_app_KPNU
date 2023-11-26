@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:student_app/class/course_class.dart';
 
+import 'calendar_dialog.dart';
+
 class MyCalendar extends StatefulWidget {
   final List<Course> courses;
 
@@ -65,6 +67,12 @@ class _MyCalendarState extends State<MyCalendar> {
           _selectedDay = selectedDay;
           _focusedDay = focusedDay;
         });
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return CalendarDialog(selectedDate: selectedDay);
+          },
+        );
       },
       onFormatChanged: (format) {
         setState(() {
