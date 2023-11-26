@@ -3,31 +3,46 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 class EventSchedule {
   String? eventName;
   String? eventType;
-  DateTime? eventDate;
+  DateTime? eventDateStart;
+  DateTime? eventDateEnd;
 
   EventSchedule({
-    this.eventName,
-    this.eventType,
-    this.eventDate,
+    required this.eventName,
+    required this.eventType,
+    this.eventDateStart,
+    this.eventDateEnd,
   }) {
     eventName = eventName ?? '';
     eventType = eventType ?? '';
-    eventDate = eventDate ?? DateTime.now();
+    eventDateStart = eventDateStart ?? DateTime.now();
+    eventDateEnd = eventDateEnd ?? DateTime.now();
   }
 
   Map<String, dynamic> toJsonEvent() {
-    return {
+    Map<String, dynamic> json = {
       'Event Name': eventName,
       'Event Type': eventType,
-      'Event Date': eventDate,
     };
+
+    if (eventDateStart != null) {
+      json['Event Date'] = eventDateStart;
+    }
+
+    if (eventDateEnd != null) {
+      json['Event Date End'] = eventDateEnd;
+    }
+
+    return json;
   }
 
   EventSchedule.fromJsonEvent(Map<String, dynamic> json) {
     eventName = json['Event Name'];
     eventType = json['Event Type'];
-    eventDate = json['Event Date'] != null
+    eventDateStart = json['Event Date'] != null
         ? (json['Event Date'] as Timestamp).toDate()
+        : null;
+    eventDateEnd = json['Event Date End'] != null
+        ? (json['Event Date End'] as Timestamp).toDate()
         : null;
   }
 }

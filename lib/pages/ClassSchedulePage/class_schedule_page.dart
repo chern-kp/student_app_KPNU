@@ -98,7 +98,7 @@ class _ClassSchedulePageState extends State<ClassSchedulePage> {
                 } else {
                   return ListView.builder(
                     shrinkWrap: true,
-                    physics: NeverScrollableScrollPhysics(), // Add this line
+                    physics: NeverScrollableScrollPhysics(),
                     itemCount: snapshot.data!.length,
                     itemBuilder: (context, index) {
                       Course course = snapshot.data![index];
