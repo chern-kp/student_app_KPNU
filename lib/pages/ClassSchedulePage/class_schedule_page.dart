@@ -48,7 +48,7 @@ class _ClassSchedulePageState extends State<ClassSchedulePage> {
         showDialog(
           context: context,
           builder: (BuildContext context) {
-            return NewEventDialog();
+            return NewEventDialog(selectedSemester: selectedSemester);
           },
         );
       },

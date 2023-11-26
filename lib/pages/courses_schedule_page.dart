@@ -236,7 +236,7 @@ class _CoursesSchedulePageState extends State<CoursesSchedulePage> {
                             mainAxisSize: MainAxisSize.min,
                             children: <Widget>[
                               IconButton(
-                                icon: course.isScheduleFilled != false
+                                icon: course.isScheduleFilled == true
                                     ? Icon(Icons.edit)
                                     : Container(),
                                 onPressed: () async {
@@ -245,7 +245,9 @@ class _CoursesSchedulePageState extends State<CoursesSchedulePage> {
                                     builder: (BuildContext context) {
                                       return NewCourseDialog(
                                         isEdit: true,
+                                        isEditFilling: false,
                                         course: course,
+                                        filledCourseSchedule: true,
                                         currentSemester: selectedSemesterPage,
                                       );
                                     },
@@ -316,9 +318,10 @@ class _CoursesSchedulePageState extends State<CoursesSchedulePage> {
                   builder: (BuildContext context) {
                     return NewCourseDialog(
                       isEdit: true,
+                      isEditFilling: true,
                       course: course,
                       filledCourseSchedule: true,
-                      filledNewRecordBook: course.isRecordBookFilled ?? false,
+                      filledNewRecordBook: course.isRecordBookFilled!,
                       currentSemester: selectedSemesterPage,
                     );
                   },

@@ -348,6 +348,7 @@ class _RecordBookPageState extends State<RecordBookPage> {
                                       isEdit: true,
                                       course: course,
                                       isRecordBook: true,
+                                      filledNewRecordBook: true,
                                       currentSemester: selectedSemesterPage,
                                     );
                                   },
@@ -374,6 +375,7 @@ class _RecordBookPageState extends State<RecordBookPage> {
                             builder: (BuildContext context) {
                               return NewCourseDialog(
                                 isEdit: true,
+                                isEditFilling: true,
                                 course: course,
                                 isRecordBook: true,
                                 filledNewRecordBook: true,

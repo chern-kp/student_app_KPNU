@@ -11,6 +11,7 @@ import '../components/my_dropdownmenu_semeter.dart';
 class NewCourseDialog extends StatefulWidget {
   NewCourseDialog({
     this.isEdit = false,
+    this.isEditFilling = false,
     this.course,
     this.isRecordBook = false,
     this.filledNewRecordBook = false,
@@ -20,6 +21,7 @@ class NewCourseDialog extends StatefulWidget {
   }) : super(key: key);
 
   bool isEdit;
+  bool isEditFilling;
   bool isRecordBook;
   bool filledNewRecordBook;
   bool filledCourseSchedule;
@@ -48,6 +50,7 @@ class _NewCourseDialogState extends State<NewCourseDialog> {
 
   DateTime? selectedDate;
   String? selectedSemesterPage;
+  bool isEvent = false;
 
   @override
   void initState() {
@@ -81,16 +84,42 @@ class _NewCourseDialogState extends State<NewCourseDialog> {
     }
   }
 
+  bool getIsScheduleFilled() {
+    if (widget.isEdit == true && widget.isEditFilling == false) {
+      return widget.filledCourseSchedule;
+    } else {
+      if (widget.isEdit == false && widget.isRecordBook == false) {
+        return true;
+      } else {
+        return widget.filledCourseSchedule;
+      }
+    }
+  }
+
+  bool getIsRecordBookFilled() {
+    if (widget.isEdit == true && widget.isEditFilling == true) {
+      if (widget.isRecordBook == true) {
+        return true;
+      } else {
+        return widget.filledNewRecordBook;
+      }
+    } else {
+      if (widget.isEdit == false && widget.isRecordBook == true) {
+        return true;
+      } else {
+        return widget.filledNewRecordBook;
+      }
+    }
+  }
+
   TextButton _saveButton(BuildContext context) {
     return TextButton(
       child: Text('Save'),
       onPressed: () async {
         try {
           Course newCourse = Course(
-            isScheduleFilled: (!widget.isEdit && !widget.isRecordBook) ||
-                widget.filledCourseSchedule,
-            isRecordBookFilled: (!widget.isEdit && widget.isRecordBook) ||
-                widget.filledNewRecordBook,
+            isScheduleFilled: getIsScheduleFilled(),
+            isRecordBookFilled: getIsRecordBookFilled(),
             nameField: nameFieldController.text,
             hoursLectionsField:
                 int.tryParse(hoursLectionsFieldController.text) ?? 0,
@@ -106,20 +135,16 @@ class _NewCourseDialogState extends State<NewCourseDialog> {
             recordBookScoreField:
                 int.tryParse(recordBookScoreFieldController.text) ?? 0,
             recordBookSelectedDateField: selectedDate,
+            isEvent: isEvent,
           );
           if (widget.isEdit &&
               widget.course != null &&
               widget.course!.nameField != nameFieldController.text) {
-            // If the course name has been changed, delete the old course
             await DatabaseService.deleteCourse(
                 user.email!, widget.course!.nameField!);
           }
-          // Create or update the course
           await DatabaseService.createOrUpdateCourse(
-            user.email,
-            newCourse,
-            selectedSemesterPage!,
-          );
+              user.email, newCourse, selectedSemesterPage!);
           Navigator.of(context).pop(true);
         } catch (e) {
           showDialog(
@@ -210,6 +235,17 @@ class _NewCourseDialogState extends State<NewCourseDialog> {
       Text(selectedDate != null
           ? '${selectedDate!.year.toString().padLeft(4, '0')}-${selectedDate!.month.toString().padLeft(2, '0')}-${selectedDate!.day.toString().padLeft(2, '0')} ${selectedDate!.hour.toString().padLeft(2, '0')}:${selectedDate!.minute.toString().padLeft(2, '0')}'
           : ''),
+      CheckboxListTile(
+        title: Text("Is Event"),
+        value: isEvent,
+        onChanged: (newValue) {
+          setState(() {
+            isEvent = newValue!;
+          });
+        },
+        controlAffinity: ListTileControlAffinity
+            .leading, //  places the control on the start of the tile
+      ),
     ]);
   }
 
@@ -263,7 +299,7 @@ class _NewCourseDialogState extends State<NewCourseDialog> {
             Visibility(
               visible: widget.isRecordBook,
               child: _recordBookFields(),
-            )
+            ),
           ],
         ),
       ),

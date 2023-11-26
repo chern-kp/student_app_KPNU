@@ -5,31 +5,70 @@ import 'package:student_app/class/event_class.dart';
 import '../../components/my_dropdownmenu_semeter.dart';
 
 class NewEventDialog extends StatefulWidget {
-  const NewEventDialog({Key? key}) : super(key: key);
+  NewEventDialog({
+    this.isEdit = false,
+    this.event,
+    this.selectedSemester,
+    Key? key,
+  }) : super(key: key);
+
+  bool isEdit;
+  final EventSchedule? event;
+  final String? selectedSemester;
 
   @override
-  _NewEventDialogState createState() => _NewEventDialogState();
+  State<NewEventDialog> createState() => _NewEventDialogState();
 }
 
 class _NewEventDialogState extends State<NewEventDialog> {
   final user = FirebaseAuth.instance.currentUser!;
-  final _formKey = GlobalKey<FormState>();
-  String eventName = '';
-  String eventType = '';
+  final eventNameController = TextEditingController();
+  final eventTypeController = TextEditingController();
   String? selectedSemesterPage;
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.isEdit && widget.event != null) {
+      eventNameController.text = widget.event!.eventName ?? '';
+      eventTypeController.text = widget.event!.eventType ?? '';
+    }
+    selectedSemesterPage = widget.selectedSemester;
+  }
 
   TextButton _saveButton(BuildContext context) {
     return TextButton(
-      child: Text('Add'),
+      child: Text('Save'),
       onPressed: () async {
-        if (_formKey.currentState!.validate() && selectedSemesterPage != null) {
+        try {
           EventSchedule newEvent = EventSchedule(
-            eventName: eventName,
-            eventType: eventType,
+            eventName: eventNameController.text,
+            eventType: eventTypeController.text,
           );
           await DatabaseService.createOrUpdateEvent(
-              user.email, newEvent, selectedSemesterPage!);
-          Navigator.of(context).pop();
+            user.email,
+            newEvent,
+            selectedSemesterPage!,
+          );
+          Navigator.of(context).pop(true);
+        } catch (e) {
+          showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return AlertDialog(
+                title: Text('Error'),
+                content: Text(e.toString()),
+                actions: <Widget>[
+                  TextButton(
+                    child: Text('Close'),
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                  ),
+                ],
+              );
+            },
+          );
         }
       },
     );
@@ -38,58 +77,42 @@ class _NewEventDialogState extends State<NewEventDialog> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: Text('Add New Event'),
-      content: Form(
-        key: _formKey,
+      title: Text('New Event'),
+      content: SingleChildScrollView(
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
             MyDropdownMenuSemester(
+              initialSemester: selectedSemesterPage,
               onSelectedItemChanged: (selectedItem) {
                 setState(() {
                   selectedSemesterPage = selectedItem;
                 });
               },
             ),
-            TextFormField(
-              decoration: InputDecoration(labelText: 'Event Name'),
-              onChanged: (value) {
-                setState(() {
-                  eventName = value;
-                });
-              },
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return 'Please enter event name';
-                }
-                return null;
-              },
+            TextField(
+              controller: eventNameController,
+              decoration: InputDecoration(
+                labelText: 'Event Name',
+              ),
             ),
-            TextFormField(
-              decoration: InputDecoration(labelText: 'Event Type'),
-              onChanged: (value) {
-                setState(() {
-                  eventType = value;
-                });
-              },
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return 'Please enter event type';
-                }
-                return null;
-              },
+            TextField(
+              controller: eventTypeController,
+              decoration: InputDecoration(
+                labelText: 'Event Type',
+              ),
             ),
           ],
         ),
       ),
-      actions: [
-        _saveButton(context),
+      actions: <Widget>[
         TextButton(
+          child: Text('Close'),
           onPressed: () {
             Navigator.of(context).pop();
           },
-          child: Text('Cancel'),
         ),
+        _saveButton(context),
       ],
     );
   }
