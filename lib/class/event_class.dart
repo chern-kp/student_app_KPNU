@@ -7,8 +7,8 @@ class EventSchedule {
   DateTime? eventDateEnd;
 
   EventSchedule({
-    required this.eventName,
-    required this.eventType,
+    this.eventName,
+    this.eventType,
     this.eventDateStart,
     this.eventDateEnd,
   }) {

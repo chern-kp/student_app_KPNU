@@ -31,14 +31,15 @@ class _ClassSchedulePageState extends State<ClassSchedulePage> {
     if (user != null) {
       selectedSemesterOfUser =
           DatabaseService.getStudentField(user!.email!, 'Current Semester');
+      selectedSemesterOfUser?.then((value) => selectedSemester = value);
       allDataFuture = initializeData();
     }
   }
 
   Future<List<dynamic>> initializeData() async {
-    String semester = await selectedSemesterOfUser!;
-    Future<List<Course>> coursesFuture = fetchCourses(semester);
-    Future<List<EventSchedule>> eventsFuture = fetchEvents(semester);
+    String selectedSemester = await selectedSemesterOfUser!;
+    Future<List<Course>> coursesFuture = fetchCourses(selectedSemester);
+    Future<List<EventSchedule>> eventsFuture = fetchEvents(selectedSemester);
     return Future.wait([coursesFuture, eventsFuture]);
   }
 

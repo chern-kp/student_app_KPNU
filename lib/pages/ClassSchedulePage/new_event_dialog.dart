@@ -149,6 +149,7 @@ class _NewEventDialogState extends State<NewEventDialog> {
               child: Text('Select End Date'),
               onPressed: () async {
                 eventDateEnd = await selectDate(context);
+                setState(() {});
               },
             ),
             Text(eventDateEnd != null
