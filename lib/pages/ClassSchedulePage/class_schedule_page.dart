@@ -42,6 +42,10 @@ class _ClassSchedulePageState extends State<ClassSchedulePage> {
     });
   }
 
+  bool isDefaultDate(DateTime? date) {
+    return date!.millisecondsSinceEpoch == 978307200000;
+  }
+
   Future<List<dynamic>> initializeData() async {
     String selectedSemester = await selectedSemesterOfUser!;
     return Future.wait([
@@ -110,7 +114,7 @@ class _ClassSchedulePageState extends State<ClassSchedulePage> {
           _buildCalendar(courses, events),
           _buildDropdownMenu(),
           _addNewEventButton(context),
-          _buildCourseList(courses),
+          _buildCourseList(courses, events),
         ],
       ),
     );
@@ -138,20 +142,57 @@ class _ClassSchedulePageState extends State<ClassSchedulePage> {
     );
   }
 
-  Widget _buildCourseList(List<Course> courses) {
+  Widget _buildCourseList(List<Course> courses, List<EventSchedule> events) {
+    List<Course> filteredCourses = _filterCourses(courses);
+    List<dynamic> combinedList = _combineLists(filteredCourses, events);
+    return _buildListView(combinedList);
+  }
+
+  List<Course> _filterCourses(List<Course> courses) {
+    return courses.where((course) {
+      return !isDefaultDate(course.recordBookSelectedDateField);
+    }).toList();
+  }
+
+  List<dynamic> _combineLists(
+      List<Course> filteredCourses, List<EventSchedule> events) {
+    return []
+      ..addAll(filteredCourses)
+      ..addAll(events);
+  }
+
+  Widget _buildListView(List<dynamic> combinedList) {
     return ListView.builder(
       shrinkWrap: true,
       physics: NeverScrollableScrollPhysics(),
-      itemCount: courses.length,
+      itemCount: combinedList.length,
       itemBuilder: (context, index) {
-        Course course = courses[index];
-        return ListTile(
-          title: Text(course.nameField!),
-          subtitle: Text('Record Book Selected Date: ' +
-              DateFormat.yMMMd().format(course.recordBookSelectedDateField!) +
-              '\nScoring Type: ' +
-              course.scoringTypeField!),
-        );
+        var item = combinedList[index];
+        if (item is Course) {
+          return ListTile(
+            title: Text(item.nameField!),
+            subtitle: Text('Record Book Selected Date: ' +
+                DateFormat.yMMMd().format(item.recordBookSelectedDateField!) +
+                '\nScoring Type: ' +
+                item.scoringTypeField!),
+          );
+        } else if (item is EventSchedule) {
+          String subtitle = 'Event Type: ' + item.eventType!;
+          if (!isDefaultDate(item.eventDateStart)) {
+            subtitle += '\nStart Date: ' +
+                DateFormat.yMMMd().format(item.eventDateStart!);
+          }
+          if (!isDefaultDate(item.eventDateEnd)) {
+            subtitle +=
+                '\nEnd Date: ' + DateFormat.yMMMd().format(item.eventDateEnd!);
+          }
+          return ListTile(
+            title: Text(item.eventName!),
+            subtitle: Text(subtitle),
+          );
+        } else {
+          throw Exception('Unknown type in combinedList');
+        }
       },
     );
   }

@@ -14,8 +14,10 @@ class EventSchedule {
   }) {
     eventName = eventName ?? '';
     eventType = eventType ?? '';
-    eventDateStart = eventDateStart ?? DateTime.now();
-    eventDateEnd = eventDateEnd ?? DateTime.now();
+    eventDateStart = eventDateStart ??
+        DateTime.fromMillisecondsSinceEpoch(978307200000, isUtc: true);
+    eventDateEnd = eventDateEnd ??
+        DateTime.fromMillisecondsSinceEpoch(978307200000, isUtc: true);
   }
 
   Map<String, dynamic> toJsonEvent() {

@@ -50,7 +50,8 @@ class Course {
     scoringTypeField = scoringTypeField ?? 'Залік';
     recordBookTeacherField = recordBookTeacherField ?? '';
     recordBookScoreField = recordBookScoreField ?? 0;
-    recordBookSelectedDateField = recordBookSelectedDateField ?? DateTime.now();
+    recordBookSelectedDateField = recordBookSelectedDateField ??
+        DateTime.fromMillisecondsSinceEpoch(978307200000, isUtc: true);
     isScheduleFilled = isScheduleFilled ?? false;
     isRecordBookFilled = isRecordBookFilled ?? false;
     isClassScheduleOnly = isClassScheduleOnly ?? false;
