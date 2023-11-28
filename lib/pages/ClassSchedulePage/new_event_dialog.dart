@@ -9,12 +9,14 @@ import '../../components/my_dropdownmenu_semeter.dart';
 
 class NewEventDialog extends StatefulWidget {
   NewEventDialog({
+    this.onUpdate,
     this.isEdit = false,
     this.event,
     this.selectedSemester,
     Key? key,
   }) : super(key: key);
 
+  final Function? onUpdate;
   bool isEdit;
   final EventSchedule? event;
   final String? selectedSemester;
@@ -67,6 +69,9 @@ class _NewEventDialogState extends State<NewEventDialog> {
             newEvent,
             selectedSemesterPage!,
           );
+          if (widget.onUpdate != null) {
+            widget.onUpdate!();
+          }
           Navigator.of(context).pop(true);
         } catch (e) {
           showDialog(

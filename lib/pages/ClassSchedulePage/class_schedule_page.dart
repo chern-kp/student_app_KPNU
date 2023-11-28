@@ -36,11 +36,18 @@ class _ClassSchedulePageState extends State<ClassSchedulePage> {
     }
   }
 
+  void updateState() {
+    setState(() {
+      allDataFuture = initializeData();
+    });
+  }
+
   Future<List<dynamic>> initializeData() async {
     String selectedSemester = await selectedSemesterOfUser!;
-    Future<List<Course>> coursesFuture = fetchCourses(selectedSemester);
-    Future<List<EventSchedule>> eventsFuture = fetchEvents(selectedSemester);
-    return Future.wait([coursesFuture, eventsFuture]);
+    return Future.wait([
+      fetchCourses(selectedSemester),
+      fetchEvents(selectedSemester),
+    ]);
   }
 
   Future<List<Course>> fetchCourses(String semester) async {
@@ -68,7 +75,10 @@ class _ClassSchedulePageState extends State<ClassSchedulePage> {
         showDialog(
           context: context,
           builder: (BuildContext context) {
-            return NewEventDialog(selectedSemester: selectedSemester);
+            return NewEventDialog(
+              selectedSemester: selectedSemester,
+              onUpdate: updateState,
+            );
           },
         );
       },
@@ -115,10 +125,14 @@ class _ClassSchedulePageState extends State<ClassSchedulePage> {
 
   Widget _buildDropdownMenu() {
     return MyDropdownMenuSemester(
+      initialSemester: selectedSemester,
       onSelectedItemChanged: (selectedItem) {
         setState(() {
           selectedSemester = selectedItem;
-          allDataFuture = initializeData();
+          allDataFuture = Future.wait([
+            fetchCourses(selectedSemester!),
+            fetchEvents(selectedSemester!),
+          ]);
         });
       },
     );
