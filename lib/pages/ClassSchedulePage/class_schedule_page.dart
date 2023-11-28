@@ -1,11 +1,14 @@
+// ignore_for_file: prefer_interpolation_to_compose_strings
+
 import 'package:flutter/material.dart';
 import 'package:student_app/class/course_class.dart';
 import 'package:student_app/class/database_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:student_app/class/event_class.dart';
 import 'package:student_app/components/my_dropdownmenu_semeter.dart';
 import 'package:student_app/pages/ClassSchedulePage/my_callendar.dart';
 import 'package:intl/intl.dart';
-import 'package:student_app/pages/ClassSchedulePage/new_event_dialog.dart'; // Import this package to format the date
+import 'package:student_app/pages/ClassSchedulePage/new_event_dialog.dart';
 
 class ClassSchedulePage extends StatefulWidget {
   const ClassSchedulePage({Key? key}) : super(key: key);
@@ -15,31 +18,47 @@ class ClassSchedulePage extends StatefulWidget {
 }
 
 class _ClassSchedulePageState extends State<ClassSchedulePage> {
-  late String selectedSemester;
-  late Future<List<Course>> coursesFuture = Future.value([]);
-
-  Future<List<Course>> fetchCourses(String semester) async {
-    String? userEmail = FirebaseAuth.instance.currentUser!.email;
-    if (userEmail == null) {
-      throw Exception('User email is null');
-    }
-    List<Course> courses =
-        await DatabaseService.getAllCourses(userEmail, semester);
-    courses.sort((a, b) => a.nameField!.compareTo(b.nameField!));
-    return courses;
-  }
+  User? user = FirebaseAuth.instance.currentUser;
+  Future<String>? selectedSemesterOfUser;
+  String? selectedSemester;
+  Future<List<Course>>? coursesFuture;
+  Future<List<EventSchedule>>? eventsFuture;
+  Future<List<dynamic>>? allDataFuture;
 
   @override
   void initState() {
     super.initState();
-    DatabaseService.getStudentField(
-            FirebaseAuth.instance.currentUser!.email, 'Current Semester')
-        .then((value) {
-      setState(() {
-        selectedSemester = value;
-        coursesFuture = fetchCourses(selectedSemester);
-      });
-    });
+    if (user != null) {
+      selectedSemesterOfUser =
+          DatabaseService.getStudentField(user!.email!, 'Current Semester');
+      allDataFuture = initializeData();
+    }
+  }
+
+  Future<List<dynamic>> initializeData() async {
+    String semester = await selectedSemesterOfUser!;
+    Future<List<Course>> coursesFuture = fetchCourses(semester);
+    Future<List<EventSchedule>> eventsFuture = fetchEvents(semester);
+    return Future.wait([coursesFuture, eventsFuture]);
+  }
+
+  Future<List<Course>> fetchCourses(String semester) async {
+    if (user!.email == null) {
+      throw Exception('User email is null');
+    }
+    List<Course> courses =
+        await DatabaseService.getAllCourses(user!.email!, semester);
+    courses.sort((a, b) => a.nameField!.compareTo(b.nameField!));
+    return courses;
+  }
+
+  Future<List<EventSchedule>> fetchEvents(String semester) async {
+    if (user!.email == null) {
+      throw Exception('User email is null');
+    }
+    List<EventSchedule> events =
+        await DatabaseService.getAllEvents(user!.email!, semester);
+    return events;
   }
 
   Widget _addNewEventButton(BuildContext context) {
@@ -52,7 +71,73 @@ class _ClassSchedulePageState extends State<ClassSchedulePage> {
           },
         );
       },
-      child: Text('Add New Event'),
+      child: const Text('Add New Event'),
+    );
+  }
+
+  Widget _buildFutureBuilder() {
+    return FutureBuilder<List<dynamic>>(
+      future: allDataFuture,
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return Center(child: CircularProgressIndicator());
+        } else if (snapshot.hasError) {
+          return Center(child: Text('Error: ${snapshot.error}'));
+        } else {
+          List<Course> courses = snapshot.data![0];
+          List<EventSchedule> events = snapshot.data![1];
+          return _buildBody(courses, events);
+        }
+      },
+    );
+  }
+
+  Widget _buildBody(List<Course> courses, List<EventSchedule> events) {
+    return SingleChildScrollView(
+      child: Column(
+        children: [
+          _buildCalendar(courses, events),
+          _buildDropdownMenu(),
+          _addNewEventButton(context),
+          _buildCourseList(courses),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildCalendar(List<Course> courses, List<EventSchedule> events) {
+    return MyCalendar(
+      courses: courses,
+      events: events,
+    );
+  }
+
+  Widget _buildDropdownMenu() {
+    return MyDropdownMenuSemester(
+      onSelectedItemChanged: (selectedItem) {
+        setState(() {
+          selectedSemester = selectedItem;
+          allDataFuture = initializeData();
+        });
+      },
+    );
+  }
+
+  Widget _buildCourseList(List<Course> courses) {
+    return ListView.builder(
+      shrinkWrap: true,
+      physics: NeverScrollableScrollPhysics(),
+      itemCount: courses.length,
+      itemBuilder: (context, index) {
+        Course course = courses[index];
+        return ListTile(
+          title: Text(course.nameField!),
+          subtitle: Text('Record Book Selected Date: ' +
+              DateFormat.yMMMd().format(course.recordBookSelectedDateField!) +
+              '\nScoring Type: ' +
+              course.scoringTypeField!),
+        );
+      },
     );
   }
 
@@ -60,64 +145,9 @@ class _ClassSchedulePageState extends State<ClassSchedulePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('ClassSchedulePage'),
+        title: Text('Class Schedule'),
       ),
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            FutureBuilder<List<Course>>(
-              future: coursesFuture,
-              builder:
-                  (BuildContext context, AsyncSnapshot<List<Course>> snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return CircularProgressIndicator();
-                } else if (snapshot.hasError) {
-                  return Text('Error: ${snapshot.error}');
-                } else {
-                  return MyCalendar(courses: snapshot.data!);
-                }
-              },
-            ),
-            MyDropdownMenuSemester(
-              onSelectedItemChanged: (selectedItem) {
-                setState(() {
-                  selectedSemester = selectedItem;
-                  coursesFuture = fetchCourses(selectedSemester);
-                });
-              },
-            ),
-            _addNewEventButton(context),
-            FutureBuilder<List<Course>>(
-              future: coursesFuture,
-              builder:
-                  (BuildContext context, AsyncSnapshot<List<Course>> snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return CircularProgressIndicator();
-                } else if (snapshot.hasError) {
-                  return Text('Error: ${snapshot.error}');
-                } else {
-                  return ListView.builder(
-                    shrinkWrap: true,
-                    physics: NeverScrollableScrollPhysics(),
-                    itemCount: snapshot.data!.length,
-                    itemBuilder: (context, index) {
-                      Course course = snapshot.data![index];
-                      return ListTile(
-                        title: Text(course.nameField!),
-                        subtitle: Text('Record Book Selected Date: ' +
-                            DateFormat.yMMMd()
-                                .format(course.recordBookSelectedDateField!) +
-                            '\nScoring Type: ' +
-                            course.scoringTypeField!),
-                      );
-                    },
-                  );
-                }
-              },
-            ),
-          ],
-        ),
-      ),
+      body: _buildFutureBuilder(),
     );
   }
 }

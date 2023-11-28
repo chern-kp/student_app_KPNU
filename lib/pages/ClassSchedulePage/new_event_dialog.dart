@@ -1,7 +1,10 @@
+// ignore_for_file: must_be_immutable, use_build_context_synchronously, prefer_const_constructors
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:student_app/class/database_service.dart';
 import 'package:student_app/class/event_class.dart';
+import '../../components/my_datepicker.dart';
 import '../../components/my_dropdownmenu_semeter.dart';
 
 class NewEventDialog extends StatefulWidget {
@@ -25,6 +28,9 @@ class _NewEventDialogState extends State<NewEventDialog> {
   final eventNameController = TextEditingController();
   final eventTypeController = TextEditingController();
   String? selectedSemesterPage;
+  DateTime? eventDateStart;
+  DateTime? eventDateEnd;
+  String? selectedScoringType = 'Exam';
 
   @override
   void initState() {
@@ -41,9 +47,20 @@ class _NewEventDialogState extends State<NewEventDialog> {
       child: Text('Save'),
       onPressed: () async {
         try {
+          String eventType;
+          if (selectedScoringType == 'Other') {
+            eventType = eventTypeController.text.isEmpty
+                ? 'Other'
+                : eventTypeController.text;
+          } else {
+            eventType = selectedScoringType!;
+          }
+
           EventSchedule newEvent = EventSchedule(
             eventName: eventNameController.text,
-            eventType: eventTypeController.text,
+            eventType: eventType,
+            eventDateStart: eventDateStart,
+            eventDateEnd: eventDateEnd,
           );
           await DatabaseService.createOrUpdateEvent(
             user.email,
@@ -96,12 +113,47 @@ class _NewEventDialogState extends State<NewEventDialog> {
                 labelText: 'Event Name',
               ),
             ),
+            DropdownButton<String>(
+              value: selectedScoringType,
+              onChanged: (String? newValue) {
+                setState(() {
+                  selectedScoringType = newValue;
+                });
+              },
+              items: <String>['Exam', 'Scoring', 'Other']
+                  .map<DropdownMenuItem<String>>((String value) {
+                return DropdownMenuItem<String>(
+                  value: value,
+                  child: Text(value),
+                );
+              }).toList(),
+            ),
             TextField(
               controller: eventTypeController,
               decoration: InputDecoration(
                 labelText: 'Event Type',
               ),
+              enabled: selectedScoringType == 'Other',
             ),
+            ElevatedButton(
+              child: Text('Select Start Date'),
+              onPressed: () async {
+                eventDateStart = await selectDate(context);
+                setState(() {});
+              },
+            ),
+            Text(eventDateStart != null
+                ? '${eventDateStart!.year.toString().padLeft(4, '0')}-${eventDateStart!.month.toString().padLeft(2, '0')}-${eventDateStart!.day.toString().padLeft(2, '0')} ${eventDateStart!.hour.toString().padLeft(2, '0')}:${eventDateStart!.minute.toString().padLeft(2, '0')}'
+                : ''),
+            ElevatedButton(
+              child: Text('Select End Date'),
+              onPressed: () async {
+                eventDateEnd = await selectDate(context);
+              },
+            ),
+            Text(eventDateEnd != null
+                ? '${eventDateEnd!.year.toString().padLeft(4, '0')}-${eventDateEnd!.month.toString().padLeft(2, '0')}-${eventDateEnd!.day.toString().padLeft(2, '0')} ${eventDateEnd!.hour.toString().padLeft(2, '0')}:${eventDateEnd!.minute.toString().padLeft(2, '0')}'
+                : ''),
           ],
         ),
       ),

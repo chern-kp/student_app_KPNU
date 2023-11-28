@@ -2,12 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:student_app/class/course_class.dart';
 
+import '../../class/event_class.dart';
 import 'calendar_dialog.dart';
 
 class MyCalendar extends StatefulWidget {
   final List<Course> courses;
+  final List<EventSchedule> events;
 
-  MyCalendar({required this.courses});
+  MyCalendar({required this.courses, required this.events});
 
   @override
   _MyCalendarState createState() => _MyCalendarState();
@@ -45,15 +47,31 @@ class _MyCalendarState extends State<MyCalendar> {
       }
     }
 
+    for (var event in widget.events) {
+      if (isSameDay(event.eventDateStart!, date) ||
+          isSameDay(event.eventDateEnd!, date)) {
+        switch (event.eventType) {
+          case 'Exam':
+            return Colors.red; // Highest priority, no need to check further
+          case 'Scoring':
+            if (highlightColor != Colors.red) {
+              highlightColor = Colors.yellow;
+            }
+            break;
+          default:
+            if (highlightColor != Colors.red &&
+                highlightColor != Colors.yellow) {
+              highlightColor = Colors.green;
+            }
+        }
+      }
+    }
+
     return highlightColor;
   }
 
   @override
   Widget build(BuildContext context) {
-    List<DateTime> highlightedDates = widget.courses
-        .map((course) => course.recordBookSelectedDateField!)
-        .toList();
-
     return TableCalendar(
       firstDay: DateTime.utc(2010, 10, 16),
       lastDay: DateTime.utc(2030, 3, 14),

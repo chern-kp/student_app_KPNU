@@ -17,13 +17,13 @@ class CoursesSchedulePage extends StatefulWidget {
 
 class _CoursesSchedulePageState extends State<CoursesSchedulePage> {
   final user = FirebaseAuth.instance.currentUser!;
-  late Future<String> selectedSemester =
+  late Future<String> selectedSemesterOfUser =
       DatabaseService.getStudentField(user.email, 'Current Semester');
   late Future<List<String>> semesterList =
       DatabaseService.getSemesterList(user.email);
 
   SortOption sortOption = SortOption.alphabeticalAsc;
-  String? selectedSemesterPage;
+  String? selectedSemester;
   // Building List View
   Future<List<Map<String, dynamic>>> coursesFuture = Future.value([]);
   List<bool> expandedState = [];
@@ -31,17 +31,17 @@ class _CoursesSchedulePageState extends State<CoursesSchedulePage> {
   @override
   void initState() {
     super.initState();
-    selectedSemester.then((value) {
+    selectedSemesterOfUser.then((value) {
       setState(() {
-        selectedSemesterPage = value;
-        coursesFuture = generateCourses(selectedSemesterPage!);
+        selectedSemester = value;
+        coursesFuture = generateCourses(selectedSemester!);
       });
     });
   }
 
   void updateSelectedSemester(String selectedItem) {
     setState(() {
-      selectedSemesterPage = selectedItem;
+      selectedSemester = selectedItem;
       coursesFuture = generateCourses(selectedItem);
       coursesFuture.then((courses) {
         setState(() {
@@ -60,7 +60,7 @@ class _CoursesSchedulePageState extends State<CoursesSchedulePage> {
       onChanged: (SortOption? newValue) {
         setState(() {
           sortOption = newValue!;
-          coursesFuture = generateCourses(selectedSemesterPage!);
+          coursesFuture = generateCourses(selectedSemester!);
           coursesFuture.then((courses) {
             setState(() {
               expandedState = courses
@@ -169,13 +169,13 @@ class _CoursesSchedulePageState extends State<CoursesSchedulePage> {
           context: context,
           builder: (BuildContext context) {
             return NewCourseDialog(
-              currentSemester: selectedSemesterPage,
+              currentSemester: selectedSemester,
             );
           },
         );
         if (result == true) {
           setState(() {
-            coursesFuture = generateCourses(selectedSemesterPage!);
+            coursesFuture = generateCourses(selectedSemester!);
           });
         }
       },
@@ -248,14 +248,14 @@ class _CoursesSchedulePageState extends State<CoursesSchedulePage> {
                                         isEditFilling: false,
                                         course: course,
                                         filledCourseSchedule: true,
-                                        currentSemester: selectedSemesterPage,
+                                        currentSemester: selectedSemester,
                                       );
                                     },
                                   );
                                   if (result == true) {
                                     setState(() {
-                                      coursesFuture = generateCourses(
-                                          selectedSemesterPage!);
+                                      coursesFuture =
+                                          generateCourses(selectedSemester!);
                                     });
                                   }
                                 },
@@ -267,7 +267,7 @@ class _CoursesSchedulePageState extends State<CoursesSchedulePage> {
                                       user.email!, course.nameField!);
                                   setState(() {
                                     coursesFuture =
-                                        generateCourses(selectedSemesterPage!);
+                                        generateCourses(selectedSemester!);
                                   });
                                 },
                               ),
@@ -322,13 +322,13 @@ class _CoursesSchedulePageState extends State<CoursesSchedulePage> {
                       course: course,
                       filledCourseSchedule: true,
                       filledNewRecordBook: course.isRecordBookFilled!,
-                      currentSemester: selectedSemesterPage,
+                      currentSemester: selectedSemester,
                     );
                   },
                 );
                 if (result == true) {
                   setState(() {
-                    coursesFuture = generateCourses(selectedSemesterPage!);
+                    coursesFuture = generateCourses(selectedSemester!);
                     coursesFuture.then((courses) {
                       setState(() {
                         expandedState = courses

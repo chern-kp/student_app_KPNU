@@ -243,8 +243,7 @@ class _NewCourseDialogState extends State<NewCourseDialog> {
             isEvent = newValue!;
           });
         },
-        controlAffinity: ListTileControlAffinity
-            .leading, //  places the control on the start of the tile
+        controlAffinity: ListTileControlAffinity.leading,
       ),
     ]);
   }
