@@ -1,3 +1,5 @@
+// ignore_for_file: prefer_const_constructors
+
 import 'package:flutter/material.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:student_app/class/course_class.dart';
@@ -21,53 +23,56 @@ class _MyCalendarState extends State<MyCalendar> {
   DateTime? _selectedDay;
 
   Color getHighlightColor(DateTime date) {
-    Color highlightColor = Colors.transparent;
+    Color highlightColor = getHighlightColorForCourses(date);
+    if (highlightColor == Colors.transparent) {
+      highlightColor = getHighlightColorForEvents(date);
+    }
+    return highlightColor;
+  }
 
+  Color getHighlightColorForCourses(DateTime date) {
     for (var course in widget.courses) {
       if (isSameDay(course.recordBookSelectedDateField!, date)) {
         switch (course.scoringTypeField) {
           case 'Exam':
-            return Colors.red; // Highest priority, no need to check further
+            return Colors.red;
           case 'Scoring':
-            if (highlightColor != Colors.red) {
-              highlightColor = Colors.yellow;
-            }
-            break;
+            return Colors.yellow;
           case 'Other':
-            if (highlightColor != Colors.red &&
-                highlightColor != Colors.yellow) {
-              highlightColor = Colors.green;
-            }
-            break;
+            return Colors.green;
           default:
-            if (highlightColor == Colors.transparent) {
-              highlightColor = Colors.blue;
-            }
+            return Colors.blue;
         }
       }
     }
+    return Colors.transparent;
+  }
 
+  Color getHighlightColorForEvents(DateTime date) {
     for (var event in widget.events) {
       if (isSameDay(event.eventDateStart!, date) ||
           isSameDay(event.eventDateEnd!, date)) {
         switch (event.eventType) {
           case 'Exam':
-            return Colors.red; // Highest priority, no need to check further
+            return Colors.red;
           case 'Scoring':
-            if (highlightColor != Colors.red) {
-              highlightColor = Colors.yellow;
-            }
-            break;
+            return Colors.yellow;
           default:
-            if (highlightColor != Colors.red &&
-                highlightColor != Colors.yellow) {
-              highlightColor = Colors.green;
-            }
+            return Colors.green;
         }
       }
     }
+    return Colors.transparent;
+  }
 
-    return highlightColor;
+  bool isBetweenEventDates(DateTime date) {
+    for (var event in widget.events) {
+      if (event.eventDateStart!.isBefore(date) &&
+          event.eventDateEnd!.isAfter(date)) {
+        return true;
+      }
+    }
+    return false;
   }
 
   @override
@@ -88,7 +93,11 @@ class _MyCalendarState extends State<MyCalendar> {
         showDialog(
           context: context,
           builder: (BuildContext context) {
-            return CalendarDialog(selectedDate: selectedDay);
+            return CalendarDialog(
+              selectedDate: selectedDay,
+              courses: widget.courses,
+              events: widget.events,
+            );
           },
         );
       },
@@ -101,6 +110,22 @@ class _MyCalendarState extends State<MyCalendar> {
         _focusedDay = focusedDay;
       },
       calendarBuilders: CalendarBuilders(
+        markerBuilder: (context, date, events) {
+          if (isBetweenEventDates(date)) {
+            return Positioned(
+              bottom: 1,
+              child: Container(
+                width: 5,
+                height: 5,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: Colors.red, // TODO between dates
+                ),
+              ),
+            );
+          }
+          return null;
+        },
         defaultBuilder: (context, date, events) {
           Color highlightColor = getHighlightColor(date);
 
