@@ -38,10 +38,8 @@ class _MyCalendarState extends State<MyCalendar> {
             return Colors.red;
           case 'Scoring':
             return Colors.yellow;
-          case 'Other':
-            return Colors.green;
           default:
-            return Colors.blue;
+            return Colors.green;
         }
       }
     }
@@ -65,14 +63,58 @@ class _MyCalendarState extends State<MyCalendar> {
     return Colors.transparent;
   }
 
-  bool isBetweenEventDates(DateTime date) {
+  List<EventSchedule> getEventsForDate(DateTime date) {
+    List<EventSchedule> eventsForDate = [];
     for (var event in widget.events) {
       if (event.eventDateStart!.isBefore(date) &&
           event.eventDateEnd!.isAfter(date)) {
-        return true;
+        eventsForDate.add(event);
       }
     }
-    return false;
+    return eventsForDate;
+  }
+
+  Widget buildDotsInBetween(BuildContext context, DateTime date, List events,
+      Function getEventsForDate) {
+    List<EventSchedule> eventsForDate = getEventsForDate(date);
+    List<Color> dotColors = [];
+    bool hasExam = false;
+    bool hasScoring = false;
+    bool hasOther = false;
+
+    for (var event in eventsForDate) {
+      if (event.eventType == 'Exam' && !hasExam) {
+        dotColors.add(Colors.red);
+        hasExam = true;
+      } else if (event.eventType == 'Scoring' && !hasScoring) {
+        dotColors.add(Colors.yellow);
+        hasScoring = true;
+      } else if (!hasOther) {
+        dotColors.add(Colors.green);
+        hasOther = true;
+      }
+
+      if (dotColors.length == 3) {
+        break;
+      }
+    }
+
+    return Positioned(
+      bottom: 1,
+      child: Row(
+        children: dotColors
+            .map((color) => Container(
+                  margin: EdgeInsets.symmetric(horizontal: 1),
+                  width: 5,
+                  height: 5,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: color,
+                  ),
+                ))
+            .toList(),
+      ),
+    );
   }
 
   @override
@@ -110,22 +152,8 @@ class _MyCalendarState extends State<MyCalendar> {
         _focusedDay = focusedDay;
       },
       calendarBuilders: CalendarBuilders(
-        markerBuilder: (context, date, events) {
-          if (isBetweenEventDates(date)) {
-            return Positioned(
-              bottom: 1,
-              child: Container(
-                width: 5,
-                height: 5,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: Colors.red, // TODO between dates
-                ),
-              ),
-            );
-          }
-          return null;
-        },
+        markerBuilder: (context, date, events) =>
+            buildDotsInBetween(context, date, events, getEventsForDate),
         defaultBuilder: (context, date, events) {
           Color highlightColor = getHighlightColor(date);
 
