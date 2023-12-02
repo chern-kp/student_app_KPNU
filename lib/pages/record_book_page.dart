@@ -272,6 +272,10 @@ class _RecordBookPageState extends State<RecordBookPage> {
         : course.scoringTypeField == 'Scoring'
             ? Colors.yellow
             : Colors.green;
+    return buildCourseCell(course, backgroundColor);
+  }
+
+  Widget buildCourseCell(Course course, Color backgroundColor) {
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: Container(
@@ -282,122 +286,129 @@ class _RecordBookPageState extends State<RecordBookPage> {
             children: [
               Center(child: Text(course.nameField!)),
               course.isRecordBookFilled ?? false
-                  ? Column(
-                      children: [
-                        Row(
-                          children: [
-                            Spacer(),
-                            Text(
-                              "Викладач",
-                              textAlign: TextAlign.end,
-                            ),
-                          ],
-                        ),
-                        Row(
-                          children: [
-                            Spacer(),
-                            Text(course.recordBookTeacherField ?? ''),
-                          ],
-                        ),
-                        SizedBox(
-                          height: 10,
-                        ),
-                        Row(
-                          children: [
-                            Text('Форма підсумкового контролю'),
-                            Spacer(),
-                            Text(
-                              course.scoringTypeField ?? "",
-                              textAlign: TextAlign.end,
-                            )
-                          ],
-                        ),
-                        Row(
-                          children: [
-                            Text('Оцінка'),
-                            Spacer(),
-                            Text(
-                              course.recordBookScoreField.toString(),
-                              textAlign: TextAlign.end,
-                            )
-                          ],
-                        ),
-                        Row(
-                          children: [
-                            Text('Дата'),
-                            Spacer(),
-                            Text(
-                              "${course.recordBookSelectedDateField?.year.toString().padLeft(4, '0')}-${course.recordBookSelectedDateField?.month.toString().padLeft(2, '0')}-${course.recordBookSelectedDateField?.day.toString().padLeft(2, '0')} ${course.recordBookSelectedDateField?.hour.toString().padLeft(2, '0')}:${course.recordBookSelectedDateField?.minute.toString().padLeft(2, '0')}",
-                              textAlign: TextAlign.end,
-                            )
-                          ],
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: [
-                            Expanded(
-                              child: Container(),
-                            ),
-                            IconButton(
-                              icon: Icon(Icons.edit),
-                              onPressed: () async {
-                                bool? result = await showDialog(
-                                  context: context,
-                                  builder: (BuildContext context) {
-                                    return NewCourseDialog(
-                                      isEdit: true,
-                                      course: course,
-                                      isRecordBook: true,
-                                      filledNewRecordBook: true,
-                                      currentSemester: selectedSemesterPage,
-                                    );
-                                  },
-                                );
-                                if (result == true) {
-                                  setState(() {
-                                    coursesFuture =
-                                        generateCourses(selectedSemesterPage!);
-                                  });
-                                }
-                              },
-                            ),
-                          ],
-                        )
-                      ],
-                    )
-                  : Container(
-                      padding: EdgeInsets.all(10),
-                      color: backgroundColor,
-                      child: ElevatedButton(
-                        onPressed: () async {
-                          bool? result = await showDialog(
-                            context: context,
-                            builder: (BuildContext context) {
-                              return NewCourseDialog(
-                                isEdit: true,
-                                isEditFilling: true,
-                                course: course,
-                                isRecordBook: true,
-                                filledNewRecordBook: true,
-                                filledCourseSchedule:
-                                    course.isScheduleFilled ?? false,
-                                currentSemester: selectedSemesterPage,
-                              );
-                            },
-                          );
-                          if (result == true) {
-                            setState(() {
-                              coursesFuture =
-                                  generateCourses(selectedSemesterPage!);
-                            });
-                          }
-                        },
-                        child: Text('Edit Scores'),
-                      ),
-                    ),
+                  ? buildFilledCourseDetails(course, backgroundColor)
+                  : buildEmptyCourseButton(course, backgroundColor),
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  Widget buildFilledCourseDetails(Course course, Color backgroundColor) {
+    return Column(
+      children: [
+        Row(
+          children: [
+            Spacer(),
+            Text(
+              "Викладач",
+              textAlign: TextAlign.end,
+            ),
+          ],
+        ),
+        Row(
+          children: [
+            Spacer(),
+            Text(course.recordBookTeacherField ?? ''),
+          ],
+        ),
+        SizedBox(
+          height: 10,
+        ),
+        Row(
+          children: [
+            Text('Форма підсумкового контролю'),
+            Spacer(),
+            Text(
+              course.scoringTypeField ?? "",
+              textAlign: TextAlign.end,
+            )
+          ],
+        ),
+        Row(
+          children: [
+            Text('Оцінка'),
+            Spacer(),
+            Text(
+              course.recordBookScoreField.toString(),
+              textAlign: TextAlign.end,
+            )
+          ],
+        ),
+        if (!course.recordBookSelectedDateField!.isAtSameMomentAs(
+            DateTime.fromMillisecondsSinceEpoch(978307200000, isUtc: true)))
+          Row(
+            children: [
+              Text('Дата'),
+              Spacer(),
+              Text(
+                "${course.recordBookSelectedDateField?.year.toString().padLeft(4, '0')}-${course.recordBookSelectedDateField?.month.toString().padLeft(2, '0')}-${course.recordBookSelectedDateField?.day.toString().padLeft(2, '0')} ${course.recordBookSelectedDateField?.hour.toString().padLeft(2, '0')}:${course.recordBookSelectedDateField?.minute.toString().padLeft(2, '0')}",
+                textAlign: TextAlign.end,
+              )
+            ],
+          ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            Expanded(
+              child: Container(),
+            ),
+            IconButton(
+              icon: Icon(Icons.edit),
+              onPressed: () async {
+                bool? result = await showDialog(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return NewCourseDialog(
+                      isEdit: true,
+                      course: course,
+                      isRecordBook: true,
+                      filledNewRecordBook: true,
+                      currentSemester: selectedSemesterPage,
+                    );
+                  },
+                );
+                if (result == true) {
+                  setState(() {
+                    coursesFuture = generateCourses(selectedSemesterPage!);
+                  });
+                }
+              },
+            ),
+          ],
+        )
+      ],
+    );
+  }
+
+  Widget buildEmptyCourseButton(Course course, Color backgroundColor) {
+    return Container(
+      padding: EdgeInsets.all(10),
+      color: backgroundColor,
+      child: ElevatedButton(
+        onPressed: () async {
+          bool? result = await showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return NewCourseDialog(
+                isEdit: true,
+                isEditFilling: true,
+                course: course,
+                isRecordBook: true,
+                filledNewRecordBook: true,
+                filledCourseSchedule: course.isScheduleFilled ?? false,
+                currentSemester: selectedSemesterPage,
+              );
+            },
+          );
+          if (result == true) {
+            setState(() {
+              coursesFuture = generateCourses(selectedSemesterPage!);
+            });
+          }
+        },
+        child: Text('Edit Scores'),
       ),
     );
   }

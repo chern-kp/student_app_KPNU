@@ -79,6 +79,8 @@ class _NewCourseDialogState extends State<NewCourseDialog> {
           widget.course!.recordBookTeacherField.toString();
       recordBookScoreFieldController.text =
           widget.course!.recordBookScoreField.toString();
+      selectedDate = widget.course!.recordBookSelectedDateField;
+      isEvent = widget.course!.isEvent ?? false;
     } else {
       scoringTypeFieldController.text = 'Exam';
     }
@@ -135,7 +137,13 @@ class _NewCourseDialogState extends State<NewCourseDialog> {
             recordBookScoreField:
                 int.tryParse(recordBookScoreFieldController.text) ?? 0,
             recordBookSelectedDateField: selectedDate,
-            isEvent: isEvent,
+            //If the date is default course always will save with isEvent = false.
+            isEvent: selectedDate != null &&
+                    !selectedDate!.isAtSameMomentAs(
+                        DateTime.fromMillisecondsSinceEpoch(978307200000,
+                            isUtc: true))
+                ? isEvent
+                : false,
           );
           if (widget.isEdit &&
               widget.course != null &&
@@ -222,27 +230,49 @@ class _NewCourseDialogState extends State<NewCourseDialog> {
           decoration: InputDecoration(
             labelText: 'Score',
           )),
-      ElevatedButton(
-        onPressed: () async {
-          DateTime? date = await selectDate(context);
-          setState(() {
-            selectedDate = date;
-          });
-        },
-        child: Text('Select date'),
+      Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          ElevatedButton(
+            onPressed: () async {
+              DateTime? date = await selectDate(context);
+              setState(() {
+                selectedDate = date;
+              });
+            },
+            child: Text('Select date'),
+          ),
+          IconButton(
+            icon: Icon(Icons.delete),
+            onPressed: () {
+              setState(() {
+                selectedDate = DateTime.fromMillisecondsSinceEpoch(978307200000,
+                    isUtc: true);
+              });
+            },
+          ),
+        ],
       ),
       //display date in "YYYY-MM-DD HH:MM" format
-      Text(selectedDate != null
+      Text(selectedDate != null &&
+              !selectedDate!.isAtSameMomentAs(
+                  DateTime.fromMillisecondsSinceEpoch(978307200000,
+                      isUtc: true))
           ? '${selectedDate!.year.toString().padLeft(4, '0')}-${selectedDate!.month.toString().padLeft(2, '0')}-${selectedDate!.day.toString().padLeft(2, '0')} ${selectedDate!.hour.toString().padLeft(2, '0')}:${selectedDate!.minute.toString().padLeft(2, '0')}'
           : ''),
       CheckboxListTile(
         title: Text("Is Event"),
         value: isEvent,
-        onChanged: (newValue) {
-          setState(() {
-            isEvent = newValue!;
-          });
-        },
+        onChanged: selectedDate != null &&
+                !selectedDate!.isAtSameMomentAs(
+                    DateTime.fromMillisecondsSinceEpoch(978307200000,
+                        isUtc: true))
+            ? (newValue) {
+                setState(() {
+                  isEvent = newValue!;
+                });
+              }
+            : null,
         controlAffinity: ListTileControlAffinity.leading,
       ),
     ]);
