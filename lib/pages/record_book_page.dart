@@ -110,6 +110,18 @@ class _RecordBookPageState extends State<RecordBookPage> {
         return aValue.compareTo(bValue);
       });
     }
+
+    // Sort by isRecordBookFilled
+    courses.sort((a, b) {
+      if (a.isRecordBookFilled == b.isRecordBookFilled) {
+        return 0;
+      } else if (a.isRecordBookFilled == true) {
+        return -1;
+      } else {
+        return 1;
+      }
+    });
+
     return courses;
   }
 
@@ -220,30 +232,52 @@ class _RecordBookPageState extends State<RecordBookPage> {
         } else if (snapshot.hasError) {
           return Text('Error: ${snapshot.error}');
         } else {
-          List<Map<String, dynamic>> examCourses = [];
-          List<Map<String, dynamic>> scoringCourses = [];
-          List<Map<String, dynamic>> otherCourses = [];
+          List<Map<String, dynamic>> examCoursesFilled = [];
+          List<Map<String, dynamic>> scoringCoursesFilled = [];
+          List<Map<String, dynamic>> otherCoursesFilled = [];
+          List<Map<String, dynamic>> examCoursesNotFilled = [];
+          List<Map<String, dynamic>> scoringCoursesNotFilled = [];
+          List<Map<String, dynamic>> otherCoursesNotFilled = [];
 
           for (var courseMap in snapshot.data!) {
             Course course = courseMap['course'];
-            if (course.scoringTypeField == 'Exam') {
-              examCourses.add(courseMap);
-            } else if (course.scoringTypeField == 'Scoring') {
-              scoringCourses.add(courseMap);
+            if (course.isRecordBookFilled!) {
+              if (course.scoringTypeField == 'Exam') {
+                examCoursesFilled.add(courseMap);
+              } else if (course.scoringTypeField == 'Scoring') {
+                scoringCoursesFilled.add(courseMap);
+              } else {
+                otherCoursesFilled.add(courseMap);
+              }
             } else {
-              otherCourses.add(courseMap);
+              if (course.scoringTypeField == 'Exam') {
+                examCoursesNotFilled.add(courseMap);
+              } else if (course.scoringTypeField == 'Scoring') {
+                scoringCoursesNotFilled.add(courseMap);
+              } else {
+                otherCoursesNotFilled.add(courseMap);
+              }
             }
           }
 
           return Expanded(
             child: ListView(
               children: [
-                if (isGroupedByScoringType)
-                  ..._buildCategory('Exam', examCourses),
-                if (isGroupedByScoringType)
-                  ..._buildCategory('Scoring', scoringCourses),
-                if (isGroupedByScoringType)
-                  ..._buildCategory('Others', otherCourses),
+                if (isGroupedByScoringType && examCoursesFilled.isNotEmpty)
+                  ..._buildCategory('Exam', examCoursesFilled),
+                if (isGroupedByScoringType && scoringCoursesFilled.isNotEmpty)
+                  ..._buildCategory('Scoring', scoringCoursesFilled),
+                if (isGroupedByScoringType && otherCoursesFilled.isNotEmpty)
+                  ..._buildCategory('Others', otherCoursesFilled),
+                if (isGroupedByScoringType && examCoursesNotFilled.isNotEmpty)
+                  ..._buildCategory('Exam', examCoursesNotFilled),
+                if (isGroupedByScoringType &&
+                    scoringCoursesNotFilled.isNotEmpty)
+                  ..._buildCategory(
+                      'Scoring (Not Filled)', scoringCoursesNotFilled),
+                if (isGroupedByScoringType && otherCoursesNotFilled.isNotEmpty)
+                  ..._buildCategory(
+                      'Others (Not Filled)', otherCoursesNotFilled),
                 if (!isGroupedByScoringType)
                   ...snapshot.data!
                       .map((courseMap) => _recordBookCell(courseMap['course']))
@@ -272,10 +306,10 @@ class _RecordBookPageState extends State<RecordBookPage> {
         : course.scoringTypeField == 'Scoring'
             ? Colors.yellow
             : Colors.green;
-    return buildCourseCell(course, backgroundColor);
+    return _buildCourseCell(course, backgroundColor);
   }
 
-  Widget buildCourseCell(Course course, Color backgroundColor) {
+  Widget _buildCourseCell(Course course, Color backgroundColor) {
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: Container(
@@ -286,8 +320,8 @@ class _RecordBookPageState extends State<RecordBookPage> {
             children: [
               Center(child: Text(course.nameField!)),
               course.isRecordBookFilled ?? false
-                  ? buildFilledCourseDetails(course, backgroundColor)
-                  : buildEmptyCourseButton(course, backgroundColor),
+                  ? _buildFilledCourseDetails(course, backgroundColor)
+                  : _buildEmptyCourseButton(course, backgroundColor),
             ],
           ),
         ),
@@ -295,7 +329,7 @@ class _RecordBookPageState extends State<RecordBookPage> {
     );
   }
 
-  Widget buildFilledCourseDetails(Course course, Color backgroundColor) {
+  Widget _buildFilledCourseDetails(Course course, Color backgroundColor) {
     return Column(
       children: [
         Row(
@@ -382,7 +416,7 @@ class _RecordBookPageState extends State<RecordBookPage> {
     );
   }
 
-  Widget buildEmptyCourseButton(Course course, Color backgroundColor) {
+  Widget _buildEmptyCourseButton(Course course, Color backgroundColor) {
     return Container(
       padding: EdgeInsets.all(10),
       color: backgroundColor,
