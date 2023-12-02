@@ -178,6 +178,23 @@ class DatabaseService {
     return docRef.set(event.toJsonEvent());
   }
 
+  static Future<void> deleteEvent(var user, String eventName) async {
+    try {
+      var currentSemester = await getStudentField(user, 'Current Semester');
+      await FirebaseFirestore.instance
+          .collection("student")
+          .doc(user)
+          .collection("semester")
+          .doc(currentSemester)
+          .collection("Events")
+          .doc(eventName) // Use event name as document ID
+          .delete();
+    } catch (e) {
+      print(e.toString());
+      throw e;
+    }
+  }
+
   static Future<List<EventSchedule>> getAllEvents(
       String userEmail, String semester) async {
     QuerySnapshot querySnapshot = await FirebaseFirestore.instance

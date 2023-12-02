@@ -1,4 +1,4 @@
-// ignore_for_file: prefer_const_constructors
+// ignore_for_file: prefer_const_constructors, prefer_const_constructors_in_immutables, use_key_in_widget_constructors, library_private_types_in_public_api
 
 import 'package:flutter/material.dart';
 import 'package:table_calendar/table_calendar.dart';
@@ -54,7 +54,7 @@ class _MyCalendarState extends State<MyCalendar> {
           case 'Exam':
             return Colors.red;
           case 'Scoring':
-            return Colors.yellow;
+            return Colors.yellow[700]!;
           default:
             return Colors.green;
         }
@@ -67,7 +67,7 @@ class _MyCalendarState extends State<MyCalendar> {
     List<EventSchedule> eventsForDate = [];
     for (var event in widget.events) {
       if (event.eventDateStart!.isBefore(date) &&
-          event.eventDateEnd!.isAfter(date)) {
+          event.eventDateEnd!.isAfter(date.add(Duration(days: 1)))) {
         eventsForDate.add(event);
       }
     }
@@ -77,28 +77,19 @@ class _MyCalendarState extends State<MyCalendar> {
   Widget buildDotsInBetween(BuildContext context, DateTime date, List events,
       Function getEventsForDate) {
     List<EventSchedule> eventsForDate = getEventsForDate(date);
+    Set<String> eventTypes =
+        eventsForDate.map((e) => e.eventType).whereType<String>().toSet();
     List<Color> dotColors = [];
-    bool hasExam = false;
-    bool hasScoring = false;
-    bool hasOther = false;
-
-    for (var event in eventsForDate) {
-      if (event.eventType == 'Exam' && !hasExam) {
-        dotColors.add(Colors.red);
-        hasExam = true;
-      } else if (event.eventType == 'Scoring' && !hasScoring) {
-        dotColors.add(Colors.yellow);
-        hasScoring = true;
-      } else if (!hasOther) {
-        dotColors.add(Colors.green);
-        hasOther = true;
-      }
-
-      if (dotColors.length == 3) {
-        break;
-      }
+    if (eventTypes.contains('Exam')) {
+      dotColors.add(Colors.red);
     }
-
+    if (eventTypes.contains('Scoring')) {
+      dotColors.add(Colors.yellow[700]!);
+    }
+    if (eventTypes.length > dotColors.length) {
+      dotColors.add(Colors.green);
+    }
+    //drawing the dot
     return Positioned(
       bottom: 1,
       child: Row(
@@ -113,6 +104,39 @@ class _MyCalendarState extends State<MyCalendar> {
                   ),
                 ))
             .toList(),
+      ),
+    );
+  }
+
+  Widget? defaultBuilderFunction(
+      BuildContext context, DateTime start, DateTime end) {
+    Color highlightColor = getHighlightColor(start);
+
+    if (highlightColor != Colors.transparent) {
+      return Center(
+        child: Container(
+          width: 30,
+          height: 30,
+          decoration: BoxDecoration(
+            color: highlightColor,
+            shape: BoxShape.circle,
+          ),
+          alignment: Alignment.center,
+          child: Text(
+            '${start.day}',
+            style: TextStyle().copyWith(color: Colors.white),
+          ),
+        ),
+      );
+    }
+    return Center(
+      child: Container(
+        width: 30,
+        height: 30,
+        alignment: Alignment.center,
+        child: Text(
+          '${start.day}',
+        ),
       ),
     );
   }
@@ -154,37 +178,7 @@ class _MyCalendarState extends State<MyCalendar> {
       calendarBuilders: CalendarBuilders(
         markerBuilder: (context, date, events) =>
             buildDotsInBetween(context, date, events, getEventsForDate),
-        defaultBuilder: (context, date, events) {
-          Color highlightColor = getHighlightColor(date);
-
-          if (highlightColor != Colors.transparent) {
-            return Center(
-              child: Container(
-                width: 30,
-                height: 30,
-                decoration: BoxDecoration(
-                  color: highlightColor,
-                  shape: BoxShape.circle,
-                ),
-                alignment: Alignment.center,
-                child: Text(
-                  '${date.day}',
-                  style: TextStyle().copyWith(color: Colors.white),
-                ),
-              ),
-            );
-          }
-          return Center(
-            child: Container(
-              width: 30,
-              height: 30,
-              alignment: Alignment.center,
-              child: Text(
-                '${date.day}',
-              ),
-            ),
-          );
-        },
+        defaultBuilder: defaultBuilderFunction,
       ),
     );
   }

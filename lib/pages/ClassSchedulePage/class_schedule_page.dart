@@ -168,33 +168,73 @@ class _ClassSchedulePageState extends State<ClassSchedulePage> {
       itemCount: combinedList.length,
       itemBuilder: (context, index) {
         var item = combinedList[index];
-        if (item is Course) {
-          return ListTile(
-            title: Text(item.nameField!),
-            subtitle: Text('Record Book Selected Date: ' +
-                DateFormat.yMMMd().format(item.recordBookSelectedDateField!) +
-                '\nScoring Type: ' +
-                item.scoringTypeField!),
-          );
-        } else if (item is EventSchedule) {
-          String subtitle = 'Event Type: ' + item.eventType!;
-          if (!isDefaultDate(item.eventDateStart)) {
-            subtitle += '\nStart Date: ' +
-                DateFormat.yMMMd().format(item.eventDateStart!);
-          }
-          if (!isDefaultDate(item.eventDateEnd)) {
-            subtitle +=
-                '\nEnd Date: ' + DateFormat.yMMMd().format(item.eventDateEnd!);
-          }
-          return ListTile(
-            title: Text(item.eventName!),
-            subtitle: Text(subtitle),
-          );
-        } else {
-          throw Exception('Unknown type in combinedList');
-        }
+        return _buildListItem(item);
       },
     );
+  }
+
+  Widget _buildListItem(dynamic item) {
+    if (item is Course) {
+      return ListTile(
+        title: Text(item.nameField!),
+        subtitle: Text('Record Book Selected Date: ' +
+            DateFormat.yMMMd().format(item.recordBookSelectedDateField!) +
+            '\nScoring Type: ' +
+            item.scoringTypeField!),
+        trailing: IconButton(
+          icon: Icon(Icons.delete),
+          onPressed: () async {
+            await DatabaseService.deleteCourse(user!.email!, item.nameField!);
+            updateState();
+          },
+        ),
+      );
+    } else if (item is EventSchedule) {
+      String subtitle = 'Event Type: ' + item.eventType!;
+      if (!isDefaultDate(item.eventDateStart)) {
+        subtitle +=
+            '\nStart Date: ' + DateFormat.yMMMd().format(item.eventDateStart!);
+      }
+      if (!isDefaultDate(item.eventDateEnd)) {
+        subtitle +=
+            '\nEnd Date: ' + DateFormat.yMMMd().format(item.eventDateEnd!);
+      }
+      return ListTile(
+        title: Text(item.eventName!),
+        subtitle: Text(subtitle),
+        trailing: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            IconButton(
+              icon: Icon(Icons.edit),
+              onPressed: () {
+                showDialog(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return NewEventDialog(
+                      isEdit: true,
+                      event: item,
+                      selectedSemester: selectedSemester,
+                      onUpdate: updateState,
+                    );
+                  },
+                );
+              },
+            ),
+            IconButton(
+              icon: Icon(Icons.delete),
+              onPressed: () async {
+                await DatabaseService.deleteEvent(
+                    user!.email!, item.eventName!);
+                updateState();
+              },
+            ),
+          ],
+        ),
+      );
+    } else {
+      throw Exception('Unknown type in combinedList');
+    }
   }
 
   @override
