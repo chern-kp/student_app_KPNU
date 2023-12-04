@@ -199,6 +199,7 @@ class _ClassSchedulePageState extends State<ClassSchedulePage> {
         subtitle +=
             '\nEnd Date: ' + DateFormat.yMMMd().format(item.eventDateEnd!);
       }
+
       return ListTile(
         title: Text(item.eventName!),
         subtitle: Text(subtitle),
