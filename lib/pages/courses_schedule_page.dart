@@ -290,6 +290,8 @@ class _CoursesSchedulePageState extends State<CoursesSchedulePage> {
     );
   }
 
+  //TODO Дати!
+
   //UI of items in the list
   Widget _courseDetails(Course course) {
     Widget courseName = Row(

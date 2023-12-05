@@ -200,6 +200,8 @@ class _ClassSchedulePageState extends State<ClassSchedulePage> {
             '\nEnd Date: ' + DateFormat.yMMMd().format(item.eventDateEnd!);
       }
 
+      //TODO ДАТИ СЕМЕСТРІВ
+
       return ListTile(
         title: Text(item.eventName!),
         subtitle: Text(subtitle),
