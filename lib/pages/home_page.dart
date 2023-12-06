@@ -9,6 +9,7 @@ import 'record_book_page.dart';
 
 import '../class/database_service.dart';
 import '../components/my_dropdownmenu.dart';
+import '../components/my_button.dart';
 
 class HomePage extends StatelessWidget {
   HomePage({super.key});
@@ -59,7 +60,7 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey[300],
+      backgroundColor: Colors.white,
       appBar: AppBar(
         actions: [IconButton(onPressed: signUserOut, icon: Icon(Icons.logout))],
       ),
@@ -74,22 +75,27 @@ class HomePage extends StatelessWidget {
                 chosenValueInDatabase: selectedSemester,
                 chosenField: 'Current Semester'),
             SizedBox(height: 25),
-            ElevatedButton(
-              onPressed: () => tempPersonalInfoPage(context),
-              child: Text('tempPersonalInfoPage'),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: MyButton(
+                onTap: () => coursesSchedulePageButton(context),
+                text: 'Індивідуальний Навчальний План',
+              ),
             ),
-            ElevatedButton(
-              onPressed: () => coursesSchedulePageButton(context),
-              child: Text('coursesSchedulePage'),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: MyButton(
+                onTap: () => recordBookPageButton(context),
+                text: 'Залікова Книжка Студента',
+              ),
             ),
-            ElevatedButton(
-              onPressed: () => recordBookPageButton(context),
-              child: Text('recordBookPage'),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: MyButton(
+                onTap: () => classSchedulePageButton(context),
+                text: 'Графік Освітнього Процесу',
+              ),
             ),
-            ElevatedButton(
-              onPressed: () => classSchedulePageButton(context),
-              child: Text('classSchedulePage'),
-            )
           ],
         ),
       ),

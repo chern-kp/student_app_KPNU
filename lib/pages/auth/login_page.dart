@@ -34,7 +34,7 @@ class _LoginPageState extends State<LoginPage> {
       // Show a SnackBar with the error message
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text("Error! Wrong e-mail or password!"),
+          content: Text("Помилка! Неправельний логін або пароль!"),
         ),
       );
     }
@@ -43,9 +43,7 @@ class _LoginPageState extends State<LoginPage> {
   void checkDoesStudentDocumentExists() async {
     var user = emailController.text;
     if (await DatabaseService.checkStudentDocument(user)) {
-      print("Document exists!");
     } else {
-      print("Document does not exist, creating...");
       await DatabaseService.createStudentDocument(
           user); //in database_service class
     }
@@ -60,7 +58,10 @@ class _LoginPageState extends State<LoginPage> {
             child: SingleChildScrollView(
               child: Column(
                 children: [
-                  SizedBox(height: 50),
+                  Text("Вхід",
+                      style:
+                          TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
+                  SizedBox(height: 20),
                   MyTextField(
                     controller: emailController,
                     hintText: "E-mail",
@@ -69,16 +70,16 @@ class _LoginPageState extends State<LoginPage> {
                   SizedBox(height: 50),
                   MyTextField(
                       controller: passwordController,
-                      hintText: "Password",
+                      hintText: "Пароль",
                       obscureText: true),
                   SizedBox(height: 25),
                   //sign in button
-                  MyButton(onTap: () => signUserIn(context), text: 'Login'),
+                  MyButton(onTap: () => signUserIn(context), text: 'Ввійти'),
                   SizedBox(height: 25),
                   GestureDetector(
                     onTap: widget.onTap,
                     child: Text(
-                      'Register New Account',
+                      'Створити новий аккаунт',
                       style: TextStyle(color: Colors.blue[800], fontSize: 16),
                     ),
                   ),

@@ -34,22 +34,16 @@ class _RegisterPageState extends State<RegisterPage> {
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text("Passwords do not match!"),
+            content: Text("Паролі не збігаються!"),
           ),
         );
       }
-    } on FirebaseAuthException catch (e) {
-      print(e.code);
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text("Registration error! Write valid e-mail and password!"),
-        ),
-      );
     } catch (error) {
       print(error);
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text("Registration error! Write valid e-mail and password!"),
+          content:
+              Text("Помилка реєстрації! Введіть коректні e-mail та пароль!"),
         ),
       );
     }
@@ -64,7 +58,10 @@ class _RegisterPageState extends State<RegisterPage> {
             child: SingleChildScrollView(
               child: Column(
                 children: [
-                  SizedBox(height: 50),
+                  Text("Реєстрація",
+                      style:
+                          TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
+                  SizedBox(height: 20),
                   MyTextField(
                     controller: emailController,
                     hintText: "E-mail",
@@ -73,22 +70,25 @@ class _RegisterPageState extends State<RegisterPage> {
                   SizedBox(height: 25),
                   MyTextField(
                       controller: passwordController,
-                      hintText: "Password",
+                      hintText: "Пароль",
                       obscureText: true),
                   SizedBox(height: 25),
                   //confirm password
                   MyTextField(
                       controller: confirmPasswordController,
-                      hintText: "Confirm Password",
+                      hintText: "Підтвердіть пароль",
                       obscureText: true),
                   SizedBox(height: 25),
                   //register button
-                  MyButton(onTap: () => signUserUp(context), text: 'Sign Up'),
+                  MyButton(
+                    onTap: () => signUserUp(context),
+                    text: 'Зареєструватись',
+                  ),
                   SizedBox(height: 25),
                   GestureDetector(
                     onTap: widget.onTap,
                     child: Text(
-                      'Log In Now',
+                      'Ввійти',
                       style: TextStyle(color: Colors.blue[800], fontSize: 16),
                     ),
                   ),
