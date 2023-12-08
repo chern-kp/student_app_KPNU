@@ -34,9 +34,9 @@ class _MyCalendarState extends State<MyCalendar> {
     for (var course in widget.courses) {
       if (isSameDay(course.recordBookSelectedDateField!, date)) {
         switch (course.scoringTypeField) {
-          case 'Exam':
+          case 'Екзамен':
             return Colors.red;
-          case 'Scoring':
+          case 'Залік':
             return Colors.yellow;
           default:
             return Colors.green;
@@ -51,9 +51,9 @@ class _MyCalendarState extends State<MyCalendar> {
       if (isSameDay(event.eventDateStart!, date) ||
           isSameDay(event.eventDateEnd!, date)) {
         switch (event.eventType) {
-          case 'Exam':
+          case 'Екзамен':
             return Colors.red;
-          case 'Scoring':
+          case 'Залік':
             return Colors.yellow[700]!;
           default:
             return Colors.green;
@@ -80,10 +80,10 @@ class _MyCalendarState extends State<MyCalendar> {
     Set<String> eventTypes =
         eventsForDate.map((e) => e.eventType).whereType<String>().toSet();
     List<Color> dotColors = [];
-    if (eventTypes.contains('Exam')) {
+    if (eventTypes.contains('Екзамен')) {
       dotColors.add(Colors.red);
     }
-    if (eventTypes.contains('Scoring')) {
+    if (eventTypes.contains('Залік')) {
       dotColors.add(Colors.yellow[700]!);
     }
     if (eventTypes.length > dotColors.length) {
