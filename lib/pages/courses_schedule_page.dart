@@ -3,7 +3,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:student_app/class/database_service.dart';
-import 'package:student_app/components/my_dropdownmenu_semeter.dart';
+import 'package:student_app/components/dropdownmenu_choose_semester.dart';
 
 import '../class/course_class.dart';
 import 'new_course_dialog.dart';
@@ -290,8 +290,6 @@ class _CoursesSchedulePageState extends State<CoursesSchedulePage> {
     );
   }
 
-  //TODO Дати!
-
   //UI of items in the list
   Widget _courseDetails(Course course) {
     Widget courseName = Row(
@@ -429,7 +427,7 @@ class _CoursesSchedulePageState extends State<CoursesSchedulePage> {
         child: Center(
           child: Column(
             children: [
-              MyDropdownMenuSemester(
+              DropdownMenuChooseSemester(
                   onSelectedItemChanged: updateSelectedSemester),
               SizedBox(height: 25),
               _addNewCourseButton(context),

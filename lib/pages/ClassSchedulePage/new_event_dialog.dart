@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:student_app/class/database_service.dart';
 import 'package:student_app/class/event_class.dart';
 import '../../components/my_datepicker.dart';
-import '../../components/my_dropdownmenu_semeter.dart';
+import '../../components/dropdownmenu_choose_semester.dart';
 
 class NewEventDialog extends StatefulWidget {
   NewEventDialog({
@@ -104,7 +104,7 @@ class _NewEventDialogState extends State<NewEventDialog> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
-            MyDropdownMenuSemester(
+            DropdownMenuChooseSemester(
               initialSemester: selectedSemesterPage,
               onSelectedItemChanged: (selectedItem) {
                 setState(() {

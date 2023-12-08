@@ -74,7 +74,7 @@ class _LoginPageState extends State<LoginPage> {
                       obscureText: true),
                   SizedBox(height: 25),
                   //sign in button
-                  MyButton(onTap: () => signUserIn(context), text: 'Ввійти'),
+                  MyButton(onTap: () => signUserIn(context), text: 'Увійти'),
                   SizedBox(height: 25),
                   GestureDetector(
                     onTap: widget.onTap,

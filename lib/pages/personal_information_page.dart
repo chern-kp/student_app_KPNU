@@ -4,7 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:student_app/components/my_button.dart';
-import 'package:student_app/components/my_dropdownmenu.dart';
+import 'package:student_app/components/dropdownmenu_user_semester.dart';
 import 'package:student_app/components/my_texfield.dart';
 import 'package:student_app/class/database_service.dart';
 
@@ -60,7 +60,7 @@ class PersonalInformationPage extends StatelessWidget {
             MyTextField(controller: groupController),
             MyButton(onTap: sendInformation, text: 'Send information'),
             SizedBox(height: 25),
-            MyDropdownMenu(
+            DropdownMenuUserSemester(
               listOfData: facultyList,
               chosenValueInDatabase: selectedFaculty,
               chosenField: 'Faculty',

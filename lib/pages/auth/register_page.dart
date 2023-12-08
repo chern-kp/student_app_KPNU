@@ -88,7 +88,7 @@ class _RegisterPageState extends State<RegisterPage> {
                   GestureDetector(
                     onTap: widget.onTap,
                     child: Text(
-                      'Ввійти',
+                      'Увійти',
                       style: TextStyle(color: Colors.blue[800], fontSize: 16),
                     ),
                   ),

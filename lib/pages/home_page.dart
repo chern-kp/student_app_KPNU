@@ -8,7 +8,7 @@ import 'personal_information_page.dart';
 import 'record_book_page.dart';
 
 import '../class/database_service.dart';
-import '../components/my_dropdownmenu.dart';
+import '../components/dropdownmenu_user_semester.dart';
 import '../components/my_button.dart';
 
 class HomePage extends StatelessWidget {
@@ -62,15 +62,21 @@ class HomePage extends StatelessWidget {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
+        backgroundColor: Color(0xFFbc653f),
         actions: [IconButton(onPressed: signUserOut, icon: Icon(Icons.logout))],
       ),
       body: Center(
         child: Column(
           children: [
-            Text(user.email!),
+            Column(
+              children: [
+                Text("Ви ввійшли як:"),
+                Text(user.email!),
+              ],
+            ),
             SizedBox(height: 25),
             Text('Choose the current semester:'),
-            MyDropdownMenu(
+            DropdownMenuUserSemester(
                 listOfData: facultyList,
                 chosenValueInDatabase: selectedSemester,
                 chosenField: 'Current Semester'),

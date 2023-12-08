@@ -6,7 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:student_app/class/database_service.dart';
 import '../class/course_class.dart';
 import '../components/my_datepicker.dart';
-import '../components/my_dropdownmenu_semeter.dart';
+import '../components/dropdownmenu_choose_semester.dart';
 
 class NewCourseDialog extends StatefulWidget {
   NewCourseDialog({
@@ -289,7 +289,7 @@ class _NewCourseDialogState extends State<NewCourseDialog> {
             Text('Content of the dialog'),
             Visibility(
               visible: !widget.isEdit,
-              child: MyDropdownMenuSemester(
+              child: DropdownMenuChooseSemester(
                 initialSemester: widget.currentSemester,
                 onSelectedItemChanged: (selectedItem) {
                   setState(() {

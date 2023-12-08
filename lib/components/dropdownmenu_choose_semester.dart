@@ -5,22 +5,25 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:student_app/class/database_service.dart';
+import 'dropdownmenu_design.dart';
 
-class MyDropdownMenuSemester extends StatefulWidget {
+class DropdownMenuChooseSemester extends StatefulWidget {
   final Function(String) onSelectedItemChanged;
   final String? initialSemester;
 
-  MyDropdownMenuSemester({
+  DropdownMenuChooseSemester({
     Key? key,
     required this.onSelectedItemChanged,
     this.initialSemester,
   }) : super(key: key);
 
   @override
-  State<MyDropdownMenuSemester> createState() => _MyDropdownMenuSemesterState();
+  State<DropdownMenuChooseSemester> createState() =>
+      _DropdownMenuChooseSemesterState();
 }
 
-class _MyDropdownMenuSemesterState extends State<MyDropdownMenuSemester> {
+class _DropdownMenuChooseSemesterState
+    extends State<DropdownMenuChooseSemester> {
   final user = FirebaseAuth.instance.currentUser!;
   late Future<List<String>> semesterList =
       DatabaseService.getSemesterList(user.email);
@@ -34,42 +37,35 @@ class _MyDropdownMenuSemesterState extends State<MyDropdownMenuSemester> {
       future: semesterList,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return CircularProgressIndicator();
+          return Center(child: CircularProgressIndicator());
         } else if (snapshot.hasError) {
-          return Text('Error: ${snapshot.error}');
+          return Center(child: Text('Error: ${snapshot.error}'));
         } else if (snapshot.hasData) {
-          List<String>? dataList = snapshot.data;
+          List<String>? dataList = snapshot.data as List<String>?;
           return FutureBuilder<String?>(
             future: currentSemester,
             builder: (BuildContext context, AsyncSnapshot<String?> snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
-                return CircularProgressIndicator();
+                return Center(child: CircularProgressIndicator());
               } else if (snapshot.hasError) {
-                return Text('Error: ${snapshot.error}');
+                return Center(child: Text('Error: ${snapshot.error}'));
               } else {
-                return DropdownButton(
-                  items: dataList?.map((String item) {
-                    return DropdownMenuItem(
-                      value: item,
-                      child: Text(item.toString()),
-                    );
-                  }).toList(),
+                return CustomDropdown(
+                  items: dataList!,
+                  selectedItem: snapshot.data,
                   onChanged: (selectedItem) {
                     setState(() {
                       currentSemester = Future.value(selectedItem);
                     });
                     widget.onSelectedItemChanged(selectedItem!);
                   },
-                  value: snapshot.data == "" ? null : snapshot.data,
-                  hint: Text(snapshot.data == ""
-                      ? "Choose the faculty"
-                      : snapshot.data!),
+                  hintText: "Choose the faculty",
                 );
               }
             },
           );
         }
-        return CircularProgressIndicator();
+        return Center(child: CircularProgressIndicator());
       },
     );
   }

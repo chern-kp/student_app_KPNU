@@ -6,7 +6,7 @@ import 'package:student_app/pages/new_course_dialog.dart';
 
 import '../class/course_class.dart';
 import '../class/database_service.dart';
-import '../components/my_dropdownmenu_semeter.dart';
+import '../components/dropdownmenu_choose_semester.dart';
 
 class RecordBookPage extends StatefulWidget {
   RecordBookPage({Key? key}) : super(key: key);
@@ -457,7 +457,7 @@ class _RecordBookPageState extends State<RecordBookPage> {
       body: Column(
         children: [
           Center(
-              child: MyDropdownMenuSemester(
+              child: DropdownMenuChooseSemester(
                   onSelectedItemChanged: updateSelectedSemester)),
           _addScoresButton(),
           _sortDropDownMenu(),

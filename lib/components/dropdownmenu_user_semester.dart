@@ -3,24 +3,26 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:student_app/class/database_service.dart';
+import 'package:student_app/components/dropdownmenu_design.dart';
 
-class MyDropdownMenu extends StatefulWidget {
+class DropdownMenuUserSemester extends StatefulWidget {
   final Future<List<String>> listOfData;
   late Future<String>
       chosenValueInDatabase; //i need to pass late Future<String> selectedFaculty
   final String? chosenField;
 
-  MyDropdownMenu(
+  DropdownMenuUserSemester(
       {super.key,
       required this.listOfData,
       required this.chosenValueInDatabase,
       required this.chosenField});
 
   @override
-  State<MyDropdownMenu> createState() => _MyDropdownMenuState();
+  State<DropdownMenuUserSemester> createState() =>
+      _DropdownMenuUserSemesterState();
 }
 
-class _MyDropdownMenuState extends State<MyDropdownMenu> {
+class _DropdownMenuUserSemesterState extends State<DropdownMenuUserSemester> {
   final user = FirebaseAuth.instance
       .currentUser!; //user here is the instance of class User from firebase auth package. To get the email address itself we use "user.email".
 
@@ -49,13 +51,9 @@ class _MyDropdownMenuState extends State<MyDropdownMenu> {
               } else if (snapshot.hasError) {
                 return Text('Error: ${snapshot.error}');
               } else {
-                return DropdownButton(
-                  items: dataList?.map((String item) {
-                    return DropdownMenuItem(
-                      value: item,
-                      child: Text(item.toString()),
-                    );
-                  }).toList(),
+                return CustomDropdown(
+                  items: dataList!,
+                  selectedItem: snapshot.data == "" ? null : snapshot.data,
                   onChanged: (selectedItem) {
                     DatabaseService.setStudentFields(
                         user.email, selectedItem!, widget.chosenField!);
@@ -63,9 +61,7 @@ class _MyDropdownMenuState extends State<MyDropdownMenu> {
                       widget.chosenValueInDatabase = Future.value(selectedItem);
                     });
                   },
-                  value: snapshot.data == "" ? null : snapshot.data,
-                  //hint if
-                  hint: Text(widget.chosenField == 'Faculty'
+                  hintText: widget.chosenField == 'Faculty'
                       ? (snapshot.data == ""
                           ? "Choose the faculty"
                           : snapshot.data!)
@@ -73,7 +69,7 @@ class _MyDropdownMenuState extends State<MyDropdownMenu> {
                           ? (snapshot.data == ""
                               ? "Current Semester"
                               : snapshot.data!)
-                          : '')),
+                          : ''),
                 );
               }
             },

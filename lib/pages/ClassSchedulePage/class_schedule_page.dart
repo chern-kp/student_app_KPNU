@@ -5,7 +5,7 @@ import 'package:student_app/class/course_class.dart';
 import 'package:student_app/class/database_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:student_app/class/event_class.dart';
-import 'package:student_app/components/my_dropdownmenu_semeter.dart';
+import 'package:student_app/components/dropdownmenu_choose_semester.dart';
 import 'package:student_app/pages/ClassSchedulePage/my_callendar.dart';
 import 'package:intl/intl.dart';
 import 'package:student_app/pages/ClassSchedulePage/new_event_dialog.dart';
@@ -128,7 +128,7 @@ class _ClassSchedulePageState extends State<ClassSchedulePage> {
   }
 
   Widget _buildDropdownMenu() {
-    return MyDropdownMenuSemester(
+    return DropdownMenuChooseSemester(
       initialSemester: selectedSemester,
       onSelectedItemChanged: (selectedItem) {
         setState(() {
