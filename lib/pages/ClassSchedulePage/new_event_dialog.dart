@@ -32,7 +32,7 @@ class _NewEventDialogState extends State<NewEventDialog> {
   String? selectedSemesterPage;
   DateTime? eventDateStart;
   DateTime? eventDateEnd;
-  String? selectedScoringType = 'Exam';
+  String? selectedScoringType = 'Екзамен';
 
   @override
   void initState() {
@@ -50,9 +50,9 @@ class _NewEventDialogState extends State<NewEventDialog> {
       onPressed: () async {
         try {
           String eventType;
-          if (selectedScoringType == 'Other') {
+          if (selectedScoringType == 'Інше') {
             eventType = eventTypeController.text.isEmpty
-                ? 'Other'
+                ? 'Інше'
                 : eventTypeController.text;
           } else {
             eventType = selectedScoringType!;
@@ -125,7 +125,7 @@ class _NewEventDialogState extends State<NewEventDialog> {
                   selectedScoringType = newValue;
                 });
               },
-              items: <String>['Exam', 'Scoring', 'Other']
+              items: <String>['Екзамен', 'Залік', 'Інше']
                   .map<DropdownMenuItem<String>>((String value) {
                 return DropdownMenuItem<String>(
                   value: value,
@@ -138,7 +138,7 @@ class _NewEventDialogState extends State<NewEventDialog> {
               decoration: InputDecoration(
                 labelText: 'Event Type',
               ),
-              enabled: selectedScoringType == 'Other',
+              enabled: selectedScoringType == 'Інше',
             ),
             ElevatedButton(
               child: Text('Select Start Date'),

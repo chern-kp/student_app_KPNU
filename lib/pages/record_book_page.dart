@@ -97,14 +97,14 @@ class _RecordBookPageState extends State<RecordBookPage> {
 
     if (isGroupedByScoringType) {
       courses.sort((a, b) {
-        int aValue = a.scoringTypeField == 'Exam'
+        int aValue = a.scoringTypeField == 'Екзамен'
             ? 1
-            : a.scoringTypeField == 'Scoring'
+            : a.scoringTypeField == 'Залік'
                 ? 2
                 : 3;
-        int bValue = b.scoringTypeField == 'Exam'
+        int bValue = b.scoringTypeField == 'Екзамен'
             ? 1
-            : b.scoringTypeField == 'Scoring'
+            : b.scoringTypeField == 'Залік'
                 ? 2
                 : 3;
         return aValue.compareTo(bValue);
@@ -140,7 +140,7 @@ class _RecordBookPageState extends State<RecordBookPage> {
 
   Widget _addScoresButton() {
     return ElevatedButton(
-      child: Text('Add Scores'),
+      child: Text('Додати новий'),
       onPressed: () async {
         bool? result = await showDialog(
           context: context,
@@ -201,7 +201,8 @@ class _RecordBookPageState extends State<RecordBookPage> {
 
   Widget _groupByScoringTypeCheckbox() {
     return CheckboxListTile(
-      title: Text('Group by Scoring Type'),
+      title: Text('Групувати за формою підсумкового контролю',
+          style: TextStyle(fontSize: 14)),
       value: isGroupedByScoringType,
       onChanged: (bool? value) {
         setState(() {
@@ -242,17 +243,17 @@ class _RecordBookPageState extends State<RecordBookPage> {
           for (var courseMap in snapshot.data!) {
             Course course = courseMap['course'];
             if (course.isRecordBookFilled!) {
-              if (course.scoringTypeField == 'Exam') {
+              if (course.scoringTypeField == 'Екзамен') {
                 examCoursesFilled.add(courseMap);
-              } else if (course.scoringTypeField == 'Scoring') {
+              } else if (course.scoringTypeField == 'Залік') {
                 scoringCoursesFilled.add(courseMap);
               } else {
                 otherCoursesFilled.add(courseMap);
               }
             } else {
-              if (course.scoringTypeField == 'Exam') {
+              if (course.scoringTypeField == 'Екзамен') {
                 examCoursesNotFilled.add(courseMap);
-              } else if (course.scoringTypeField == 'Scoring') {
+              } else if (course.scoringTypeField == 'Залік') {
                 scoringCoursesNotFilled.add(courseMap);
               } else {
                 otherCoursesNotFilled.add(courseMap);
@@ -264,20 +265,18 @@ class _RecordBookPageState extends State<RecordBookPage> {
             child: ListView(
               children: [
                 if (isGroupedByScoringType && examCoursesFilled.isNotEmpty)
-                  ..._buildCategory('Exam', examCoursesFilled),
+                  ..._buildCategory('Екзамен', examCoursesFilled),
                 if (isGroupedByScoringType && scoringCoursesFilled.isNotEmpty)
-                  ..._buildCategory('Scoring', scoringCoursesFilled),
+                  ..._buildCategory('Залік', scoringCoursesFilled),
                 if (isGroupedByScoringType && otherCoursesFilled.isNotEmpty)
-                  ..._buildCategory('Others', otherCoursesFilled),
+                  ..._buildCategory('Інше', otherCoursesFilled),
                 if (isGroupedByScoringType && examCoursesNotFilled.isNotEmpty)
-                  ..._buildCategory('Exam', examCoursesNotFilled),
+                  ..._buildCategory('Екзамен', examCoursesNotFilled),
                 if (isGroupedByScoringType &&
                     scoringCoursesNotFilled.isNotEmpty)
-                  ..._buildCategory(
-                      'Scoring (Not Filled)', scoringCoursesNotFilled),
+                  ..._buildCategory('Залік', scoringCoursesNotFilled),
                 if (isGroupedByScoringType && otherCoursesNotFilled.isNotEmpty)
-                  ..._buildCategory(
-                      'Others (Not Filled)', otherCoursesNotFilled),
+                  ..._buildCategory('Інше', otherCoursesNotFilled),
                 if (!isGroupedByScoringType)
                   ...snapshot.data!
                       .map((courseMap) => _recordBookCell(courseMap['course']))
@@ -301,9 +300,9 @@ class _RecordBookPageState extends State<RecordBookPage> {
   }
 
   Widget _recordBookCell(Course course) {
-    Color backgroundColor = course.scoringTypeField == 'Exam'
+    Color backgroundColor = course.scoringTypeField == 'Екзамен'
         ? Colors.red
-        : course.scoringTypeField == 'Scoring'
+        : course.scoringTypeField == 'Залік'
             ? Colors.yellow
             : Colors.green;
     return _buildCourseCell(course, backgroundColor);
@@ -442,7 +441,7 @@ class _RecordBookPageState extends State<RecordBookPage> {
             });
           }
         },
-        child: Text('Edit Scores'),
+        child: Text('Додати оцінку'),
       ),
     );
   }
@@ -451,7 +450,7 @@ class _RecordBookPageState extends State<RecordBookPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('RecordBookPage'),
+        title: Text('Залікова Книжка Студента'),
         //todo
       ),
       body: Column(

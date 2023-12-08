@@ -179,7 +179,7 @@ class _CoursesSchedulePageState extends State<CoursesSchedulePage> {
           });
         }
       },
-      child: Text("Add New Course"),
+      child: Text("Додати новий"),
     );
   }
 

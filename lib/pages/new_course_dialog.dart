@@ -281,7 +281,7 @@ class _NewCourseDialogState extends State<NewCourseDialog> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: Text('New Course'),
+      title: Text('Додати '),
       content: SingleChildScrollView(
         child: Column(
           mainAxisSize: MainAxisSize.min,

@@ -60,7 +60,7 @@ class HomePage extends StatelessWidget {
           children: [
             Column(
               children: [
-                Text("Ви ввійшли як:", style: TextStyle(fontSize: 16)),
+                Text("Ви увійшли як:", style: TextStyle(fontSize: 16)),
                 Text(user.email!,
                     style: TextStyle(fontSize: 18, color: Colors.blue[700])),
               ],
