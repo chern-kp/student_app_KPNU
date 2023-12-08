@@ -25,12 +25,11 @@ class MyApp extends StatelessWidget {
       home: AuthPage(), //First page we are getting to after app was launched
       theme: ThemeData(
         appBarTheme: AppBarTheme(
-          color: Color(0xFFbc653f), // Change this to your desired color
+          color: Color(0xFFbc653f),
         ),
         elevatedButtonTheme: ElevatedButtonThemeData(
           style: ButtonStyle(
-            backgroundColor: MaterialStateProperty.all(
-                Colors.brown), // Change this to your desired button color
+            backgroundColor: MaterialStateProperty.all(Colors.brown),
           ),
         ),
       ),
