@@ -23,6 +23,17 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false, //turns off debug banner
       home: AuthPage(), //First page we are getting to after app was launched
+      theme: ThemeData(
+        appBarTheme: AppBarTheme(
+          color: Color(0xFFbc653f), // Change this to your desired color
+        ),
+        elevatedButtonTheme: ElevatedButtonThemeData(
+          style: ButtonStyle(
+            backgroundColor: MaterialStateProperty.all(
+                Colors.brown), // Change this to your desired button color
+          ),
+        ),
+      ),
     );
   }
 }

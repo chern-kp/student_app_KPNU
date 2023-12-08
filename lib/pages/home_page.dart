@@ -62,7 +62,6 @@ class HomePage extends StatelessWidget {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        backgroundColor: Color(0xFFbc653f),
         actions: [IconButton(onPressed: signUserOut, icon: Icon(Icons.logout))],
       ),
       body: Center(

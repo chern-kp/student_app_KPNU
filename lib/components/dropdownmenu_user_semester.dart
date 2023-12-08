@@ -51,7 +51,7 @@ class _DropdownMenuUserSemesterState extends State<DropdownMenuUserSemester> {
               } else if (snapshot.hasError) {
                 return Text('Error: ${snapshot.error}');
               } else {
-                return CustomDropdown(
+                return DropdownMenuDesign(
                   items: dataList!,
                   selectedItem: snapshot.data == "" ? null : snapshot.data,
                   onChanged: (selectedItem) {

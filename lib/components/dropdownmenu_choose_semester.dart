@@ -50,7 +50,7 @@ class _DropdownMenuChooseSemesterState
               } else if (snapshot.hasError) {
                 return Center(child: Text('Error: ${snapshot.error}'));
               } else {
-                return CustomDropdown(
+                return DropdownMenuDesign(
                   items: dataList!,
                   selectedItem: snapshot.data,
                   onChanged: (selectedItem) {
