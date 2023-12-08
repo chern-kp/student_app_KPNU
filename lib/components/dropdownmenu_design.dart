@@ -17,7 +17,7 @@ class DropdownMenuDesign extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 160, // Set the width as per your requirement
+      width: 160,
       padding: EdgeInsets.symmetric(),
       decoration: BoxDecoration(
         color: Colors.white,
@@ -34,13 +34,13 @@ class DropdownMenuDesign extends StatelessWidget {
               return DropdownMenuItem<String>(
                 value: item,
                 child: Container(
-                  height: 18, // Set the height of the container
+                  height: 18,
                   child: Align(
                     alignment: Alignment.centerLeft,
                     child: Text(
                       item,
                       style: TextStyle(
-                          fontSize: 18,
+                          fontSize: 16,
                           fontFamily: 'Sans-serif',
                           color: Colors.black),
                     ),
@@ -50,15 +50,6 @@ class DropdownMenuDesign extends StatelessWidget {
             }).toList(),
             onChanged: onChanged,
             value: selectedItem,
-            hint: Center(
-              child: Text(
-                hintText,
-                style: TextStyle(
-                    color: Colors.grey[600],
-                    fontSize: 16,
-                    fontFamily: 'Sans-serif'),
-              ),
-            ),
             icon: Icon(Icons.arrow_drop_down, color: Colors.grey[600]),
             padding: const EdgeInsets.symmetric(),
           ),

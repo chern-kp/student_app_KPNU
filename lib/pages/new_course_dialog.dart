@@ -82,7 +82,7 @@ class _NewCourseDialogState extends State<NewCourseDialog> {
       selectedDate = widget.course!.recordBookSelectedDateField;
       isEvent = widget.course!.isEvent ?? false;
     } else {
-      scoringTypeFieldController.text = 'Exam';
+      scoringTypeFieldController.text = 'Екзамен';
     }
   }
 
@@ -317,7 +317,7 @@ class _NewCourseDialogState extends State<NewCourseDialog> {
                   scoringTypeFieldController.text = newValue!;
                 });
               },
-              items: <String>['Exam', 'Scoring', 'Other']
+              items: <String>['Екзамен', 'Залік', 'Інше']
                   .map<DropdownMenuItem<String>>((String value) {
                 return DropdownMenuItem<String>(
                   value: value,

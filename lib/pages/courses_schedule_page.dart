@@ -214,8 +214,7 @@ class _CoursesSchedulePageState extends State<CoursesSchedulePage> {
                     child: Column(
                       children: [
                         ListTile(
-                          leading: Row(
-                            mainAxisSize: MainAxisSize.min,
+                          title: Row(
                             children: <Widget>[
                               IconButton(
                                 icon: Icon(expandedState[index]
@@ -228,13 +227,10 @@ class _CoursesSchedulePageState extends State<CoursesSchedulePage> {
                                   });
                                 },
                               ),
-                              Text(course.nameField ?? "",
-                                  style: TextStyle(fontSize: 16)),
-                            ],
-                          ),
-                          trailing: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: <Widget>[
+                              Expanded(
+                                child: Text(course.nameField ?? "",
+                                    style: TextStyle(fontSize: 16)),
+                              ),
                               IconButton(
                                 icon: course.isScheduleFilled == true
                                     ? Icon(Icons.edit)
@@ -294,14 +290,15 @@ class _CoursesSchedulePageState extends State<CoursesSchedulePage> {
   Widget _courseDetails(Course course) {
     Widget courseName = Row(
       children: [
-        Text(
-          'Назва дисципліни: ',
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
-            fontSize: 20,
+        Expanded(
+          child: Text(
+            'Назва дисципліни: ${course.nameField}',
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: 20,
+            ),
           ),
         ),
-        Text(course.nameField ?? '', style: TextStyle(fontSize: 20)),
       ],
     );
     if (!(course.isScheduleFilled ?? false)) {
@@ -355,10 +352,12 @@ class _CoursesSchedulePageState extends State<CoursesSchedulePage> {
             SizedBox(height: 10),
             Row(
               children: [
-                Text('Форма підсумкового конролю: ',
-                    style: TextStyle(fontSize: 20)),
-                Text(course.scoringTypeField ?? '',
-                    style: TextStyle(fontSize: 20))
+                Expanded(
+                  child: Text(
+                    'Форма підсумкового конролю: ${course.scoringTypeField}',
+                    style: TextStyle(fontSize: 20),
+                  ),
+                ),
               ],
             ),
             SizedBox(height: 10),
@@ -371,13 +370,14 @@ class _CoursesSchedulePageState extends State<CoursesSchedulePage> {
             SizedBox(height: 10),
             Row(
               children: [
-                Text('Кількість кредитів: ', style: TextStyle(fontSize: 20)),
-                Text(
-                  course.creditsOverallTotalField.toString(),
-                  style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.red[600]),
+                Expanded(
+                  child: Text(
+                    'Кількість кредитів: ${course.creditsOverallTotalField}',
+                    style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.red[600]),
+                  ),
                 ),
               ],
             ),
@@ -421,7 +421,7 @@ class _CoursesSchedulePageState extends State<CoursesSchedulePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('CoursesSchedulePage'),
+        title: Text('Індивідуальний Навчальний План'),
       ),
       body: Container(
         child: Center(

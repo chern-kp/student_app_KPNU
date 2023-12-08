@@ -17,7 +17,7 @@ class DatabaseService {
         lastNameField: "",
         facultyField: "",
         groupField: "",
-        currentSemesterField: "Semester 1");
+        currentSemesterField: "Семестер 1");
     final json = studentInstance.toJsonStudent();
     return docRef.set(json).then((_) {
       return createSemesterCollection(user);
@@ -54,7 +54,7 @@ class DatabaseService {
           .collection("student")
           .doc(user)
           .collection('semester')
-          .doc('Semester $i')
+          .doc('Семестер $i')
           .set({"isEmpty?": true}));
     }
     return Future.wait(tasks);

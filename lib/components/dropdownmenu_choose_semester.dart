@@ -1,7 +1,5 @@
 // ignore_for_file: must_be_immutable, prefer_const_constructors, prefer_const_constructors_in_immutables
 
-//todo combine with MyDropdownMenu
-
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:student_app/class/database_service.dart';
@@ -41,7 +39,7 @@ class _DropdownMenuChooseSemesterState
         } else if (snapshot.hasError) {
           return Center(child: Text('Error: ${snapshot.error}'));
         } else if (snapshot.hasData) {
-          List<String>? dataList = snapshot.data as List<String>?;
+          List<String>? dataList = snapshot.data;
           return FutureBuilder<String?>(
             future: currentSemester,
             builder: (BuildContext context, AsyncSnapshot<String?> snapshot) {

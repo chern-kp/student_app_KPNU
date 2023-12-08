@@ -4,7 +4,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:student_app/pages/ClassSchedulePage/class_schedule_page.dart';
 import 'courses_schedule_page.dart';
-import 'personal_information_page.dart';
 import 'record_book_page.dart';
 
 import '../class/database_service.dart';
@@ -22,14 +21,6 @@ class HomePage extends StatelessWidget {
 
   final user = FirebaseAuth.instance
       .currentUser!; //user here is the instance of class User from firebase auth package. To get the email address itself we use "user.email".
-
-  void tempPersonalInfoPage(BuildContext context) {
-    //todo delete - debug
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => PersonalInformationPage()),
-    );
-  }
 
   void coursesSchedulePageButton(BuildContext context) {
     Navigator.push(
@@ -69,12 +60,14 @@ class HomePage extends StatelessWidget {
           children: [
             Column(
               children: [
-                Text("Ви ввійшли як:"),
-                Text(user.email!),
+                Text("Ви ввійшли як:", style: TextStyle(fontSize: 16)),
+                Text(user.email!,
+                    style: TextStyle(fontSize: 18, color: Colors.blue[700])),
               ],
             ),
             SizedBox(height: 25),
-            Text('Choose the current semester:'),
+            Text('Оберіть поточний семестр:', style: TextStyle(fontSize: 16)),
+            SizedBox(height: 5),
             DropdownMenuUserSemester(
                 listOfData: facultyList,
                 chosenValueInDatabase: selectedSemester,
