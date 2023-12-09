@@ -116,7 +116,7 @@ class _NewCourseDialogState extends State<NewCourseDialog> {
 
   TextButton _saveButton(BuildContext context) {
     return TextButton(
-      child: Text('Save'),
+      child: Text('Зберегти'),
       onPressed: () async {
         try {
           Course newCourse = Course(
@@ -183,7 +183,7 @@ class _NewCourseDialogState extends State<NewCourseDialog> {
         TextField(
           controller: hoursLectionsFieldController,
           decoration: InputDecoration(
-            labelText: 'Lection hours',
+            labelText: 'Лекції (год.)',
           ),
           keyboardType: TextInputType.number,
           inputFormatters: <TextInputFormatter>[
@@ -193,25 +193,25 @@ class _NewCourseDialogState extends State<NewCourseDialog> {
         TextField(
           controller: hoursPracticesFieldController,
           decoration: InputDecoration(
-            labelText: 'Practice hours',
+            labelText: 'Практичні/Семінарські (год.)',
           ),
         ),
         TextField(
           controller: hoursLabsFieldController,
           decoration: InputDecoration(
-            labelText: 'Lab hours',
+            labelText: 'Лабораторні (год.)',
           ),
         ),
         TextField(
           controller: hoursCourseworkFieldController,
           decoration: InputDecoration(
-            labelText: 'Coursework hours',
+            labelText: 'Курсові (год.)',
           ),
         ),
         TextField(
           controller: hoursIndividualTotalFieldController,
           decoration: InputDecoration(
-            labelText: 'Individual total hours',
+            labelText: 'Самостійна робота студента',
           ),
         ),
       ],
@@ -281,12 +281,11 @@ class _NewCourseDialogState extends State<NewCourseDialog> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: Text('Додати '),
       content: SingleChildScrollView(
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
-            Text('Content of the dialog'),
+            Text('Додати новий освітній елемент'),
             Visibility(
               visible: !widget.isEdit,
               child: DropdownMenuChooseSemester(
@@ -301,7 +300,7 @@ class _NewCourseDialogState extends State<NewCourseDialog> {
             TextField(
               controller: nameFieldController,
               decoration: InputDecoration(
-                labelText: 'Course name',
+                labelText: 'Назва освітнього елементу',
               ),
             ),
             Visibility(
@@ -334,7 +333,7 @@ class _NewCourseDialogState extends State<NewCourseDialog> {
       ),
       actions: <Widget>[
         TextButton(
-          child: Text('Close'),
+          child: Text('Закрити'),
           onPressed: () {
             Navigator.of(context).pop();
           },

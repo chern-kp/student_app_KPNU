@@ -74,23 +74,23 @@ class _CoursesSchedulePageState extends State<CoursesSchedulePage> {
       items: <DropdownMenuItem<SortOption>>[
         DropdownMenuItem<SortOption>(
           value: SortOption.alphabeticalAsc,
-          child: Text('Alphabetical (A to Z)'),
+          child: Text('За алфавітом (А до Я)'),
         ),
         DropdownMenuItem<SortOption>(
           value: SortOption.alphabeticalDesc,
-          child: Text('Alphabetical (Z to A)'),
+          child: Text('За алфавітом (Я до А)'),
         ),
         DropdownMenuItem<SortOption>(
           value: SortOption.hoursInClassDesc,
-          child: Text('By Hours In Class'),
+          child: Text('За аудитоними годинами'),
         ),
         DropdownMenuItem<SortOption>(
           value: SortOption.hoursIndividualDesc,
-          child: Text('By Hours Individual'),
+          child: Text('За індивідуальними годинами'),
         ),
         DropdownMenuItem<SortOption>(
           value: SortOption.hoursOverallDesc,
-          child: Text('By Hours Overall'),
+          child: Text('За годимами загалом'),
         ),
       ],
     );
@@ -183,6 +183,49 @@ class _CoursesSchedulePageState extends State<CoursesSchedulePage> {
     );
   }
 
+  void showDeleteDialog(BuildContext context, Course course, String semester) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Delete Course'),
+          content: Text('Choose an option:'),
+          actions: <Widget>[
+            TextButton(
+              child: Text('Delete from Page'),
+              onPressed: () async {
+                course.isScheduleFilled = false;
+                await DatabaseService.createOrUpdateCourse(
+                    user.email!, course, semester);
+                setState(() {
+                  coursesFuture = generateCourses(selectedSemester!);
+                });
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: Text('Delete from Database'),
+              onPressed: () async {
+                await DatabaseService.deleteCourse(
+                    user.email!, course.nameField!);
+                setState(() {
+                  coursesFuture = generateCourses(selectedSemester!);
+                });
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: Text('Close'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   Widget _coursesListView(BuildContext context) {
     return FutureBuilder(
       future: coursesFuture,
@@ -258,13 +301,9 @@ class _CoursesSchedulePageState extends State<CoursesSchedulePage> {
                               ),
                               IconButton(
                                 icon: Icon(Icons.delete),
-                                onPressed: () async {
-                                  await DatabaseService.deleteCourse(
-                                      user.email!, course.nameField!);
-                                  setState(() {
-                                    coursesFuture =
-                                        generateCourses(selectedSemester!);
-                                  });
+                                onPressed: () {
+                                  showDeleteDialog(
+                                      context, course, selectedSemester!);
                                 },
                               ),
                             ],
@@ -288,26 +327,12 @@ class _CoursesSchedulePageState extends State<CoursesSchedulePage> {
 
   //UI of items in the list
   Widget _courseDetails(Course course) {
-    Widget courseName = Row(
-      children: [
-        Expanded(
-          child: Text(
-            'Назва дисципліни: ${course.nameField}',
-            style: TextStyle(
-              fontWeight: FontWeight.bold,
-              fontSize: 20,
-            ),
-          ),
-        ),
-      ],
-    );
     if (!(course.isScheduleFilled ?? false)) {
       return Align(
         alignment: Alignment.centerLeft,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            courseName,
             ElevatedButton(
               onPressed: () async {
                 bool? result = await showDialog(
@@ -343,6 +368,19 @@ class _CoursesSchedulePageState extends State<CoursesSchedulePage> {
         ),
       );
     } else {
+      Widget courseName = Row(
+        children: [
+          Expanded(
+            child: Text(
+              'Назва дисципліни: ${course.nameField}',
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 20,
+              ),
+            ),
+          ),
+        ],
+      );
       return Align(
         alignment: Alignment.centerLeft,
         child: Column(

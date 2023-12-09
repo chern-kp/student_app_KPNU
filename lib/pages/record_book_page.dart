@@ -311,17 +311,20 @@ class _RecordBookPageState extends State<RecordBookPage> {
   Widget _buildCourseCell(Course course, Color backgroundColor) {
     return Padding(
       padding: const EdgeInsets.all(8.0),
-      child: Container(
-        padding: EdgeInsets.all(10),
-        color: backgroundColor,
-        child: SingleChildScrollView(
-          child: Column(
-            children: [
-              Center(child: Text(course.nameField!)),
-              course.isRecordBookFilled ?? false
-                  ? _buildFilledCourseDetails(course, backgroundColor)
-                  : _buildEmptyCourseButton(course, backgroundColor),
-            ],
+      child: Card(
+        elevation: 3.0,
+        child: Container(
+          padding: EdgeInsets.all(10),
+          color: backgroundColor,
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                Center(child: Text(course.nameField!)),
+                course.isRecordBookFilled ?? false
+                    ? _buildFilledCourseDetails(course, backgroundColor)
+                    : _buildEmptyCourseButton(course, backgroundColor),
+              ],
+            ),
           ),
         ),
       ),
