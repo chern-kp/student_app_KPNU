@@ -140,7 +140,7 @@ class _RecordBookPageState extends State<RecordBookPage> {
 
   Widget _addScoresButton() {
     return ElevatedButton(
-      child: Text('Додати новий'),
+      child: Text('Додати новий елемент'),
       onPressed: () async {
         bool? result = await showDialog(
           context: context,
@@ -301,28 +301,40 @@ class _RecordBookPageState extends State<RecordBookPage> {
 
   Widget _recordBookCell(Course course) {
     Color backgroundColor = course.scoringTypeField == 'Екзамен'
-        ? Colors.red
+        ? Color.fromARGB(255, 184, 48, 38)
         : course.scoringTypeField == 'Залік'
-            ? Colors.yellow
-            : Colors.green;
+            ? Color.fromARGB(255, 250, 193, 8)
+            : const Color.fromARGB(255, 60, 139, 63);
     return _buildCourseCell(course, backgroundColor);
   }
 
-  Widget _buildCourseCell(Course course, Color backgroundColor) {
+  Widget _buildCourseCell(Course course, Color borderColor) {
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: Card(
+        shape: RoundedRectangleBorder(
+          borderRadius:
+              BorderRadius.circular(15.0), // This line adds rounded corners
+        ),
         elevation: 3.0,
         child: Container(
           padding: EdgeInsets.all(10),
-          color: backgroundColor,
+          decoration: BoxDecoration(
+            border: Border.all(
+              color: borderColor, // Border color
+              width: 5.0, // Border width
+            ),
+            color: Color.fromARGB(255, 241, 96, 33), // Background color
+            borderRadius:
+                BorderRadius.circular(10), // Match the Card's borderRadius
+          ),
           child: SingleChildScrollView(
             child: Column(
               children: [
                 Center(child: Text(course.nameField!)),
                 course.isRecordBookFilled ?? false
-                    ? _buildFilledCourseDetails(course, backgroundColor)
-                    : _buildEmptyCourseButton(course, backgroundColor),
+                    ? _buildFilledCourseDetails(course, borderColor)
+                    : _buildEmptyCourseButton(course),
               ],
             ),
           ),
@@ -331,6 +343,7 @@ class _RecordBookPageState extends State<RecordBookPage> {
     );
   }
 
+//TODO Кількість годин
   Widget _buildFilledCourseDetails(Course course, Color backgroundColor) {
     return Column(
       children: [
@@ -412,16 +425,65 @@ class _RecordBookPageState extends State<RecordBookPage> {
                 }
               },
             ),
+            IconButton(
+              icon: Icon(Icons.delete),
+              onPressed: () {
+                showDeleteDialog(context, course, selectedSemesterPage!);
+              },
+            ),
           ],
         )
       ],
     );
   }
 
-  Widget _buildEmptyCourseButton(Course course, Color backgroundColor) {
+  void showDeleteDialog(BuildContext context, Course course, String semester) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Delete Course'),
+          content: Text('Choose an option:'),
+          actions: <Widget>[
+            TextButton(
+              child: Text('Delete from Page'),
+              onPressed: () async {
+                course.isRecordBookFilled = false;
+                await DatabaseService.createOrUpdateCourse(
+                    user.email!, course, semester);
+                setState(() {
+                  coursesFuture = generateCourses(selectedSemesterPage!);
+                });
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: Text('Delete from Database'),
+              onPressed: () async {
+                await DatabaseService.deleteCourse(
+                    user.email!, course.nameField!);
+                setState(() {
+                  coursesFuture = generateCourses(selectedSemesterPage!);
+                });
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: Text('Close'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Widget _buildEmptyCourseButton(Course course) {
     return Container(
       padding: EdgeInsets.all(10),
-      color: backgroundColor,
+      color: Color.fromARGB(255, 241, 96, 33),
       child: ElevatedButton(
         onPressed: () async {
           bool? result = await showDialog(
@@ -444,7 +506,7 @@ class _RecordBookPageState extends State<RecordBookPage> {
             });
           }
         },
-        child: Text('Додати оцінку'),
+        child: Text('Додати інформацію'),
       ),
     );
   }

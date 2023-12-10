@@ -261,7 +261,7 @@ class _NewCourseDialogState extends State<NewCourseDialog> {
           ? '${selectedDate!.year.toString().padLeft(4, '0')}-${selectedDate!.month.toString().padLeft(2, '0')}-${selectedDate!.day.toString().padLeft(2, '0')} ${selectedDate!.hour.toString().padLeft(2, '0')}:${selectedDate!.minute.toString().padLeft(2, '0')}'
           : ''),
       CheckboxListTile(
-        title: Text("Is Event"),
+        title: Text("Додати як подію?"),
         value: isEvent,
         onChanged: selectedDate != null &&
                 !selectedDate!.isAtSameMomentAs(

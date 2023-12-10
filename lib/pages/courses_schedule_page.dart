@@ -179,7 +179,7 @@ class _CoursesSchedulePageState extends State<CoursesSchedulePage> {
           });
         }
       },
-      child: Text("Додати новий"),
+      child: Text("Додати новий елемент"),
     );
   }
 
@@ -248,7 +248,7 @@ class _CoursesSchedulePageState extends State<CoursesSchedulePage> {
                     Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: Text(
-                        'Not Filled Courses',
+                        'Не заповнені',
                         style: TextStyle(
                             fontSize: 20, fontWeight: FontWeight.bold),
                       ),
@@ -362,7 +362,7 @@ class _CoursesSchedulePageState extends State<CoursesSchedulePage> {
                   });
                 }
               },
-              child: Text('Button Text'),
+              child: Text('Додати інформацію'),
             ),
           ],
         ),

@@ -4,22 +4,15 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:student_app/class/course_class.dart';
 import 'package:student_app/class/event_class.dart';
 
-import 'student_class.dart';
-
 class DatabaseService {
   static Future<void> createStudentDocument(var user) {
     //path to the document "student" - "%user%"
     final docRef = FirebaseFirestore.instance.collection("student").doc(user);
-
-    final Student studentInstance = Student(
-        emailField: user,
-        firstNameField: "",
-        lastNameField: "",
-        facultyField: "",
-        groupField: "",
-        currentSemesterField: "Семестер 1");
-    final json = studentInstance.toJsonStudent();
-    return docRef.set(json).then((_) {
+    final Map<String, dynamic> studentData = {
+      'emailField': user,
+      'currentSemesterField': "Семестер 1"
+    };
+    return docRef.set(studentData).then((_) {
       return createSemesterCollection(user);
     });
   }
@@ -64,17 +57,6 @@ class DatabaseService {
     DocumentSnapshot snapshot =
         await FirebaseFirestore.instance.collection("student").doc(user).get();
     return snapshot.exists;
-  }
-
-  static Future<List<String>> getFacultyList() async {
-    //*Firestore - "university" collection - "faculty" document - "Faculty List" collection - get all documents to list of strings
-    QuerySnapshot snapshot = await FirebaseFirestore.instance
-        .collection("university")
-        .doc("faculty")
-        .collection("Faculty List")
-        .get();
-    List<String> facultyList = snapshot.docs.map((doc) => doc.id).toList();
-    return facultyList;
   }
 
   static Future<List<String>> getSemesterList(var user) async {
