@@ -6,7 +6,7 @@ import 'package:student_app/class/event_class.dart';
 
 class DatabaseService {
   static Future<void> createStudentDocument(var user) {
-    //path to the document "student" - "%user%"
+    //шлях до документу "student" - "%user%"
     final docRef = FirebaseFirestore.instance.collection("student").doc(user);
     final Map<String, dynamic> studentData = {
       'emailField': user,
@@ -15,6 +15,19 @@ class DatabaseService {
     return docRef.set(studentData).then((_) {
       return createSemesterCollection(user);
     });
+  }
+
+  static Future<void> createSemesterCollection(var user) {
+    List<Future> tasks = [];
+    for (int i = 1; i <= 10; i++) {
+      tasks.add(FirebaseFirestore.instance
+          .collection("student")
+          .doc(user)
+          .collection('semester')
+          .doc('Семестер ')
+          .set({}));
+    }
+    return Future.wait(tasks);
   }
 
   //*Firestore - "student" collection - set/update the field of the document whe pass as parameter
@@ -37,20 +50,6 @@ class DatabaseService {
     } else {
       return '';
     }
-  }
-
-  static Future<void> createSemesterCollection(var user) {
-    List<Future> tasks = [];
-    for (int i = 1; i <= 8; i++) {
-      tasks.add(FirebaseFirestore.instance
-          //*Firestore - "student" collection - "%user%" document - "semester" collection -
-          .collection("student")
-          .doc(user)
-          .collection('semester')
-          .doc('Семестер $i')
-          .set({"isEmpty?": true}));
-    }
-    return Future.wait(tasks);
   }
 
   static Future<bool> checkStudentDocument(var user) async {

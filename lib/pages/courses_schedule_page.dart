@@ -183,7 +183,7 @@ class _CoursesSchedulePageState extends State<CoursesSchedulePage> {
     );
   }
 
-  void showDeleteDialog(BuildContext context, Course course, String semester) {
+  void _showDeleteDialog(BuildContext context, Course course, String semester) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -302,7 +302,7 @@ class _CoursesSchedulePageState extends State<CoursesSchedulePage> {
                               IconButton(
                                 icon: Icon(Icons.delete),
                                 onPressed: () {
-                                  showDeleteDialog(
+                                  _showDeleteDialog(
                                       context, course, selectedSemester!);
                                 },
                               ),
@@ -328,131 +328,207 @@ class _CoursesSchedulePageState extends State<CoursesSchedulePage> {
   //UI of items in the list
   Widget _courseDetails(Course course) {
     if (!(course.isScheduleFilled ?? false)) {
-      return Align(
-        alignment: Alignment.centerLeft,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            ElevatedButton(
-              onPressed: () async {
-                bool? result = await showDialog(
-                  context: context,
-                  builder: (BuildContext context) {
-                    return NewCourseDialog(
-                      isEdit: true,
-                      isEditFilling: true,
-                      course: course,
-                      filledCourseSchedule: true,
-                      filledNewRecordBook: course.isRecordBookFilled!,
-                      currentSemester: selectedSemester,
-                    );
-                  },
-                );
-                if (result == true) {
-                  setState(() {
-                    coursesFuture = generateCourses(selectedSemester!);
-                    coursesFuture.then((courses) {
-                      setState(() {
-                        expandedState = courses
-                            .map((course) =>
-                                !(course['course'].isScheduleFilled ?? false))
-                            .toList();
-                      });
-                    });
-                  });
-                }
-              },
-              child: Text('Додати інформацію'),
-            ),
-          ],
-        ),
-      );
+      return _courseDetailsUnfilledCourse(course);
     } else {
-      Widget courseName = Row(
-        children: [
-          Expanded(
-            child: Text(
-              'Назва дисципліни: ${course.nameField}',
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 20,
+      return _courseDetailsFilledCourse(course);
+    }
+  }
+
+  Widget _courseDetailsFilledCourse(Course course) {
+    Widget courseName = Row(
+      children: [
+        Expanded(
+          child: Text(
+            'Назва дисципліни: ${course.nameField}',
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: 20,
+            ),
+            softWrap: true,
+            overflow: TextOverflow.clip,
+          ),
+        ),
+      ],
+    );
+    return Align(
+      alignment: Alignment.centerLeft,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          courseName,
+          SizedBox(height: 10),
+          Row(
+            children: [
+              Expanded(
+                child: Text.rich(
+                  TextSpan(
+                    style: TextStyle(fontSize: 20),
+                    children: <InlineSpan>[
+                      TextSpan(
+                        text: 'Форма підсумкового контролю: ',
+                      ),
+                      TextSpan(
+                        text: '${course.scoringTypeField}',
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 22,
+                          color: course.scoringTypeField == 'Екзамен'
+                              ? Colors.red
+                              : course.scoringTypeField == 'Залік'
+                                  ? Colors.orange
+                                  : Colors.green,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
               ),
+            ],
+          ),
+          SizedBox(height: 10),
+          Center(
+            child: Text(
+              'Навчальне навантаження',
+              style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
             ),
           ),
-        ],
-      );
-      return Align(
-        alignment: Alignment.centerLeft,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            courseName,
-            SizedBox(height: 10),
-            Row(
-              children: [
-                Expanded(
-                  child: Text(
-                    'Форма підсумкового конролю: ${course.scoringTypeField}',
-                    style: TextStyle(fontSize: 20),
-                  ),
-                ),
-              ],
-            ),
-            SizedBox(height: 10),
-            Center(
-              child: Text(
-                'Навчальне навантаження: ',
-                style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
+          SizedBox(height: 10),
+          Center(
+              child: Text("Аудиторні години", style: TextStyle(fontSize: 20))),
+          SizedBox(height: 10),
+          Table(
+            border: TableBorder.all(color: Colors.black),
+            children: [
+              TableRow(
+                children: [
+                  Center(child: Text('Лекції', style: TextStyle(fontSize: 15))),
+                  Center(
+                      child: Text('Практичні / Семінарські',
+                          style: TextStyle(fontSize: 15))),
+                  Center(
+                      child:
+                          Text('Лабораторні', style: TextStyle(fontSize: 15))),
+                  Center(
+                      child: Text('Курсові', style: TextStyle(fontSize: 15))),
+                ],
               ),
-            ),
-            SizedBox(height: 10),
-            Row(
-              children: [
-                Expanded(
-                  child: Text(
-                    'Кількість кредитів: ${course.creditsOverallTotalField}',
-                    style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.red[600]),
-                  ),
-                ),
+              TableRow(
+                children: [
+                  Center(
+                      child: Text('${course.hoursLectionsField}',
+                          style: TextStyle(
+                              fontSize: 20, fontWeight: FontWeight.bold))),
+                  Center(
+                      child: Text('${course.hoursPracticesField}',
+                          style: TextStyle(
+                              fontSize: 20, fontWeight: FontWeight.bold))),
+                  Center(
+                      child: Text('${course.hoursLabsField}',
+                          style: TextStyle(
+                              fontSize: 20, fontWeight: FontWeight.bold))),
+                  Center(
+                      child: Text('${course.hoursCourseworkField}',
+                          style: TextStyle(
+                              fontSize: 20, fontWeight: FontWeight.bold))),
+                ],
+              ),
+            ],
+          ),
+          SizedBox(height: 10),
+          Text.rich(
+            TextSpan(
+              style: TextStyle(fontSize: 20),
+              children: <InlineSpan>[
+                TextSpan(text: 'Усього аудиторних годин: '),
+                TextSpan(
+                    text: '${course.hoursIndividualTotalField}',
+                    style: TextStyle(fontWeight: FontWeight.bold)),
               ],
             ),
-            SizedBox(height: 10),
-            Text('Години: ', style: TextStyle(fontSize: 20)),
-            SizedBox(height: 10),
-            Table(
-              border: TableBorder.all(color: Colors.black),
-              children: [
-                TableRow(
-                  children: [
-                    Text('Усього'),
-                    Text('В аудиторії'),
-                    Text('Лекції'),
-                    Text('Практичні'),
-                    Text('Лабораторні'),
-                    Text('Курсові'),
-                    Text('Самостійна робота'),
-                  ],
-                ),
-                TableRow(
-                  children: [
-                    Text('${course.hoursOverallTotalField}'),
-                    Text('${course.hoursInClassTotalField}'),
-                    Text('${course.hoursLectionsField}'),
-                    Text('${course.hoursPracticesField}'),
-                    Text('${course.hoursLabsField}'),
-                    Text('${course.hoursCourseworkField}'),
-                    Text('${course.hoursIndividualTotalField}'),
-                  ],
-                ),
+          ),
+          SizedBox(height: 10),
+          Text.rich(
+            TextSpan(
+              style: TextStyle(fontSize: 20),
+              children: <InlineSpan>[
+                TextSpan(text: 'Години на самостійну роботу: '),
+                TextSpan(
+                    text: '${course.hoursIndividualTotalField}',
+                    style: TextStyle(fontWeight: FontWeight.bold)),
               ],
-            )
-          ],
-        ),
-      );
-    }
+            ),
+          ),
+          SizedBox(height: 10),
+          Text.rich(
+            TextSpan(
+              style: TextStyle(fontSize: 20),
+              children: <InlineSpan>[
+                TextSpan(text: 'Усього годин: '),
+                TextSpan(
+                    text: '${course.hoursOverallTotalField}',
+                    style: TextStyle(fontWeight: FontWeight.bold)),
+              ],
+            ),
+          ),
+          SizedBox(height: 10),
+          Row(
+            children: [
+              Expanded(
+                child: Text(
+                  'Кількість кредитів: ${course.creditsOverallTotalField != null && course.creditsOverallTotalField! % 1 == 0 ? course.creditsOverallTotalField!.toInt() : course.creditsOverallTotalField}',
+                  style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.red[600]),
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _courseDetailsUnfilledCourse(Course course) {
+    return Align(
+      alignment: Alignment.centerLeft,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          ElevatedButton(
+            onPressed: () async {
+              bool? result = await showDialog(
+                context: context,
+                builder: (BuildContext context) {
+                  return NewCourseDialog(
+                    isEdit: true,
+                    isEditFilling: true,
+                    course: course,
+                    filledCourseSchedule: true,
+                    filledNewRecordBook: course.isRecordBookFilled!,
+                    currentSemester: selectedSemester,
+                  );
+                },
+              );
+              if (result == true) {
+                setState(() {
+                  coursesFuture = generateCourses(selectedSemester!);
+                  coursesFuture.then((courses) {
+                    setState(() {
+                      expandedState = courses
+                          .map((course) =>
+                              !(course['course'].isScheduleFilled ?? false))
+                          .toList();
+                    });
+                  });
+                });
+              }
+            },
+            child: Text('Додати інформацію'),
+          ),
+        ],
+      ),
+    );
   }
 
   @override
