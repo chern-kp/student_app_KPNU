@@ -1,5 +1,3 @@
-// ignore_for_file: prefer_const_literals_to_create_immutables, prefer_const_constructors, prefer_const_constructors_in_immutables
-
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:student_app/pages/new_course_dialog.dart';
@@ -9,7 +7,7 @@ import '../class/database_service.dart';
 import '../components/dropdownmenu_choose_semester.dart';
 
 class RecordBookPage extends StatefulWidget {
-  RecordBookPage({Key? key}) : super(key: key);
+  const RecordBookPage({Key? key}) : super(key: key);
 
   @override
   State<RecordBookPage> createState() => _RecordBookPageState();
@@ -140,7 +138,7 @@ class _RecordBookPageState extends State<RecordBookPage> {
 
   Widget _addScoresButton() {
     return ElevatedButton(
-      child: Text('Додати новий елемент'),
+      child: const Text('Додати новий елемент'),
       onPressed: () async {
         bool? result = await showDialog(
           context: context,
@@ -170,7 +168,7 @@ class _RecordBookPageState extends State<RecordBookPage> {
           coursesFuture = generateCourses(selectedSemesterPage!);
         });
       },
-      items: <DropdownMenuItem<SortOption>>[
+      items: const <DropdownMenuItem<SortOption>>[
         DropdownMenuItem<SortOption>(
           value: SortOption.alphabeticalAsc,
           child: Text('Alphabetical (A to Z)'),
@@ -201,7 +199,7 @@ class _RecordBookPageState extends State<RecordBookPage> {
 
   Widget _groupByScoringTypeCheckbox() {
     return CheckboxListTile(
-      title: Text('Групувати за формою підсумкового контролю',
+      title: const Text('Групувати за формою підсумкового контролю',
           style: TextStyle(fontSize: 14)),
       value: isGroupedByScoringType,
       onChanged: (bool? value) {
@@ -218,7 +216,7 @@ class _RecordBookPageState extends State<RecordBookPage> {
       padding: const EdgeInsets.all(8.0),
       child: Text(
         title,
-        style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+        style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
       ),
     );
   }
@@ -229,7 +227,7 @@ class _RecordBookPageState extends State<RecordBookPage> {
       builder: (BuildContext context,
           AsyncSnapshot<List<Map<String, dynamic>>> snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return CircularProgressIndicator();
+          return const CircularProgressIndicator();
         } else if (snapshot.hasError) {
           return Text('Error: ${snapshot.error}');
         } else {
@@ -301,9 +299,9 @@ class _RecordBookPageState extends State<RecordBookPage> {
 
   Widget _recordBookCell(Course course) {
     Color backgroundColor = course.scoringTypeField == 'Екзамен'
-        ? Color.fromARGB(255, 184, 48, 38)
+        ? const Color.fromARGB(255, 184, 48, 38)
         : course.scoringTypeField == 'Залік'
-            ? Color.fromARGB(255, 250, 193, 8)
+            ? const Color.fromARGB(255, 250, 193, 8)
             : const Color.fromARGB(255, 60, 139, 63);
     return _buildCourseCell(course, backgroundColor);
   }
@@ -318,13 +316,13 @@ class _RecordBookPageState extends State<RecordBookPage> {
         ),
         elevation: 3.0,
         child: Container(
-          padding: EdgeInsets.all(10),
+          padding: const EdgeInsets.all(10),
           decoration: BoxDecoration(
             border: Border.all(
               color: borderColor, // Border color
               width: 5.0, // Border width
             ),
-            color: Color.fromARGB(255, 241, 96, 33), // Background color
+            color: const Color.fromARGB(255, 241, 96, 33), // Background color
             borderRadius:
                 BorderRadius.circular(10), // Match the Card's borderRadius
           ),
@@ -347,7 +345,7 @@ class _RecordBookPageState extends State<RecordBookPage> {
   Widget _buildFilledCourseDetails(Course course, Color backgroundColor) {
     return Column(
       children: [
-        Row(
+        const Row(
           children: [
             Spacer(),
             Text(
@@ -358,17 +356,17 @@ class _RecordBookPageState extends State<RecordBookPage> {
         ),
         Row(
           children: [
-            Spacer(),
+            const Spacer(),
             Text(course.recordBookTeacherField ?? ''),
           ],
         ),
-        SizedBox(
+        const SizedBox(
           height: 10,
         ),
         Row(
           children: [
-            Text('Форма підсумкового контролю'),
-            Spacer(),
+            const Text('Форма підсумкового контролю'),
+            const Spacer(),
             Text(
               course.scoringTypeField ?? "",
               textAlign: TextAlign.end,
@@ -377,8 +375,8 @@ class _RecordBookPageState extends State<RecordBookPage> {
         ),
         Row(
           children: [
-            Text('Оцінка'),
-            Spacer(),
+            const Text('Оцінка'),
+            const Spacer(),
             Text(
               course.recordBookScoreField.toString(),
               textAlign: TextAlign.end,
@@ -389,8 +387,8 @@ class _RecordBookPageState extends State<RecordBookPage> {
             DateTime.fromMillisecondsSinceEpoch(978307200000, isUtc: true)))
           Row(
             children: [
-              Text('Дата'),
-              Spacer(),
+              const Text('Дата'),
+              const Spacer(),
               Text(
                 "${course.recordBookSelectedDateField?.year.toString().padLeft(4, '0')}-${course.recordBookSelectedDateField?.month.toString().padLeft(2, '0')}-${course.recordBookSelectedDateField?.day.toString().padLeft(2, '0')} ${course.recordBookSelectedDateField?.hour.toString().padLeft(2, '0')}:${course.recordBookSelectedDateField?.minute.toString().padLeft(2, '0')}",
                 textAlign: TextAlign.end,
@@ -404,7 +402,7 @@ class _RecordBookPageState extends State<RecordBookPage> {
               child: Container(),
             ),
             IconButton(
-              icon: Icon(Icons.edit),
+              icon: const Icon(Icons.edit),
               onPressed: () async {
                 bool? result = await showDialog(
                   context: context,
@@ -426,7 +424,7 @@ class _RecordBookPageState extends State<RecordBookPage> {
               },
             ),
             IconButton(
-              icon: Icon(Icons.delete),
+              icon: const Icon(Icons.delete),
               onPressed: () {
                 showDeleteDialog(context, course, selectedSemesterPage!);
               },
@@ -442,34 +440,65 @@ class _RecordBookPageState extends State<RecordBookPage> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Delete Course'),
-          content: Text('Choose an option:'),
+          title: const Text('Delete Course'),
           actions: <Widget>[
-            TextButton(
-              child: Text('Delete from Page'),
-              onPressed: () async {
-                course.isRecordBookFilled = false;
-                await DatabaseService.createOrUpdateCourse(
-                    user.email!, course, semester);
-                setState(() {
-                  coursesFuture = generateCourses(selectedSemesterPage!);
-                });
-                Navigator.of(context).pop();
-              },
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Builder(
+                      builder: (context) => ElevatedButton(
+                        style: Theme.of(context).elevatedButtonTheme.style,
+                        child: const Center(
+                            child: Text('Delete from Page',
+                                textAlign: TextAlign.center)),
+                        onPressed: () async {
+                          course.isRecordBookFilled = false;
+                          await DatabaseService.createOrUpdateCourse(
+                              user.email!, course, semester);
+                          setState(() {
+                            coursesFuture =
+                                generateCourses(selectedSemesterPage!);
+                          });
+                          if (context.mounted) {
+                            Navigator.of(context).pop();
+                          }
+                        },
+                      ),
+                    ),
+                  ),
+                ),
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Builder(
+                      builder: (context) => ElevatedButton(
+                        style: Theme.of(context).elevatedButtonTheme.style,
+                        child: const Center(
+                            child: Text('Delete from Database',
+                                textAlign: TextAlign.center)),
+                        onPressed: () async {
+                          await DatabaseService.deleteCourse(
+                              user.email!, course.nameField!);
+                          setState(() {
+                            coursesFuture =
+                                generateCourses(selectedSemesterPage!);
+                          });
+                          // Use the context from the Builder widget
+                          if (context.mounted) {
+                            Navigator.of(context).pop();
+                          }
+                        },
+                      ),
+                    ),
+                  ),
+                ),
+              ],
             ),
             TextButton(
-              child: Text('Delete from Database'),
-              onPressed: () async {
-                await DatabaseService.deleteCourse(
-                    user.email!, course.nameField!);
-                setState(() {
-                  coursesFuture = generateCourses(selectedSemesterPage!);
-                });
-                Navigator.of(context).pop();
-              },
-            ),
-            TextButton(
-              child: Text('Close'),
+              child: const Text('Close'),
               onPressed: () {
                 Navigator.of(context).pop();
               },
@@ -482,8 +511,8 @@ class _RecordBookPageState extends State<RecordBookPage> {
 
   Widget _buildEmptyCourseButton(Course course) {
     return Container(
-      padding: EdgeInsets.all(10),
-      color: Color.fromARGB(255, 241, 96, 33),
+      padding: const EdgeInsets.all(10),
+      color: const Color.fromARGB(255, 241, 96, 33),
       child: ElevatedButton(
         onPressed: () async {
           bool? result = await showDialog(
@@ -506,7 +535,7 @@ class _RecordBookPageState extends State<RecordBookPage> {
             });
           }
         },
-        child: Text('Додати інформацію'),
+        child: const Text('Додати інформацію'),
       ),
     );
   }
@@ -515,7 +544,7 @@ class _RecordBookPageState extends State<RecordBookPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Залікова Книжка Студента'),
+        title: const Text('Залікова Книжка Студента'),
         //todo
       ),
       body: Column(

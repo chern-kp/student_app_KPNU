@@ -1,5 +1,3 @@
-// ignore_for_file: prefer_const_constructors, prefer_const_constructors_in_immutables, use_key_in_widget_constructors, library_private_types_in_public_api
-
 import 'package:flutter/material.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:student_app/class/course_class.dart';
@@ -11,13 +9,13 @@ class MyCalendar extends StatefulWidget {
   final List<Course> courses;
   final List<EventSchedule> events;
 
-  MyCalendar({required this.courses, required this.events});
+  const MyCalendar({super.key, required this.courses, required this.events});
 
   @override
-  _MyCalendarState createState() => _MyCalendarState();
+  MyCalendarState createState() => MyCalendarState();
 }
 
-class _MyCalendarState extends State<MyCalendar> {
+class MyCalendarState extends State<MyCalendar> {
   CalendarFormat _calendarFormat = CalendarFormat.month;
   DateTime _focusedDay = DateTime.now();
   DateTime? _selectedDay;
@@ -67,7 +65,7 @@ class _MyCalendarState extends State<MyCalendar> {
     List<EventSchedule> eventsForDate = [];
     for (var event in widget.events) {
       if (event.eventDateStart!.isBefore(date) &&
-          event.eventDateEnd!.isAfter(date.add(Duration(days: 1)))) {
+          event.eventDateEnd!.isAfter(date.add(const Duration(days: 1)))) {
         eventsForDate.add(event);
       }
     }
@@ -95,7 +93,7 @@ class _MyCalendarState extends State<MyCalendar> {
       child: Row(
         children: dotColors
             .map((color) => Container(
-                  margin: EdgeInsets.symmetric(horizontal: 1),
+                  margin: const EdgeInsets.symmetric(horizontal: 1),
                   width: 5,
                   height: 5,
                   decoration: BoxDecoration(
@@ -124,7 +122,7 @@ class _MyCalendarState extends State<MyCalendar> {
           alignment: Alignment.center,
           child: Text(
             '${start.day}',
-            style: TextStyle().copyWith(color: Colors.white),
+            style: const TextStyle().copyWith(color: Colors.white),
           ),
         ),
       );

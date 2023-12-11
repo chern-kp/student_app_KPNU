@@ -1,5 +1,3 @@
-// ignore_for_file: must_be_immutable, prefer_const_constructors
-
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:student_app/class/database_service.dart';
@@ -35,7 +33,7 @@ class _DropdownMenuUserSemesterState extends State<DropdownMenuUserSemester> {
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           //if problems with internet connection
-          return CircularProgressIndicator();
+          return const CircularProgressIndicator();
         } else if (snapshot.hasError) {
           //todo better error handling
           return Text('Error: ${snapshot.error}');
@@ -47,7 +45,7 @@ class _DropdownMenuUserSemesterState extends State<DropdownMenuUserSemester> {
             future: widget.chosenValueInDatabase,
             builder: (BuildContext context, AsyncSnapshot<String?> snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
-                return CircularProgressIndicator();
+                return const CircularProgressIndicator();
               } else if (snapshot.hasError) {
                 return Text('Error: ${snapshot.error}');
               } else {
@@ -75,7 +73,7 @@ class _DropdownMenuUserSemesterState extends State<DropdownMenuUserSemester> {
             },
           );
         }
-        return CircularProgressIndicator();
+        return const CircularProgressIndicator();
       },
     );
   }

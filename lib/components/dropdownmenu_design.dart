@@ -18,7 +18,7 @@ class DropdownMenuDesign extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       width: 160,
-      padding: EdgeInsets.symmetric(),
+      padding: const EdgeInsets.symmetric(),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(10.0),
@@ -33,13 +33,13 @@ class DropdownMenuDesign extends StatelessWidget {
             items: items.map<DropdownMenuItem<String>>((String item) {
               return DropdownMenuItem<String>(
                 value: item,
-                child: Container(
+                child: SizedBox(
                   height: 18,
                   child: Align(
                     alignment: Alignment.centerLeft,
                     child: Text(
                       item,
-                      style: TextStyle(
+                      style: const TextStyle(
                           fontSize: 16,
                           fontFamily: 'Sans-serif',
                           color: Colors.black),

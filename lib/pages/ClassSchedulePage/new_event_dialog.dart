@@ -1,5 +1,3 @@
-// ignore_for_file: must_be_immutable, use_build_context_synchronously, prefer_const_constructors
-
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:student_app/class/database_service.dart';
@@ -46,7 +44,7 @@ class _NewEventDialogState extends State<NewEventDialog> {
 
   TextButton _saveButton(BuildContext context) {
     return TextButton(
-      child: Text('Save'),
+      child: const Text('Save'),
       onPressed: () async {
         try {
           String eventType;
@@ -72,17 +70,19 @@ class _NewEventDialogState extends State<NewEventDialog> {
           if (widget.onUpdate != null) {
             widget.onUpdate!();
           }
-          Navigator.of(context).pop(true);
+          if (context.mounted) {
+            Navigator.of(context).pop();
+          }
         } catch (e) {
           showDialog(
             context: context,
             builder: (BuildContext context) {
               return AlertDialog(
-                title: Text('Error'),
+                title: const Text('Error'),
                 content: Text(e.toString()),
                 actions: <Widget>[
                   TextButton(
-                    child: Text('Close'),
+                    child: const Text('Close'),
                     onPressed: () {
                       Navigator.of(context).pop();
                     },
@@ -99,7 +99,7 @@ class _NewEventDialogState extends State<NewEventDialog> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: Text('New Event'),
+      title: const Text('New Event'),
       content: SingleChildScrollView(
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -114,7 +114,7 @@ class _NewEventDialogState extends State<NewEventDialog> {
             ),
             TextField(
               controller: eventNameController,
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 labelText: 'Event Name',
               ),
             ),
@@ -135,13 +135,13 @@ class _NewEventDialogState extends State<NewEventDialog> {
             ),
             TextField(
               controller: eventTypeController,
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 labelText: 'Event Type',
               ),
               enabled: selectedScoringType == 'Інше',
             ),
             ElevatedButton(
-              child: Text('Select Start Date'),
+              child: const Text('Select Start Date'),
               onPressed: () async {
                 eventDateStart = await selectDate(context);
                 setState(() {});
@@ -151,7 +151,7 @@ class _NewEventDialogState extends State<NewEventDialog> {
                 ? '${eventDateStart!.year.toString().padLeft(4, '0')}-${eventDateStart!.month.toString().padLeft(2, '0')}-${eventDateStart!.day.toString().padLeft(2, '0')} ${eventDateStart!.hour.toString().padLeft(2, '0')}:${eventDateStart!.minute.toString().padLeft(2, '0')}'
                 : ''),
             ElevatedButton(
-              child: Text('Select End Date'),
+              child: const Text('Select End Date'),
               onPressed: () async {
                 eventDateEnd = await selectDate(context);
                 setState(() {});
@@ -165,7 +165,7 @@ class _NewEventDialogState extends State<NewEventDialog> {
       ),
       actions: <Widget>[
         TextButton(
-          child: Text('Close'),
+          child: const Text('Close'),
           onPressed: () {
             Navigator.of(context).pop();
           },

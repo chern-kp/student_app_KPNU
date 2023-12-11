@@ -1,11 +1,9 @@
-// ignore_for_file: prefer_const_constructors_in_immutables
-
 import 'package:flutter/material.dart';
 import 'login_page.dart';
 import 'register_page.dart';
 
 class LoginOrRegisterPage extends StatefulWidget {
-  LoginOrRegisterPage({super.key});
+  const LoginOrRegisterPage({super.key});
 
   @override
   State<LoginOrRegisterPage> createState() => _LoginOrRegisterPageState();

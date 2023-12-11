@@ -9,11 +9,12 @@ class CalendarDialog extends StatelessWidget {
   final List<Course> courses;
   final List<EventSchedule> events;
 
-  CalendarDialog({
+  const CalendarDialog({
+    Key? key,
     required this.selectedDate,
     required this.courses,
     required this.events,
-  });
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -33,35 +34,28 @@ class CalendarDialog extends StatelessWidget {
     }).toList();
 
     return AlertDialog(
-      title: Text('Selected Date'),
+      title: const Text('Selected Date'),
       content: SingleChildScrollView(
         child: ListBody(
           children: [
             for (var course in selectedCourses)
               ListTile(
                 title: Text(course.nameField!),
-                subtitle: Text('Record Book Selected Date: ' +
-                    DateFormat.yMMMd()
-                        .format(course.recordBookSelectedDateField!) +
-                    '\nScoring Type: ' +
-                    course.scoringTypeField!),
+                subtitle: Text(
+                    'Record Book Selected Date: ${DateFormat.yMMMd().format(course.recordBookSelectedDateField!)}\nScoring Type: ${course.scoringTypeField!}'),
               ),
             for (var event in selectedEvents)
               ListTile(
                 title: Text(event.eventName!),
-                subtitle: Text('Event Type: ' +
-                    event.eventType! +
-                    '\nStart Date: ' +
-                    DateFormat.yMMMd().format(event.eventDateStart!) +
-                    '\nEnd Date: ' +
-                    DateFormat.yMMMd().format(event.eventDateEnd!)),
+                subtitle: Text(
+                    'Event Type: ${event.eventType!}\nStart Date: ${DateFormat.yMMMd().format(event.eventDateStart!)}\nEnd Date: ${DateFormat.yMMMd().format(event.eventDateEnd!)}'),
               ),
           ],
         ),
       ),
       actions: <Widget>[
         TextButton(
-          child: Text('OK'),
+          child: const Text('OK'),
           onPressed: () {
             Navigator.of(context).pop();
           },

@@ -1,5 +1,3 @@
-// ignore_for_file: must_be_immutable, prefer_const_literals_to_create_immutables, prefer_const_constructors, avoid_unnecessary_containers, prefer_const_constructors_in_immutables
-
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:student_app/class/database_service.dart';
@@ -9,7 +7,7 @@ import '../class/course_class.dart';
 import 'new_course_dialog.dart';
 
 class CoursesSchedulePage extends StatefulWidget {
-  CoursesSchedulePage({Key? key}) : super(key: key);
+  const CoursesSchedulePage({Key? key}) : super(key: key);
 
   @override
   State<CoursesSchedulePage> createState() => _CoursesSchedulePageState();
@@ -71,7 +69,7 @@ class _CoursesSchedulePageState extends State<CoursesSchedulePage> {
           });
         });
       },
-      items: <DropdownMenuItem<SortOption>>[
+      items: const <DropdownMenuItem<SortOption>>[
         DropdownMenuItem<SortOption>(
           value: SortOption.alphabeticalAsc,
           child: Text('За алфавітом (А до Я)'),
@@ -179,7 +177,7 @@ class _CoursesSchedulePageState extends State<CoursesSchedulePage> {
           });
         }
       },
-      child: Text("Додати новий елемент"),
+      child: const Text("Додати новий елемент"),
     );
   }
 
@@ -188,34 +186,55 @@ class _CoursesSchedulePageState extends State<CoursesSchedulePage> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Delete Course'),
-          content: Text('Choose an option:'),
+          title: const Text('Видалити елемент?'),
           actions: <Widget>[
-            TextButton(
-              child: Text('Delete from Page'),
-              onPressed: () async {
-                course.isScheduleFilled = false;
-                await DatabaseService.createOrUpdateCourse(
-                    user.email!, course, semester);
-                setState(() {
-                  coursesFuture = generateCourses(selectedSemester!);
-                });
-                Navigator.of(context).pop();
-              },
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: ElevatedButton(
+                      style: Theme.of(context).elevatedButtonTheme.style,
+                      child: const Center(
+                          child: Text('Видалити зі сторінки',
+                              textAlign: TextAlign.center)),
+                      onPressed: () async {
+                        NavigatorState navigator = Navigator.of(context);
+                        course.isScheduleFilled = false;
+                        await DatabaseService.createOrUpdateCourse(
+                            user.email!, course, semester);
+                        setState(() {
+                          coursesFuture = generateCourses(selectedSemester!);
+                        });
+                        navigator.pop();
+                      },
+                    ),
+                  ),
+                ),
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: ElevatedButton(
+                      style: Theme.of(context).elevatedButtonTheme.style,
+                      child: const Center(
+                          child: Text('Повністю видалити елемент',
+                              textAlign: TextAlign.center)),
+                      onPressed: () async {
+                        Navigator.of(context).pop();
+                        await DatabaseService.deleteCourse(
+                            user.email!, course.nameField!);
+                        setState(() {
+                          coursesFuture = generateCourses(selectedSemester!);
+                        });
+                      },
+                    ),
+                  ),
+                ),
+              ],
             ),
             TextButton(
-              child: Text('Delete from Database'),
-              onPressed: () async {
-                await DatabaseService.deleteCourse(
-                    user.email!, course.nameField!);
-                setState(() {
-                  coursesFuture = generateCourses(selectedSemester!);
-                });
-                Navigator.of(context).pop();
-              },
-            ),
-            TextButton(
-              child: Text('Close'),
+              child: const Text('Close'),
               onPressed: () {
                 Navigator.of(context).pop();
               },
@@ -231,7 +250,7 @@ class _CoursesSchedulePageState extends State<CoursesSchedulePage> {
       future: coursesFuture,
       builder: (BuildContext context, AsyncSnapshot snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return Center(child: CircularProgressIndicator());
+          return const Center(child: CircularProgressIndicator());
         } else if (snapshot.hasError) {
           return Text('Error: ${snapshot.error}');
         } else {
@@ -245,8 +264,8 @@ class _CoursesSchedulePageState extends State<CoursesSchedulePage> {
               return Column(
                 children: [
                   if (isNotFilledTitle)
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
+                    const Padding(
+                      padding: EdgeInsets.all(8.0),
                       child: Text(
                         'Не заповнені',
                         style: TextStyle(
@@ -272,11 +291,11 @@ class _CoursesSchedulePageState extends State<CoursesSchedulePage> {
                               ),
                               Expanded(
                                 child: Text(course.nameField ?? "",
-                                    style: TextStyle(fontSize: 16)),
+                                    style: const TextStyle(fontSize: 16)),
                               ),
                               IconButton(
                                 icon: course.isScheduleFilled == true
-                                    ? Icon(Icons.edit)
+                                    ? const Icon(Icons.edit)
                                     : Container(),
                                 onPressed: () async {
                                   bool? result = await showDialog(
@@ -300,7 +319,7 @@ class _CoursesSchedulePageState extends State<CoursesSchedulePage> {
                                 },
                               ),
                               IconButton(
-                                icon: Icon(Icons.delete),
+                                icon: const Icon(Icons.delete),
                                 onPressed: () {
                                   _showDeleteDialog(
                                       context, course, selectedSemester!);
@@ -340,7 +359,7 @@ class _CoursesSchedulePageState extends State<CoursesSchedulePage> {
         Expanded(
           child: Text(
             'Назва дисципліни: ${course.nameField}',
-            style: TextStyle(
+            style: const TextStyle(
               fontWeight: FontWeight.bold,
               fontSize: 20,
             ),
@@ -356,15 +375,15 @@ class _CoursesSchedulePageState extends State<CoursesSchedulePage> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           courseName,
-          SizedBox(height: 10),
+          const SizedBox(height: 10),
           Row(
             children: [
               Expanded(
                 child: Text.rich(
                   TextSpan(
-                    style: TextStyle(fontSize: 20),
+                    style: const TextStyle(fontSize: 20),
                     children: <InlineSpan>[
-                      TextSpan(
+                      const TextSpan(
                         text: 'Форма підсумкового контролю: ',
                       ),
                       TextSpan(
@@ -385,21 +404,21 @@ class _CoursesSchedulePageState extends State<CoursesSchedulePage> {
               ),
             ],
           ),
-          SizedBox(height: 10),
-          Center(
+          const SizedBox(height: 10),
+          const Center(
             child: Text(
               'Навчальне навантаження',
               style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
             ),
           ),
-          SizedBox(height: 10),
-          Center(
+          const SizedBox(height: 10),
+          const Center(
               child: Text("Аудиторні години", style: TextStyle(fontSize: 20))),
-          SizedBox(height: 10),
+          const SizedBox(height: 10),
           Table(
             border: TableBorder.all(color: Colors.black),
             children: [
-              TableRow(
+              const TableRow(
                 children: [
                   Center(child: Text('Лекції', style: TextStyle(fontSize: 15))),
                   Center(
@@ -416,61 +435,61 @@ class _CoursesSchedulePageState extends State<CoursesSchedulePage> {
                 children: [
                   Center(
                       child: Text('${course.hoursLectionsField}',
-                          style: TextStyle(
+                          style: const TextStyle(
                               fontSize: 20, fontWeight: FontWeight.bold))),
                   Center(
                       child: Text('${course.hoursPracticesField}',
-                          style: TextStyle(
+                          style: const TextStyle(
                               fontSize: 20, fontWeight: FontWeight.bold))),
                   Center(
                       child: Text('${course.hoursLabsField}',
-                          style: TextStyle(
+                          style: const TextStyle(
                               fontSize: 20, fontWeight: FontWeight.bold))),
                   Center(
                       child: Text('${course.hoursCourseworkField}',
-                          style: TextStyle(
+                          style: const TextStyle(
                               fontSize: 20, fontWeight: FontWeight.bold))),
                 ],
               ),
             ],
           ),
-          SizedBox(height: 10),
+          const SizedBox(height: 10),
           Text.rich(
             TextSpan(
-              style: TextStyle(fontSize: 20),
+              style: const TextStyle(fontSize: 20),
               children: <InlineSpan>[
-                TextSpan(text: 'Усього аудиторних годин: '),
+                const TextSpan(text: 'Усього аудиторних годин: '),
                 TextSpan(
                     text: '${course.hoursIndividualTotalField}',
-                    style: TextStyle(fontWeight: FontWeight.bold)),
+                    style: const TextStyle(fontWeight: FontWeight.bold)),
               ],
             ),
           ),
-          SizedBox(height: 10),
+          const SizedBox(height: 10),
           Text.rich(
             TextSpan(
-              style: TextStyle(fontSize: 20),
+              style: const TextStyle(fontSize: 20),
               children: <InlineSpan>[
-                TextSpan(text: 'Години на самостійну роботу: '),
+                const TextSpan(text: 'Години на самостійну роботу: '),
                 TextSpan(
                     text: '${course.hoursIndividualTotalField}',
-                    style: TextStyle(fontWeight: FontWeight.bold)),
+                    style: const TextStyle(fontWeight: FontWeight.bold)),
               ],
             ),
           ),
-          SizedBox(height: 10),
+          const SizedBox(height: 10),
           Text.rich(
             TextSpan(
-              style: TextStyle(fontSize: 20),
+              style: const TextStyle(fontSize: 20),
               children: <InlineSpan>[
-                TextSpan(text: 'Усього годин: '),
+                const TextSpan(text: 'Усього годин: '),
                 TextSpan(
                     text: '${course.hoursOverallTotalField}',
-                    style: TextStyle(fontWeight: FontWeight.bold)),
+                    style: const TextStyle(fontWeight: FontWeight.bold)),
               ],
             ),
           ),
-          SizedBox(height: 10),
+          const SizedBox(height: 10),
           Row(
             children: [
               Expanded(
@@ -524,7 +543,7 @@ class _CoursesSchedulePageState extends State<CoursesSchedulePage> {
                 });
               }
             },
-            child: Text('Додати інформацію'),
+            child: const Text('Додати інформацію'),
           ),
         ],
       ),
@@ -535,22 +554,20 @@ class _CoursesSchedulePageState extends State<CoursesSchedulePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Індивідуальний Навчальний План'),
+        title: const Text('Індивідуальний Навчальний План'),
       ),
-      body: Container(
-        child: Center(
-          child: Column(
-            children: [
-              DropdownMenuChooseSemester(
-                  onSelectedItemChanged: updateSelectedSemester),
-              SizedBox(height: 25),
-              _addNewCourseButton(context),
-              SizedBox(height: 5),
-              _sortDropDownMenu(),
-              SizedBox(height: 5),
-              Expanded(child: _coursesListView(context)),
-            ],
-          ),
+      body: Center(
+        child: Column(
+          children: [
+            DropdownMenuChooseSemester(
+                onSelectedItemChanged: updateSelectedSemester),
+            const SizedBox(height: 25),
+            _addNewCourseButton(context),
+            const SizedBox(height: 5),
+            _sortDropDownMenu(),
+            const SizedBox(height: 5),
+            Expanded(child: _coursesListView(context)),
+          ],
         ),
       ),
     );

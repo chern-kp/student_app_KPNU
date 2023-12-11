@@ -1,5 +1,3 @@
-// ignore_for_file: must_be_immutable, prefer_const_constructors, prefer_const_constructors_in_immutables
-
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:student_app/class/database_service.dart';
@@ -9,7 +7,7 @@ class DropdownMenuChooseSemester extends StatefulWidget {
   final Function(String) onSelectedItemChanged;
   final String? initialSemester;
 
-  DropdownMenuChooseSemester({
+  const DropdownMenuChooseSemester({
     Key? key,
     required this.onSelectedItemChanged,
     this.initialSemester,
@@ -35,7 +33,7 @@ class _DropdownMenuChooseSemesterState
       future: semesterList,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return Center(child: CircularProgressIndicator());
+          return const Center(child: CircularProgressIndicator());
         } else if (snapshot.hasError) {
           return Center(child: Text('Error: ${snapshot.error}'));
         } else if (snapshot.hasData) {
@@ -44,7 +42,7 @@ class _DropdownMenuChooseSemesterState
             future: currentSemester,
             builder: (BuildContext context, AsyncSnapshot<String?> snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
-                return Center(child: CircularProgressIndicator());
+                return const Center(child: CircularProgressIndicator());
               } else if (snapshot.hasError) {
                 return Center(child: Text('Error: ${snapshot.error}'));
               } else {
@@ -63,7 +61,7 @@ class _DropdownMenuChooseSemesterState
             },
           );
         }
-        return Center(child: CircularProgressIndicator());
+        return const Center(child: CircularProgressIndicator());
       },
     );
   }

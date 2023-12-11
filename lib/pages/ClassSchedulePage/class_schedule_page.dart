@@ -1,5 +1,3 @@
-// ignore_for_file: prefer_interpolation_to_compose_strings
-
 import 'package:flutter/material.dart';
 import 'package:student_app/class/course_class.dart';
 import 'package:student_app/class/database_service.dart';
@@ -14,10 +12,10 @@ class ClassSchedulePage extends StatefulWidget {
   const ClassSchedulePage({Key? key}) : super(key: key);
 
   @override
-  _ClassSchedulePageState createState() => _ClassSchedulePageState();
+  ClassSchedulePageState createState() => ClassSchedulePageState();
 }
 
-class _ClassSchedulePageState extends State<ClassSchedulePage> {
+class ClassSchedulePageState extends State<ClassSchedulePage> {
   User? user = FirebaseAuth.instance.currentUser;
   Future<String>? selectedSemesterOfUser;
   String? selectedSemester;
@@ -95,7 +93,7 @@ class _ClassSchedulePageState extends State<ClassSchedulePage> {
       future: allDataFuture,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return Center(child: CircularProgressIndicator());
+          return const Center(child: CircularProgressIndicator());
         } else if (snapshot.hasError) {
           return Center(child: Text('Error: ${snapshot.error}'));
         } else {
@@ -156,15 +154,13 @@ class _ClassSchedulePageState extends State<ClassSchedulePage> {
 
   List<dynamic> _combineLists(
       List<Course> filteredCourses, List<EventSchedule> events) {
-    return []
-      ..addAll(filteredCourses)
-      ..addAll(events);
+    return [...filteredCourses, ...events];
   }
 
   Widget _buildListView(List<dynamic> combinedList) {
     return ListView.builder(
       shrinkWrap: true,
-      physics: NeverScrollableScrollPhysics(),
+      physics: const NeverScrollableScrollPhysics(),
       itemCount: combinedList.length,
       itemBuilder: (context, index) {
         var item = combinedList[index];
@@ -177,12 +173,10 @@ class _ClassSchedulePageState extends State<ClassSchedulePage> {
     if (item is Course) {
       return ListTile(
         title: Text(item.nameField!),
-        subtitle: Text('Record Book Selected Date: ' +
-            DateFormat.yMMMd().format(item.recordBookSelectedDateField!) +
-            '\nScoring Type: ' +
-            item.scoringTypeField!),
+        subtitle: Text(
+            'Record Book Selected Date: ${DateFormat.yMMMd().format(item.recordBookSelectedDateField!)}\nScoring Type: ${item.scoringTypeField!}'),
         trailing: IconButton(
-          icon: Icon(Icons.delete),
+          icon: const Icon(Icons.delete),
           onPressed: () async {
             await DatabaseService.deleteCourse(user!.email!, item.nameField!);
             updateState();
@@ -190,14 +184,14 @@ class _ClassSchedulePageState extends State<ClassSchedulePage> {
         ),
       );
     } else if (item is EventSchedule) {
-      String subtitle = 'Event Type: ' + item.eventType!;
+      String subtitle = 'Event Type: ${item.eventType!}';
       if (!isDefaultDate(item.eventDateStart)) {
         subtitle +=
-            '\nStart Date: ' + DateFormat.yMMMd().format(item.eventDateStart!);
+            '\nStart Date: ${DateFormat.yMMMd().format(item.eventDateStart!)}';
       }
       if (!isDefaultDate(item.eventDateEnd)) {
         subtitle +=
-            '\nEnd Date: ' + DateFormat.yMMMd().format(item.eventDateEnd!);
+            '\nEnd Date: ${DateFormat.yMMMd().format(item.eventDateEnd!)}';
       }
 
       //TODO ДАТИ СЕМЕСТРІВ
@@ -209,7 +203,7 @@ class _ClassSchedulePageState extends State<ClassSchedulePage> {
           mainAxisSize: MainAxisSize.min,
           children: [
             IconButton(
-              icon: Icon(Icons.edit),
+              icon: const Icon(Icons.edit),
               onPressed: () {
                 showDialog(
                   context: context,
@@ -225,7 +219,7 @@ class _ClassSchedulePageState extends State<ClassSchedulePage> {
               },
             ),
             IconButton(
-              icon: Icon(Icons.delete),
+              icon: const Icon(Icons.delete),
               onPressed: () async {
                 await DatabaseService.deleteEvent(
                     user!.email!, item.eventName!);
@@ -244,7 +238,7 @@ class _ClassSchedulePageState extends State<ClassSchedulePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Class Schedule'),
+        title: const Text('Class Schedule'),
       ),
       body: _buildFutureBuilder(),
     );

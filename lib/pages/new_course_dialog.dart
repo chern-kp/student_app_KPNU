@@ -1,5 +1,3 @@
-// ignore_for_file: prefer_const_constructors_in_immutables, prefer_const_constructors, prefer_const_literals_to_create_immutables, must_be_immutable, use_build_context_synchronously
-
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -116,7 +114,7 @@ class _NewCourseDialogState extends State<NewCourseDialog> {
 
   TextButton _saveButton(BuildContext context) {
     return TextButton(
-      child: Text('Зберегти'),
+      child: const Text('Зберегти'),
       onPressed: () async {
         try {
           Course newCourse = Course(
@@ -153,17 +151,19 @@ class _NewCourseDialogState extends State<NewCourseDialog> {
           }
           await DatabaseService.createOrUpdateCourse(
               user.email, newCourse, selectedSemesterPage!);
-          Navigator.of(context).pop(true);
+          if (context.mounted) {
+            Navigator.of(context).pop(true);
+          }
         } catch (e) {
           showDialog(
             context: context,
             builder: (BuildContext context) {
               return AlertDialog(
-                title: Text('Error'),
+                title: const Text('Error'),
                 content: Text(e.toString()),
                 actions: <Widget>[
                   TextButton(
-                    child: Text('Close'),
+                    child: const Text('Close'),
                     onPressed: () {
                       Navigator.of(context).pop();
                     },
@@ -182,7 +182,7 @@ class _NewCourseDialogState extends State<NewCourseDialog> {
       children: <Widget>[
         TextField(
           controller: hoursLectionsFieldController,
-          decoration: InputDecoration(
+          decoration: const InputDecoration(
             labelText: 'Лекції (год.)',
           ),
           keyboardType: TextInputType.number,
@@ -192,25 +192,25 @@ class _NewCourseDialogState extends State<NewCourseDialog> {
         ),
         TextField(
           controller: hoursPracticesFieldController,
-          decoration: InputDecoration(
+          decoration: const InputDecoration(
             labelText: 'Практичні/Семінарські (год.)',
           ),
         ),
         TextField(
           controller: hoursLabsFieldController,
-          decoration: InputDecoration(
+          decoration: const InputDecoration(
             labelText: 'Лабораторні (год.)',
           ),
         ),
         TextField(
           controller: hoursCourseworkFieldController,
-          decoration: InputDecoration(
+          decoration: const InputDecoration(
             labelText: 'Курсові (год.)',
           ),
         ),
         TextField(
           controller: hoursIndividualTotalFieldController,
-          decoration: InputDecoration(
+          decoration: const InputDecoration(
             labelText: 'Самостійна робота студента',
           ),
         ),
@@ -222,12 +222,12 @@ class _NewCourseDialogState extends State<NewCourseDialog> {
     return Column(children: <Widget>[
       TextField(
           controller: recordBookTeacherFieldController,
-          decoration: InputDecoration(
+          decoration: const InputDecoration(
             labelText: 'Teacher',
           )),
       TextField(
           controller: recordBookScoreFieldController,
-          decoration: InputDecoration(
+          decoration: const InputDecoration(
             labelText: 'Score',
           )),
       Row(
@@ -240,10 +240,10 @@ class _NewCourseDialogState extends State<NewCourseDialog> {
                 selectedDate = date;
               });
             },
-            child: Text('Select date'),
+            child: const Text('Select date'),
           ),
           IconButton(
-            icon: Icon(Icons.delete),
+            icon: const Icon(Icons.delete),
             onPressed: () {
               setState(() {
                 selectedDate = DateTime.fromMillisecondsSinceEpoch(978307200000,
@@ -261,7 +261,7 @@ class _NewCourseDialogState extends State<NewCourseDialog> {
           ? '${selectedDate!.year.toString().padLeft(4, '0')}-${selectedDate!.month.toString().padLeft(2, '0')}-${selectedDate!.day.toString().padLeft(2, '0')} ${selectedDate!.hour.toString().padLeft(2, '0')}:${selectedDate!.minute.toString().padLeft(2, '0')}'
           : ''),
       CheckboxListTile(
-        title: Text("Додати як подію?"),
+        title: const Text("Додати як подію?"),
         value: isEvent,
         onChanged: selectedDate != null &&
                 !selectedDate!.isAtSameMomentAs(
@@ -285,7 +285,7 @@ class _NewCourseDialogState extends State<NewCourseDialog> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
-            Text('Додати новий освітній елемент'),
+            const Text('Додати новий освітній елемент'),
             Visibility(
               visible: !widget.isEdit,
               child: DropdownMenuChooseSemester(
@@ -299,7 +299,7 @@ class _NewCourseDialogState extends State<NewCourseDialog> {
             ),
             TextField(
               controller: nameFieldController,
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 labelText: 'Назва освітнього елементу',
               ),
             ),
@@ -333,7 +333,7 @@ class _NewCourseDialogState extends State<NewCourseDialog> {
       ),
       actions: <Widget>[
         TextButton(
-          child: Text('Закрити'),
+          child: const Text('Закрити'),
           onPressed: () {
             Navigator.of(context).pop();
           },

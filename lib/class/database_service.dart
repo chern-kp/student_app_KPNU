@@ -1,5 +1,3 @@
-// ignore_for_file: avoid_print
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:student_app/class/course_class.dart';
 import 'package:student_app/class/event_class.dart';
@@ -139,8 +137,7 @@ class DatabaseService {
           .doc(courseName) // Use course name as document ID
           .delete();
     } catch (e) {
-      print(e.toString());
-      throw e;
+      rethrow;
     }
   }
 
@@ -171,8 +168,7 @@ class DatabaseService {
           .doc(eventName) // Use event name as document ID
           .delete();
     } catch (e) {
-      print(e.toString());
-      throw e;
+      rethrow;
     }
   }
 
