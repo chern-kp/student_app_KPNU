@@ -21,6 +21,7 @@ class _RegisterPageState extends State<RegisterPage> {
 
 // Sign user up method. Creating student firestore document called from here (the function itself - below)
   void signUserUp(BuildContext context) async {
+    final scaffoldMessenger = ScaffoldMessenger.of(context);
     try {
       // check if passwords match with confirm password
       if (passwordController.text == confirmPasswordController.text) {
@@ -31,17 +32,33 @@ class _RegisterPageState extends State<RegisterPage> {
         await DatabaseService.createStudentDocument(
             emailController.text); // in database_service class
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(
+        scaffoldMessenger.showSnackBar(
           const SnackBar(
             content: Text("Паролі не збігаються!"),
           ),
         );
       }
-    } catch (error) {
-      ScaffoldMessenger.of(context).showSnackBar(
+    } on FirebaseAuthException catch (e) {
+      String errorMessage;
+      switch (e.code) {
+        case 'email-already-in-use':
+          errorMessage = 'Помилка! Користувач вже існує!';
+          break;
+        case 'invalid-email':
+          errorMessage = 'Помилка! Неправельний e-mail!';
+          break;
+        default:
+          errorMessage = 'Невідома помилка!';
+      }
+      scaffoldMessenger.showSnackBar(
+        SnackBar(
+          content: Text(errorMessage),
+        ),
+      );
+    } catch (e) {
+      scaffoldMessenger.showSnackBar(
         const SnackBar(
-          content:
-              Text("Помилка реєстрації! Введіть коректні e-mail та пароль!"),
+          content: Text("Невідома помилка!"),
         ),
       );
     }

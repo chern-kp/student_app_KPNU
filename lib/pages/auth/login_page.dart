@@ -21,19 +21,34 @@ class _LoginPageState extends State<LoginPage> {
 
 // sign user in method
   void signUserIn(BuildContext context) async {
+    final scaffoldMessenger = ScaffoldMessenger.of(context);
     try {
       await FirebaseAuth.instance.signInWithEmailAndPassword(
         email: emailController.text,
         password: passwordController.text,
       );
       checkDoesStudentDocumentExists();
-    } catch (error) {
-      // Display error message
-      print(error);
-      // Show a SnackBar with the error message
-      ScaffoldMessenger.of(context).showSnackBar(
+    } on FirebaseAuthException catch (e) {
+      String errorMessage;
+      switch (e.code) {
+        case 'user-not-found':
+          errorMessage = 'Помилка! Не знайдено користувача з таким e-mail.';
+          break;
+        case 'wrong-password':
+          errorMessage = 'Помилка! Неправельний логін або пароль!';
+          break;
+        default:
+          errorMessage = 'Невідома помилка!';
+      }
+      scaffoldMessenger.showSnackBar(
+        SnackBar(
+          content: Text(errorMessage),
+        ),
+      );
+    } catch (e) {
+      scaffoldMessenger.showSnackBar(
         const SnackBar(
-          content: Text("Помилка! Неправельний логін або пароль!"),
+          content: Text('Невідома помилка!'),
         ),
       );
     }
