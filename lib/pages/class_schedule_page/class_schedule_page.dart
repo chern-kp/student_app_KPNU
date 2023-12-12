@@ -236,7 +236,7 @@ class ClassSchedulePageState extends State<ClassSchedulePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Class Schedule'),
+        title: const Text('Графік Освітнього Процесу'),
       ),
       body: _buildFutureBuilder(),
     );

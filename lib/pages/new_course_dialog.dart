@@ -12,10 +12,10 @@ class NewCourseDialog extends StatefulWidget {
   NewCourseDialog({
     this.isEdit = false,
     this.isEditFilling = false,
-    this.course,
     this.isRecordBook = false,
     this.filledNewRecordBook = false,
     this.filledCourseSchedule = false,
+    this.course,
     this.currentSemester,
     Key? key,
   }) : super(key: key);
@@ -35,7 +35,6 @@ class NewCourseDialog extends StatefulWidget {
 class _NewCourseDialogState extends State<NewCourseDialog> {
   final user = FirebaseAuth.instance.currentUser!;
   final nameFieldController = TextEditingController();
-  final semesterFieldController = TextEditingController();
   final hoursLectionsFieldController = TextEditingController();
   final hoursPracticesFieldController = TextEditingController();
   final hoursLabsFieldController = TextEditingController();
@@ -116,7 +115,10 @@ class _NewCourseDialogState extends State<NewCourseDialog> {
 
   TextButton _saveButton(BuildContext context) {
     return TextButton(
-      child: const Text('Зберегти'),
+      child: const Text(
+        'Зберегти',
+        style: TextStyle(color: Colors.brown),
+      ),
       onPressed: () async {
         try {
           Course newCourse = Course(
@@ -161,11 +163,14 @@ class _NewCourseDialogState extends State<NewCourseDialog> {
             context: context,
             builder: (BuildContext context) {
               return AlertDialog(
-                title: const Text('Error'),
+                title: const Text('Помилка'),
                 content: Text(e.toString()),
                 actions: <Widget>[
                   TextButton(
-                    child: const Text('Close'),
+                    child: const Text(
+                      'Закрити',
+                      style: TextStyle(color: Colors.brown),
+                    ),
                     onPressed: () {
                       Navigator.of(context).pop();
                     },
@@ -287,7 +292,10 @@ class _NewCourseDialogState extends State<NewCourseDialog> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
-            const Text('Додати новий освітній елемент'),
+            Text(widget.isEdit
+                ? 'Змінити освітній елемент'
+                : 'Додати новий освітній елемент'),
+            const SizedBox(height: 5),
             Visibility(
               visible: !widget.isEdit,
               child: DropdownMenuChooseSemester(
@@ -335,7 +343,10 @@ class _NewCourseDialogState extends State<NewCourseDialog> {
       ),
       actions: <Widget>[
         TextButton(
-          child: const Text('Закрити'),
+          child: const Text(
+            'Закрити',
+            style: TextStyle(color: Colors.brown),
+          ),
           onPressed: () {
             Navigator.of(context).pop();
           },

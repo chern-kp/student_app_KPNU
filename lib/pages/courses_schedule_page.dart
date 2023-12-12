@@ -80,7 +80,7 @@ class _CoursesSchedulePageState extends State<CoursesSchedulePage> {
         ),
         DropdownMenuItem<SortOption>(
           value: SortOption.hoursInClassDesc,
-          child: Text('За аудитоними годинами'),
+          child: Text('За аудиторними годинами'),
         ),
         DropdownMenuItem<SortOption>(
           value: SortOption.hoursIndividualDesc,
@@ -88,7 +88,7 @@ class _CoursesSchedulePageState extends State<CoursesSchedulePage> {
         ),
         DropdownMenuItem<SortOption>(
           value: SortOption.hoursOverallDesc,
-          child: Text('За годимами загалом'),
+          child: Text('За годинами загалом'),
         ),
       ],
     );
@@ -234,7 +234,10 @@ class _CoursesSchedulePageState extends State<CoursesSchedulePage> {
               ],
             ),
             TextButton(
-              child: const Text('Close'),
+              child: const Text(
+                'Закрити',
+                style: TextStyle(color: Colors.brown),
+              ),
               onPressed: () {
                 Navigator.of(context).pop();
               },
@@ -562,7 +565,7 @@ class _CoursesSchedulePageState extends State<CoursesSchedulePage> {
             const SizedBox(height: 5),
             DropdownMenuChooseSemester(
                 onSelectedItemChanged: updateSelectedSemester),
-            const SizedBox(height: 25),
+            const SizedBox(height: 5),
             _addNewCourseButton(context),
             const SizedBox(height: 5),
             _sortDropDownMenu(),

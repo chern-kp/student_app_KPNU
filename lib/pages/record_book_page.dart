@@ -171,27 +171,27 @@ class _RecordBookPageState extends State<RecordBookPage> {
       items: const <DropdownMenuItem<SortOption>>[
         DropdownMenuItem<SortOption>(
           value: SortOption.alphabeticalAsc,
-          child: Text('Alphabetical (A to Z)'),
+          child: Text('За алфавітом (А до Я)'),
         ),
         DropdownMenuItem<SortOption>(
           value: SortOption.alphabeticalDesc,
-          child: Text('Alphabetical (Z to A)'),
+          child: Text('За алфавітом (Я до А)'),
         ),
         DropdownMenuItem<SortOption>(
           value: SortOption.dateAsc,
-          child: Text('Sort by Date (Oldest to Newest)'),
+          child: Text('По даті (Старіші до новіших)'),
         ),
         DropdownMenuItem<SortOption>(
           value: SortOption.dateDesc,
-          child: Text('Sort by Date (Newest to Oldest)'),
+          child: Text('По даті (Новіші до старіших)'),
         ),
         DropdownMenuItem<SortOption>(
           value: SortOption.teacherAsc,
-          child: Text('Sort by Teacher (A to Z)'),
+          child: Text('За викладачем (А до Я)'),
         ),
         DropdownMenuItem<SortOption>(
           value: SortOption.teacherDesc,
-          child: Text('Sort by Teacher (Z to A)'),
+          child: Text('За викладачем (Я до А)'),
         ),
       ],
     );
@@ -322,14 +322,18 @@ class _RecordBookPageState extends State<RecordBookPage> {
               color: borderColor, // Border color
               width: 5.0, // Border width
             ),
-            color: const Color.fromARGB(255, 241, 96, 33), // Background color
+            //color: Color.fromARGB(255, 255, 128, 74),
             borderRadius:
                 BorderRadius.circular(10), // Match the Card's borderRadius
           ),
           child: SingleChildScrollView(
             child: Column(
               children: [
-                Center(child: Text(course.nameField!)),
+                Center(
+                    child: Text(
+                  course.nameField!,
+                  style: const TextStyle(fontSize: 18),
+                )),
                 course.isRecordBookFilled ?? false
                     ? _buildFilledCourseDetails(course, borderColor)
                     : _buildEmptyCourseButton(course),
@@ -341,96 +345,201 @@ class _RecordBookPageState extends State<RecordBookPage> {
     );
   }
 
-//TODO Кількість годин
   Widget _buildFilledCourseDetails(Course course, Color backgroundColor) {
     return Column(
       children: [
-        const Row(
-          children: [
-            Spacer(),
-            Text(
-              "Викладач",
-              textAlign: TextAlign.end,
-            ),
-          ],
+        const SizedBox(
+          height: 10,
         ),
-        Row(
-          children: [
-            const Spacer(),
-            Text(course.recordBookTeacherField ?? ''),
-          ],
-        ),
+        if (course.recordBookTeacherField!.isNotEmpty)
+          Column(
+            children: [
+              const SizedBox(
+                height: 10,
+              ),
+              Row(
+                children: [
+                  const Text(
+                    "Викладач: ",
+                    style: TextStyle(
+                      fontSize: 20,
+                    ),
+                  ),
+                  Expanded(
+                    child: Text(
+                      '${course.recordBookTeacherField}',
+                      style: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 20,
+                      ),
+                      softWrap: true,
+                      overflow: TextOverflow.clip,
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
         const SizedBox(
           height: 10,
         ),
         Row(
           children: [
-            const Text('Форма підсумкового контролю'),
-            const Spacer(),
-            Text(
-              course.scoringTypeField ?? "",
-              textAlign: TextAlign.end,
-            )
-          ],
-        ),
-        Row(
-          children: [
-            const Text('Оцінка'),
-            const Spacer(),
-            Text(
-              course.recordBookScoreField.toString(),
-              textAlign: TextAlign.end,
-            )
-          ],
-        ),
-        if (!course.recordBookSelectedDateField!.isAtSameMomentAs(
-            DateTime.fromMillisecondsSinceEpoch(978307200000, isUtc: true)))
-          Row(
-            children: [
-              const Text('Дата'),
-              const Spacer(),
-              Text(
-                "${course.recordBookSelectedDateField?.year.toString().padLeft(4, '0')}-${course.recordBookSelectedDateField?.month.toString().padLeft(2, '0')}-${course.recordBookSelectedDateField?.day.toString().padLeft(2, '0')} ${course.recordBookSelectedDateField?.hour.toString().padLeft(2, '0')}:${course.recordBookSelectedDateField?.minute.toString().padLeft(2, '0')}",
+            const Text('Форма підсумкового \nконтролю:',
+                style: TextStyle(fontSize: 20)),
+            Expanded(
+              child: Text.rich(
+                TextSpan(
+                  style: const TextStyle(fontSize: 20),
+                  children: <InlineSpan>[
+                    TextSpan(
+                      text: '${course.scoringTypeField}',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 22,
+                        color: course.scoringTypeField == 'Екзамен'
+                            ? Colors.red
+                            : course.scoringTypeField == 'Залік'
+                                ? Colors.orange
+                                : Colors.green,
+                      ),
+                    ),
+                  ],
+                ),
+                softWrap: true,
+                overflow: TextOverflow.clip,
                 textAlign: TextAlign.end,
-              )
+              ),
+            ),
+          ],
+        ),
+        if (course.hoursOverallTotalField != null &&
+            course.hoursOverallTotalField != 0)
+          Column(
+            children: [
+              const SizedBox(
+                height: 10,
+              ),
+              Row(
+                children: [
+                  const Text('Кількість годин: ',
+                      style: TextStyle(fontSize: 20)),
+                  const Spacer(),
+                  Text(course.hoursOverallTotalField.toString(),
+                      textAlign: TextAlign.end,
+                      style: const TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                      ))
+                ],
+              ),
             ],
           ),
+        if (course.creditsOverallTotalField != null &&
+            course.creditsOverallTotalField != 0)
+          Column(
+            children: [
+              const SizedBox(
+                height: 10,
+              ),
+              Row(
+                children: [
+                  const Text('Кількість кредитів:',
+                      style: TextStyle(fontSize: 20)),
+                  const Spacer(),
+                  Text(course.creditsOverallTotalField.toString(),
+                      textAlign: TextAlign.end,
+                      style: const TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                      ))
+                ],
+              ),
+            ],
+          ),
+        if (!course.recordBookSelectedDateField!.isAtSameMomentAs(
+            DateTime.fromMillisecondsSinceEpoch(978307200000, isUtc: true)))
+          Column(
+            children: [
+              const SizedBox(
+                height: 10,
+              ),
+              Row(
+                children: [
+                  const Text('Дата і час:', style: TextStyle(fontSize: 20)),
+                  const Spacer(),
+                  Text(
+                      "${course.recordBookSelectedDateField?.year.toString().padLeft(4, '0')}-${course.recordBookSelectedDateField?.month.toString().padLeft(2, '0')}-${course.recordBookSelectedDateField?.day.toString().padLeft(2, '0')} ${course.recordBookSelectedDateField?.hour.toString().padLeft(2, '0')}:${course.recordBookSelectedDateField?.minute.toString().padLeft(2, '0')}",
+                      textAlign: TextAlign.end,
+                      style: const TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ))
+                ],
+              ),
+            ],
+          ),
+        const SizedBox(
+          height: 5,
+        ),
+        const Text('Оцінка', style: TextStyle(fontSize: 24)),
         Row(
-          mainAxisAlignment: MainAxisAlignment.end,
           children: [
             Expanded(
-              child: Container(),
-            ),
-            IconButton(
-              icon: const Icon(Icons.edit),
-              onPressed: () async {
-                bool? result = await showDialog(
-                  context: context,
-                  builder: (BuildContext context) {
-                    return NewCourseDialog(
-                      isEdit: true,
-                      course: course,
-                      isRecordBook: true,
-                      filledNewRecordBook: true,
-                      currentSemester: selectedSemesterPage,
-                    );
-                  },
-                );
-                if (result == true) {
-                  setState(() {
-                    coursesFuture = generateCourses(selectedSemesterPage!);
-                  });
-                }
-              },
-            ),
-            IconButton(
-              icon: const Icon(Icons.delete),
-              onPressed: () {
-                showDeleteDialog(context, course, selectedSemesterPage!);
-              },
+              child: Stack(
+                alignment: Alignment.center,
+                children: [
+                  Text(
+                    course.recordBookScoreField == null ||
+                            course.recordBookScoreField == 0
+                        ? "-"
+                        : course.recordBookScoreField.toString(),
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      IconButton(
+                        icon: const Icon(Icons.edit),
+                        onPressed: () async {
+                          bool? result = await showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return NewCourseDialog(
+                                isEdit: true,
+                                course: course,
+                                isRecordBook: true,
+                                filledNewRecordBook: true,
+                                currentSemester: selectedSemesterPage,
+                              );
+                            },
+                          );
+                          if (result == true) {
+                            setState(() {
+                              coursesFuture =
+                                  generateCourses(selectedSemesterPage!);
+                            });
+                          }
+                        },
+                      ),
+                      IconButton(
+                        icon: const Icon(Icons.delete),
+                        onPressed: () {
+                          showDeleteDialog(
+                              context, course, selectedSemesterPage!);
+                        },
+                      ),
+                    ],
+                  ),
+                ],
+              ),
             ),
           ],
-        )
+        ),
       ],
     );
   }
@@ -512,7 +621,6 @@ class _RecordBookPageState extends State<RecordBookPage> {
   Widget _buildEmptyCourseButton(Course course) {
     return Container(
       padding: const EdgeInsets.all(10),
-      color: const Color.fromARGB(255, 241, 96, 33),
       child: ElevatedButton(
         onPressed: () async {
           bool? result = await showDialog(

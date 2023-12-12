@@ -70,7 +70,7 @@ class DatabaseService {
   static Future<void> createOrUpdateCourse(
       var user, Course course, String semester) async {
     if (course.nameField!.trim().isEmpty) {
-      throw Exception('Course name cannot be empty');
+      throw Exception('Назва курсу не може бути порожньою!');
     }
     final docRef = FirebaseFirestore.instance
         .collection("student")
@@ -111,7 +111,7 @@ class DatabaseService {
           .collection("semester")
           .doc(currentSemester)
           .collection("Courses")
-          .doc(courseName) // Use course name as document ID
+          .doc(courseName)
           .delete();
     } catch (e) {
       rethrow;
@@ -121,7 +121,7 @@ class DatabaseService {
   static Future<void> createOrUpdateEvent(
       var user, EventSchedule event, String semester) async {
     if (event.eventName!.trim().isEmpty) {
-      throw Exception('Event name cannot be empty');
+      throw Exception('Назва події не може бути порожньою!');
     }
     final docRef = FirebaseFirestore.instance
         .collection("student")
