@@ -4,14 +4,12 @@ class DropdownMenuDesign extends StatelessWidget {
   final List<String> items;
   final String? selectedItem;
   final ValueChanged<String?>? onChanged;
-  final String hintText;
 
   const DropdownMenuDesign({
     Key? key,
     required this.items,
     this.selectedItem,
     this.onChanged,
-    this.hintText = "Select an item",
   }) : super(key: key);
 
   @override

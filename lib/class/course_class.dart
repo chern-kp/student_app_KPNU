@@ -2,7 +2,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 class Course {
   String? nameField;
-  String? semesterField;
   num? hoursLectionsField;
   num? hoursPracticesField;
   num? hoursLabsField;
@@ -22,7 +21,6 @@ class Course {
 
   Course({
     this.nameField,
-    this.semesterField,
     this.hoursLectionsField,
     this.hoursPracticesField,
     this.hoursLabsField,
@@ -61,7 +59,6 @@ class Course {
   Map<String, dynamic> toJsonCourse() {
     return {
       'Name': nameField,
-      'Semester': semesterField,
       'Hours Lections': hoursLectionsField,
       'Hours Practices': hoursPracticesField,
       'Hours Labs': hoursLabsField,
@@ -83,7 +80,6 @@ class Course {
 
   Course.fromJsonCourse(Map<String, dynamic> json) {
     nameField = json['Name'];
-    semesterField = json['Semester'];
     hoursLectionsField = json['Hours Lections'];
     hoursPracticesField = json['Hours Practices'];
     hoursLabsField = json['Hours Labs'];

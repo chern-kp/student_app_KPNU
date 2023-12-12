@@ -82,28 +82,6 @@ class DatabaseService {
     return docRef.set(course.toJsonCourse());
   }
 
-  // GET course by name
-  static Future<Course> getCourseByName(
-      String userEmail, String courseName) async {
-    var currentSemester = await getStudentField(userEmail, 'Current Semester');
-    QuerySnapshot querySnapshot = await FirebaseFirestore.instance
-        .collection("student")
-        .doc(userEmail)
-        .collection("semester")
-        .doc(currentSemester)
-        .collection("Courses")
-        .where('Name', isEqualTo: courseName)
-        .get();
-
-    if (querySnapshot.docs.isNotEmpty) {
-      // If there are multiple courses with the same name, this will return the first one.
-      DocumentSnapshot snapshot = querySnapshot.docs.first;
-      return Course.fromJsonCourse(snapshot.data() as Map<String, dynamic>);
-    } else {
-      throw Exception('Course not found');
-    }
-  }
-
 // get all courses
   static Future<List<Course>> getAllCourses(
       String userEmail, String semester) async {
@@ -114,7 +92,6 @@ class DatabaseService {
         .doc(semester)
         .collection("Courses")
         .get();
-
     if (querySnapshot.docs.isNotEmpty) {
       return querySnapshot.docs
           .map((doc) =>

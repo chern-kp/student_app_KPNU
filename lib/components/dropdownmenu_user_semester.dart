@@ -37,7 +37,6 @@ class _DropdownMenuUserSemesterState extends State<DropdownMenuUserSemester> {
           //if problems with internet connection
           return const CircularProgressIndicator();
         } else if (snapshot.hasError) {
-          //todo better error handling
           return Text('Error: ${snapshot.error}');
         } else if (snapshot.hasData) {
           //if everything is ok
@@ -61,15 +60,6 @@ class _DropdownMenuUserSemesterState extends State<DropdownMenuUserSemester> {
                       widget.chosenValueInDatabase = Future.value(selectedItem);
                     });
                   },
-                  hintText: widget.chosenField == 'Faculty'
-                      ? (snapshot.data == ""
-                          ? "Choose the faculty"
-                          : snapshot.data!)
-                      : (widget.chosenField == 'Current Semester'
-                          ? (snapshot.data == ""
-                              ? "Current Semester"
-                              : snapshot.data!)
-                          : ''),
                 );
               }
             },

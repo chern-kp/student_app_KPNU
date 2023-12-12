@@ -358,7 +358,7 @@ class _CoursesSchedulePageState extends State<CoursesSchedulePage> {
       children: [
         Expanded(
           child: Text(
-            'Назва дисципліни: ${course.nameField}',
+            'Назва: ${course.nameField}',
             style: const TextStyle(
               fontWeight: FontWeight.bold,
               fontSize: 20,
@@ -494,7 +494,7 @@ class _CoursesSchedulePageState extends State<CoursesSchedulePage> {
             children: [
               Expanded(
                 child: Text(
-                  'Кількість кредитів: ${course.creditsOverallTotalField != null && course.creditsOverallTotalField! % 1 == 0 ? course.creditsOverallTotalField!.toInt() : course.creditsOverallTotalField}',
+                  'Кількість кредитів ЄКТС: ${course.creditsOverallTotalField != null && course.creditsOverallTotalField! % 1 == 0 ? course.creditsOverallTotalField!.toInt() : course.creditsOverallTotalField}',
                   style: TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
@@ -559,6 +559,7 @@ class _CoursesSchedulePageState extends State<CoursesSchedulePage> {
       body: Center(
         child: Column(
           children: [
+            const SizedBox(height: 5),
             DropdownMenuChooseSemester(
                 onSelectedItemChanged: updateSelectedSemester),
             const SizedBox(height: 25),

@@ -35,7 +35,7 @@ class _DropdownMenuChooseSemesterState
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(child: CircularProgressIndicator());
         } else if (snapshot.hasError) {
-          return Center(child: Text('Error: ${snapshot.error}'));
+          return Center(child: Text('Помилка: ${snapshot.error}'));
         } else if (snapshot.hasData) {
           List<String>? dataList = snapshot.data;
           return FutureBuilder<String?>(
@@ -44,7 +44,7 @@ class _DropdownMenuChooseSemesterState
               if (snapshot.connectionState == ConnectionState.waiting) {
                 return const Center(child: CircularProgressIndicator());
               } else if (snapshot.hasError) {
-                return Center(child: Text('Error: ${snapshot.error}'));
+                return Center(child: Text('Помилка: ${snapshot.error}'));
               } else {
                 return DropdownMenuDesign(
                   items: dataList!,
@@ -55,7 +55,6 @@ class _DropdownMenuChooseSemesterState
                     });
                     widget.onSelectedItemChanged(selectedItem!);
                   },
-                  hintText: "Choose the faculty",
                 );
               }
             },

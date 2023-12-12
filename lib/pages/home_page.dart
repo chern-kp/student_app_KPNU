@@ -2,7 +2,7 @@
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:student_app/pages/ClassSchedulePage/class_schedule_page.dart';
+import 'package:student_app/pages/class_schedule_page/class_schedule_page.dart';
 import 'courses_schedule_page.dart';
 import 'record_book_page.dart';
 

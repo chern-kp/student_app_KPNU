@@ -4,9 +4,9 @@ import 'package:student_app/class/database_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:student_app/class/event_class.dart';
 import 'package:student_app/components/dropdownmenu_choose_semester.dart';
-import 'package:student_app/pages/ClassSchedulePage/my_callendar.dart';
+import 'package:student_app/pages/class_schedule_page/my_callendar.dart';
 import 'package:intl/intl.dart';
-import 'package:student_app/pages/ClassSchedulePage/new_event_dialog.dart';
+import 'package:student_app/pages/class_schedule_page/new_event_dialog.dart';
 
 class ClassSchedulePage extends StatefulWidget {
   const ClassSchedulePage({Key? key}) : super(key: key);
@@ -193,8 +193,6 @@ class ClassSchedulePageState extends State<ClassSchedulePage> {
         subtitle +=
             '\nEnd Date: ${DateFormat.yMMMd().format(item.eventDateEnd!)}';
       }
-
-      //TODO ДАТИ СЕМЕСТРІВ
 
       return ListTile(
         title: Text(item.eventName!),
