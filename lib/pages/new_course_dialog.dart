@@ -306,7 +306,7 @@ class _NewCourseDialogState extends State<NewCourseDialog> {
           children: <Widget>[
             Text(widget.isEdit
                 ? 'Змінити освіtній елемент'
-                : 'Додати новий освіtній елемент'),
+                : 'Додати новий освітній елемент'),
             const SizedBox(height: 5),
             if (!widget.isEdit) ...[
               DropdownMenuChooseSemester(

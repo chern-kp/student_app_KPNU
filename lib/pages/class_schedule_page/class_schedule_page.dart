@@ -23,6 +23,7 @@ class ClassSchedulePageState extends State<ClassSchedulePage> {
   Future<List<Course>>? coursesFuture;
   Future<List<EventSchedule>>? eventsFuture;
   Future<List<dynamic>>? allDataFuture;
+  SortOption sortOption = SortOption.byNameAtoZ;
 
   @override
   void initState() {
@@ -39,6 +40,37 @@ class ClassSchedulePageState extends State<ClassSchedulePage> {
     setState(() {
       allDataFuture = initializeData();
     });
+  }
+
+  Widget _sortDropDownMenu() {
+    return DropdownButton<SortOption>(
+      value: sortOption,
+      icon: const Icon(Icons.arrow_downward),
+      onChanged: (SortOption? newValue) {
+        setState(() {
+          sortOption = newValue!;
+          allDataFuture = initializeData();
+        });
+      },
+      items: const <DropdownMenuItem<SortOption>>[
+        DropdownMenuItem<SortOption>(
+          value: SortOption.byNameAtoZ,
+          child: Text('Alphabetical A to Z'),
+        ),
+        DropdownMenuItem<SortOption>(
+          value: SortOption.byNameZtoA,
+          child: Text('Alphabetical Z to A'),
+        ),
+        DropdownMenuItem<SortOption>(
+          value: SortOption.byStartDate,
+          child: Text('By Start Date'),
+        ),
+        DropdownMenuItem<SortOption>(
+          value: SortOption.byEndDate,
+          child: Text('By End Date'),
+        ),
+      ],
+    );
   }
 
   bool isDefaultDate(DateTime? date) {
@@ -59,7 +91,18 @@ class ClassSchedulePageState extends State<ClassSchedulePage> {
     }
     List<Course> courses =
         await DatabaseService.getAllCourses(user!.email!, semester);
-    courses.sort((a, b) => a.nameField!.compareTo(b.nameField!));
+    courses.sort((a, b) {
+      switch (sortOption) {
+        case SortOption.byNameAtoZ:
+          return a.nameField!.compareTo(b.nameField!);
+        case SortOption.byNameZtoA:
+          return b.nameField!.compareTo(a.nameField!);
+        case SortOption.byStartDate:
+        case SortOption.byEndDate:
+          return a.recordBookSelectedDateField!
+              .compareTo(b.recordBookSelectedDateField!);
+      }
+    });
     return courses;
   }
 
@@ -69,6 +112,18 @@ class ClassSchedulePageState extends State<ClassSchedulePage> {
     }
     List<EventSchedule> events =
         await DatabaseService.getAllEvents(user!.email!, semester);
+    events.sort((a, b) {
+      switch (sortOption) {
+        case SortOption.byNameAtoZ:
+          return a.eventName!.compareTo(b.eventName!);
+        case SortOption.byNameZtoA:
+          return b.eventName!.compareTo(a.eventName!);
+        case SortOption.byStartDate:
+          return a.eventDateStart!.compareTo(b.eventDateStart!);
+        case SortOption.byEndDate:
+          return a.eventDateEnd!.compareTo(b.eventDateEnd!);
+      }
+    });
     return events;
   }
 
@@ -137,6 +192,7 @@ class ClassSchedulePageState extends State<ClassSchedulePage> {
         children: [
           _buildCalendar(courses, events),
           _buildDropdownMenu(),
+          _sortDropDownMenu(),
           _addNewEventButton(context),
           _buildCourseList(courses, events),
         ],
@@ -346,4 +402,11 @@ class ClassSchedulePageState extends State<ClassSchedulePage> {
       body: _buildFutureBuilder(),
     );
   }
+}
+
+enum SortOption {
+  byNameAtoZ,
+  byNameZtoA,
+  byStartDate,
+  byEndDate,
 }

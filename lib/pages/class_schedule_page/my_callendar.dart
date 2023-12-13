@@ -21,14 +21,6 @@ class MyCalendarState extends State<MyCalendar> {
   DateTime? _selectedDay;
 
   Color getHighlightColor(DateTime date) {
-    Color highlightColor = getHighlightColorForCourses(date);
-    if (highlightColor == Colors.transparent) {
-      highlightColor = getHighlightColorForEvents(date);
-    }
-    return highlightColor;
-  }
-
-  Color getHighlightColorForCourses(DateTime date) {
     for (var course in widget.courses) {
       if (isSameDay(course.recordBookSelectedDateField!, date) &&
           course.isEvent == true) {
@@ -42,10 +34,7 @@ class MyCalendarState extends State<MyCalendar> {
         }
       }
     }
-    return Colors.transparent;
-  }
 
-  Color getHighlightColorForEvents(DateTime date) {
     for (var event in widget.events) {
       if (isSameDay(event.eventDateStart!, date) ||
           isSameDay(event.eventDateEnd!, date)) {
@@ -59,18 +48,8 @@ class MyCalendarState extends State<MyCalendar> {
         }
       }
     }
-    return Colors.transparent;
-  }
 
-  List<EventSchedule> getEventsForDate(DateTime date) {
-    List<EventSchedule> eventsForDate = [];
-    for (var event in widget.events) {
-      if (event.eventDateStart!.isBefore(date) &&
-          event.eventDateEnd!.isAfter(date.add(const Duration(days: 1)))) {
-        eventsForDate.add(event);
-      }
-    }
-    return eventsForDate;
+    return Colors.transparent;
   }
 
   Widget buildDotsInBetween(BuildContext context, DateTime date, List events,
@@ -83,12 +62,11 @@ class MyCalendarState extends State<MyCalendar> {
       dotColors.add(Colors.red);
     }
     if (eventTypes.contains('Залік')) {
-      dotColors.add(Colors.yellow[700]!);
+      dotColors.add(Colors.yellow[800]!);
     }
     if (eventTypes.length > dotColors.length) {
       dotColors.add(Colors.green);
     }
-    //drawing the dot
     return Positioned(
       bottom: 1,
       child: Row(
@@ -105,6 +83,17 @@ class MyCalendarState extends State<MyCalendar> {
             .toList(),
       ),
     );
+  }
+
+  List<EventSchedule> getEventsForDate(DateTime date) {
+    List<EventSchedule> eventsForDate = [];
+    for (var event in widget.events) {
+      if (event.eventDateStart!.isBefore(date) &&
+          event.eventDateEnd!.isAfter(date.add(const Duration(days: 1)))) {
+        eventsForDate.add(event);
+      }
+    }
+    return eventsForDate;
   }
 
   Widget? defaultBuilderFunction(
