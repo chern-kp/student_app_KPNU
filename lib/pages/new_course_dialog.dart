@@ -230,12 +230,12 @@ class _NewCourseDialogState extends State<NewCourseDialog> {
       TextField(
           controller: recordBookTeacherFieldController,
           decoration: const InputDecoration(
-            labelText: 'Teacher',
+            labelText: 'Викладач',
           )),
       TextField(
           controller: recordBookScoreFieldController,
           decoration: const InputDecoration(
-            labelText: 'Score',
+            labelText: 'Оцінка',
           )),
       Row(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -247,7 +247,7 @@ class _NewCourseDialogState extends State<NewCourseDialog> {
                 selectedDate = date;
               });
             },
-            child: const Text('Select date'),
+            child: const Text('Обрати дату'),
           ),
           IconButton(
             icon: const Icon(Icons.delete),

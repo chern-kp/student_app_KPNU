@@ -174,24 +174,37 @@ class ClassSchedulePageState extends State<ClassSchedulePage> {
       return ListTile(
         title: Text(item.nameField!),
         subtitle: Text(
-            'Record Book Selected Date: ${DateFormat.yMMMd().format(item.recordBookSelectedDateField!)}\nScoring Type: ${item.scoringTypeField!}'),
-        trailing: IconButton(
-          icon: const Icon(Icons.delete),
-          onPressed: () async {
-            await DatabaseService.deleteCourse(user!.email!, item.nameField!);
-            updateState();
-          },
+          'Дата і час: ${item.recordBookSelectedDateField?.year.toString().padLeft(4, '0')}-${item.recordBookSelectedDateField?.month.toString().padLeft(2, '0')}-${item.recordBookSelectedDateField?.day.toString().padLeft(2, '0')} ${item.recordBookSelectedDateField?.hour.toString().padLeft(2, '0')}:${item.recordBookSelectedDateField?.minute.toString().padLeft(2, '0')}\nScoring Type: ${item.scoringTypeField!}',
+        ),
+        trailing: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            IconButton(
+              icon: const Icon(Icons.edit),
+              onPressed: () {
+                // TODO: Add edit functionality
+              },
+            ),
+            IconButton(
+              icon: const Icon(Icons.delete),
+              onPressed: () async {
+                await DatabaseService.deleteCourse(
+                    user!.email!, item.nameField!);
+                updateState();
+              },
+            ),
+          ],
         ),
       );
     } else if (item is EventSchedule) {
-      String subtitle = 'Event Type: ${item.eventType!}';
+      String subtitle = 'Тип: ${item.eventType!}';
       if (!isDefaultDate(item.eventDateStart)) {
         subtitle +=
-            '\nStart Date: ${DateFormat.yMMMd().format(item.eventDateStart!)}';
+            '\nДата і час початку: ${item.eventDateStart?.year.toString().padLeft(4, '0')}-${item.eventDateStart?.month.toString().padLeft(2, '0')}-${item.eventDateStart?.day.toString().padLeft(2, '0')} ${item.eventDateStart?.hour.toString().padLeft(2, '0')}:${item.eventDateStart?.minute.toString().padLeft(2, '0')}';
       }
       if (!isDefaultDate(item.eventDateEnd)) {
         subtitle +=
-            '\nEnd Date: ${DateFormat.yMMMd().format(item.eventDateEnd!)}';
+            '\nДата і час кінця: ${item.eventDateEnd?.year.toString().padLeft(4, '0')}-${item.eventDateEnd?.month.toString().padLeft(2, '0')}-${item.eventDateEnd?.day.toString().padLeft(2, '0')} ${item.eventDateEnd?.hour.toString().padLeft(2, '0')}:${item.eventDateEnd?.minute.toString().padLeft(2, '0')}';
       }
 
       return ListTile(

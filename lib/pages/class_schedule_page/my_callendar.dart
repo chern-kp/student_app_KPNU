@@ -142,12 +142,18 @@ class MyCalendarState extends State<MyCalendar> {
   @override
   Widget build(BuildContext context) {
     return TableCalendar(
+      locale: 'uk_UA',
       firstDay: DateTime.utc(2000, 1, 1),
       lastDay: DateTime.utc(2030, 3, 14),
       focusedDay: _focusedDay,
       calendarFormat: _calendarFormat,
       selectedDayPredicate: (day) {
         return isSameDay(_selectedDay, day);
+      },
+      availableCalendarFormats: const {
+        CalendarFormat.month: 'Місяць',
+        CalendarFormat.twoWeeks: '2 Тижні',
+        CalendarFormat.week: 'Тиждень',
       },
       onDaySelected: (selectedDay, focusedDay) {
         setState(() {

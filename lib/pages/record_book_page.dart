@@ -191,7 +191,7 @@ class _RecordBookPageState extends State<RecordBookPage> {
         ),
         DropdownMenuItem<SortOption>(
           value: SortOption.teacherDesc,
-          child: Text('За викладачем (Я до А)'),
+          child: Text('За викладачем (Я до Аcr)'),
         ),
       ],
     );
@@ -447,7 +447,11 @@ class _RecordBookPageState extends State<RecordBookPage> {
                   const Text('Кількість кредитів:',
                       style: TextStyle(fontSize: 20)),
                   const Spacer(),
-                  Text(course.creditsOverallTotalField.toString(),
+                  Text(
+                      course.creditsOverallTotalField != null &&
+                              course.creditsOverallTotalField! % 1 == 0
+                          ? course.creditsOverallTotalField!.toInt().toString()
+                          : course.creditsOverallTotalField.toString(),
                       textAlign: TextAlign.end,
                       style: const TextStyle(
                         fontSize: 20,
@@ -653,10 +657,12 @@ class _RecordBookPageState extends State<RecordBookPage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Залікова Книжка Студента'),
-        //todo
       ),
       body: Column(
         children: [
+          const SizedBox(
+            height: 5,
+          ),
           Center(
               child: DropdownMenuChooseSemester(
                   onSelectedItemChanged: updateSelectedSemester)),
