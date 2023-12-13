@@ -21,7 +21,8 @@ class CalendarDialog extends StatelessWidget {
     List<Course> selectedCourses = courses.where((course) {
       return course.recordBookSelectedDateField!.day == selectedDate.day &&
           course.recordBookSelectedDateField!.month == selectedDate.month &&
-          course.recordBookSelectedDateField!.year == selectedDate.year;
+          course.recordBookSelectedDateField!.year == selectedDate.year &&
+          course.isEvent == true;
     }).toList();
 
     List<EventSchedule> selectedEvents = events.where((event) {

@@ -5,8 +5,9 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:student_app/class/event_class.dart';
 import 'package:student_app/components/dropdownmenu_choose_semester.dart';
 import 'package:student_app/pages/class_schedule_page/my_callendar.dart';
-import 'package:intl/intl.dart';
 import 'package:student_app/pages/class_schedule_page/new_event_dialog.dart';
+
+import '../new_course_dialog.dart';
 
 class ClassSchedulePage extends StatefulWidget {
   const ClassSchedulePage({Key? key}) : super(key: key);
@@ -72,19 +73,44 @@ class ClassSchedulePageState extends State<ClassSchedulePage> {
   }
 
   Widget _addNewEventButton(BuildContext context) {
-    return ElevatedButton(
-      onPressed: () {
-        showDialog(
-          context: context,
-          builder: (BuildContext context) {
-            return NewEventDialog(
-              selectedSemester: selectedSemester,
-              onUpdate: updateState,
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      children: [
+        ElevatedButton(
+          onPressed: () {
+            showDialog(
+              context: context,
+              builder: (BuildContext context) {
+                return NewEventDialog(
+                  selectedSemester: selectedSemester,
+                  onUpdate: updateState,
+                );
+              },
             );
           },
-        );
-      },
-      child: const Text('Add New Event'),
+          child: const Text('Додати нову подію'),
+        ),
+        ElevatedButton(
+          onPressed: () async {
+            final result = await showDialog(
+              context: context,
+              builder: (BuildContext context) {
+                return NewCourseDialog(
+                  isClassSchedule: true,
+                  isRecordBook: false,
+                  filledNewRecordBook: false,
+                  filledCourseSchedule: false,
+                  currentSemester: selectedSemester,
+                );
+              },
+            );
+            if (result != null && result) {
+              updateState();
+            }
+          },
+          child: const Text('Додати новий елемент'),
+        ),
+      ],
     );
   }
 
@@ -148,7 +174,8 @@ class ClassSchedulePageState extends State<ClassSchedulePage> {
 
   List<Course> _filterCourses(List<Course> courses) {
     return courses.where((course) {
-      return !isDefaultDate(course.recordBookSelectedDateField);
+      return !isDefaultDate(course.recordBookSelectedDateField) &&
+          course.isEvent == true;
     }).toList();
   }
 
@@ -169,33 +196,117 @@ class ClassSchedulePageState extends State<ClassSchedulePage> {
     );
   }
 
-  Widget _buildListItem(dynamic item) {
-    if (item is Course) {
-      return ListTile(
-        title: Text(item.nameField!),
-        subtitle: Text(
-          'Дата і час: ${item.recordBookSelectedDateField?.year.toString().padLeft(4, '0')}-${item.recordBookSelectedDateField?.month.toString().padLeft(2, '0')}-${item.recordBookSelectedDateField?.day.toString().padLeft(2, '0')} ${item.recordBookSelectedDateField?.hour.toString().padLeft(2, '0')}:${item.recordBookSelectedDateField?.minute.toString().padLeft(2, '0')}\nScoring Type: ${item.scoringTypeField!}',
-        ),
-        trailing: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            IconButton(
-              icon: const Icon(Icons.edit),
-              onPressed: () {
-                // TODO: Add edit functionality
-              },
+  void showDeleteDialog(BuildContext context, dynamic item) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Delete Item'),
+          actions: <Widget>[
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Builder(
+                      builder: (context) => ElevatedButton(
+                        style: Theme.of(context).elevatedButtonTheme.style,
+                        child: const Center(
+                            child: Text('Delete from Page',
+                                textAlign: TextAlign.center)),
+                        onPressed: () async {
+                          // TODO: Add delete from page functionality
+                          if (context.mounted) {
+                            Navigator.of(context).pop();
+                          }
+                        },
+                      ),
+                    ),
+                  ),
+                ),
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Builder(
+                      builder: (context) => ElevatedButton(
+                        style: Theme.of(context).elevatedButtonTheme.style,
+                        child: const Center(
+                            child: Text('Delete from Database',
+                                textAlign: TextAlign.center)),
+                        onPressed: () async {
+                          // TODO: Add delete from database functionality
+                          if (context.mounted) {
+                            Navigator.of(context).pop();
+                          }
+                        },
+                      ),
+                    ),
+                  ),
+                ),
+              ],
             ),
-            IconButton(
-              icon: const Icon(Icons.delete),
-              onPressed: () async {
-                await DatabaseService.deleteCourse(
-                    user!.email!, item.nameField!);
-                updateState();
+            TextButton(
+              child: const Text('Close'),
+              onPressed: () {
+                Navigator.of(context).pop();
               },
             ),
           ],
+        );
+      },
+    );
+  }
+
+  Widget _buildListItemDesign(String title, String subtitle, Function onEdit,
+      Function onDelete, dynamic item) {
+    BorderRadius borderRadius = BorderRadius.circular(8.0);
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4.0, horizontal: 8.0),
+      child: Card(
+        elevation: 5.0,
+        child: Container(
+          decoration: BoxDecoration(
+            border: Border.all(
+              color: Colors.grey[700]!,
+              width: 2,
+            ),
+            borderRadius: borderRadius,
+          ),
+          child: ListTile(
+            title: Text(title),
+            subtitle: Text(subtitle),
+            trailing: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                IconButton(
+                  icon: const Icon(Icons.edit),
+                  onPressed: () => onEdit(),
+                ),
+                IconButton(
+                  icon: const Icon(Icons.delete),
+                  onPressed: () {
+                    // Show delete dialog when delete button is clicked
+                    showDeleteDialog(context, item);
+                  },
+                ),
+              ],
+            ),
+          ),
         ),
-      );
+      ),
+    );
+  }
+
+  Widget _buildListItem(dynamic item) {
+    if (item is Course) {
+      String subtitle =
+          'Дата і час: ${item.recordBookSelectedDateField?.year.toString().padLeft(4, '0')}-${item.recordBookSelectedDateField?.month.toString().padLeft(2, '0')}-${item.recordBookSelectedDateField?.day.toString().padLeft(2, '0')} ${item.recordBookSelectedDateField?.hour.toString().padLeft(2, '0')}:${item.recordBookSelectedDateField?.minute.toString().padLeft(2, '0')}\nТип: ${item.scoringTypeField!}';
+      return _buildListItemDesign(item.nameField!, subtitle, () {
+        // TODO: Add edit functionality
+      }, () async {
+        // TODO: Add delete functionality
+      }, item);
     } else if (item is EventSchedule) {
       String subtitle = 'Тип: ${item.eventType!}';
       if (!isDefaultDate(item.eventDateStart)) {
@@ -206,40 +317,21 @@ class ClassSchedulePageState extends State<ClassSchedulePage> {
         subtitle +=
             '\nДата і час кінця: ${item.eventDateEnd?.year.toString().padLeft(4, '0')}-${item.eventDateEnd?.month.toString().padLeft(2, '0')}-${item.eventDateEnd?.day.toString().padLeft(2, '0')} ${item.eventDateEnd?.hour.toString().padLeft(2, '0')}:${item.eventDateEnd?.minute.toString().padLeft(2, '0')}';
       }
-
-      return ListTile(
-        title: Text(item.eventName!),
-        subtitle: Text(subtitle),
-        trailing: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            IconButton(
-              icon: const Icon(Icons.edit),
-              onPressed: () {
-                showDialog(
-                  context: context,
-                  builder: (BuildContext context) {
-                    return NewEventDialog(
-                      isEdit: true,
-                      event: item,
-                      selectedSemester: selectedSemester,
-                      onUpdate: updateState,
-                    );
-                  },
-                );
-              },
-            ),
-            IconButton(
-              icon: const Icon(Icons.delete),
-              onPressed: () async {
-                await DatabaseService.deleteEvent(
-                    user!.email!, item.eventName!);
-                updateState();
-              },
-            ),
-          ],
-        ),
-      );
+      return _buildListItemDesign(item.eventName!, subtitle, () {
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return NewEventDialog(
+              isEdit: true,
+              event: item,
+              selectedSemester: selectedSemester,
+              onUpdate: updateState,
+            );
+          },
+        );
+      }, () async {
+        // TODO: Add delete functionality
+      }, item);
     } else {
       throw Exception('Unknown type in combinedList');
     }

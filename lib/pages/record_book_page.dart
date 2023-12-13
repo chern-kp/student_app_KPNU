@@ -109,7 +109,6 @@ class _RecordBookPageState extends State<RecordBookPage> {
       });
     }
 
-    // Sort by isRecordBookFilled
     courses.sort((a, b) {
       if (a.isRecordBookFilled == b.isRecordBookFilled) {
         return 0;
@@ -229,7 +228,7 @@ class _RecordBookPageState extends State<RecordBookPage> {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const CircularProgressIndicator();
         } else if (snapshot.hasError) {
-          return Text('Error: ${snapshot.error}');
+          return Text('Помилка: ${snapshot.error}');
         } else {
           List<Map<String, dynamic>> examCoursesFilled = [];
           List<Map<String, dynamic>> scoringCoursesFilled = [];

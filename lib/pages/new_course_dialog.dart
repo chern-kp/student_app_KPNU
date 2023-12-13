@@ -15,41 +15,42 @@ class NewCourseDialog extends StatefulWidget {
     this.isRecordBook = false,
     this.filledNewRecordBook = false,
     this.filledCourseSchedule = false,
+    this.isClassSchedule = false,
     this.course,
     this.currentSemester,
     Key? key,
   }) : super(key: key);
 
+  final Course? course;
+  final String? currentSemester;
+  bool filledCourseSchedule;
+  bool filledNewRecordBook;
+  bool isClassSchedule;
   bool isEdit;
   bool isEditFilling;
   bool isRecordBook;
-  bool filledNewRecordBook;
-  bool filledCourseSchedule;
-  final Course? course;
-  final String? currentSemester;
 
   @override
   State<NewCourseDialog> createState() => _NewCourseDialogState();
 }
 
 class _NewCourseDialogState extends State<NewCourseDialog> {
-  final user = FirebaseAuth.instance.currentUser!;
-  final nameFieldController = TextEditingController();
-  final hoursLectionsFieldController = TextEditingController();
-  final hoursPracticesFieldController = TextEditingController();
-  final hoursLabsFieldController = TextEditingController();
+  final creditsOverallTotalFieldController = TextEditingController();
   final hoursCourseworkFieldController = TextEditingController();
   final hoursInClassTotalFieldController = TextEditingController();
   final hoursIndividualTotalFieldController = TextEditingController();
+  final hoursLabsFieldController = TextEditingController();
+  final hoursLectionsFieldController = TextEditingController();
   final hoursOverallTotalFieldController = TextEditingController();
-  final creditsOverallTotalFieldController = TextEditingController();
-  final scoringTypeFieldController = TextEditingController();
-  final recordBookTeacherFieldController = TextEditingController();
+  final hoursPracticesFieldController = TextEditingController();
+  bool isEvent = false;
+  final nameFieldController = TextEditingController();
   final recordBookScoreFieldController = TextEditingController();
-
+  final recordBookTeacherFieldController = TextEditingController();
+  final scoringTypeFieldController = TextEditingController();
   DateTime? selectedDate;
   String? selectedSemesterPage;
-  bool isEvent = false;
+  final user = FirebaseAuth.instance.currentUser!;
 
   @override
   void initState() {
@@ -89,7 +90,9 @@ class _NewCourseDialogState extends State<NewCourseDialog> {
     if (widget.isEdit == true && widget.isEditFilling == false) {
       return widget.filledCourseSchedule;
     } else {
-      if (widget.isEdit == false && widget.isRecordBook == false) {
+      if (widget.isEdit == false &&
+          widget.isRecordBook == false &&
+          widget.isClassSchedule == false) {
         return true;
       } else {
         return widget.filledCourseSchedule;
@@ -105,11 +108,25 @@ class _NewCourseDialogState extends State<NewCourseDialog> {
         return widget.filledNewRecordBook;
       }
     } else {
-      if (widget.isEdit == false && widget.isRecordBook == true) {
+      if (widget.isEdit == false &&
+          widget.isRecordBook == true &&
+          widget.isClassSchedule == false) {
         return true;
       } else {
         return widget.filledNewRecordBook;
       }
+    }
+  }
+
+  bool getIsEvent() {
+    if (!widget.isEdit && widget.isClassSchedule) {
+      return true;
+    } else if (selectedDate != null &&
+        !selectedDate!.isAtSameMomentAs(
+            DateTime.fromMillisecondsSinceEpoch(978307200000, isUtc: true))) {
+      return isEvent;
+    } else {
+      return false;
     }
   }
 
@@ -140,12 +157,7 @@ class _NewCourseDialogState extends State<NewCourseDialog> {
                 int.tryParse(recordBookScoreFieldController.text) ?? 0,
             recordBookSelectedDateField: selectedDate,
             //If the date is default course always will save with isEvent = false.
-            isEvent: selectedDate != null &&
-                    !selectedDate!.isAtSameMomentAs(
-                        DateTime.fromMillisecondsSinceEpoch(978307200000,
-                            isUtc: true))
-                ? isEvent
-                : false,
+            isEvent: getIsEvent(),
           );
           if (widget.isEdit &&
               widget.course != null &&
@@ -293,12 +305,11 @@ class _NewCourseDialogState extends State<NewCourseDialog> {
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
             Text(widget.isEdit
-                ? 'Змінити освітній елемент'
-                : 'Додати новий освітній елемент'),
+                ? 'Змінити освіtній елемент'
+                : 'Додати новий освіtній елемент'),
             const SizedBox(height: 5),
-            Visibility(
-              visible: !widget.isEdit,
-              child: DropdownMenuChooseSemester(
+            if (!widget.isEdit) ...[
+              DropdownMenuChooseSemester(
                 initialSemester: widget.currentSemester,
                 onSelectedItemChanged: (selectedItem) {
                   setState(() {
@@ -306,38 +317,89 @@ class _NewCourseDialogState extends State<NewCourseDialog> {
                   });
                 },
               ),
-            ),
+            ],
             TextField(
               controller: nameFieldController,
               decoration: const InputDecoration(
                 labelText: 'Назва освітнього елементу',
               ),
             ),
-            Visibility(
-              visible: !widget.isRecordBook,
-              child: _coursesScheduleFields(),
-            ),
-            DropdownButton<String>(
-              value: scoringTypeFieldController.text.isEmpty
-                  ? null
-                  : scoringTypeFieldController.text,
-              onChanged: (String? newValue) {
-                setState(() {
-                  scoringTypeFieldController.text = newValue!;
-                });
-              },
-              items: <String>['Екзамен', 'Залік', 'Інше']
-                  .map<DropdownMenuItem<String>>((String value) {
-                return DropdownMenuItem<String>(
-                  value: value,
-                  child: Text(value),
-                );
-              }).toList(),
-            ),
-            Visibility(
-              visible: widget.isRecordBook,
-              child: _recordBookFields(),
-            ),
+            if (!widget.isClassSchedule) ...[
+              Visibility(
+                visible: !widget.isRecordBook,
+                child: _coursesScheduleFields(),
+              ),
+              DropdownButton<String>(
+                value: scoringTypeFieldController.text.isEmpty
+                    ? null
+                    : scoringTypeFieldController.text,
+                onChanged: (String? newValue) {
+                  setState(() {
+                    scoringTypeFieldController.text = newValue!;
+                  });
+                },
+                items: <String>['Екзамен', 'Залік', 'Інше']
+                    .map<DropdownMenuItem<String>>((String value) {
+                  return DropdownMenuItem<String>(
+                    value: value,
+                    child: Text(value),
+                  );
+                }).toList(),
+              ),
+              Visibility(
+                visible: widget.isRecordBook,
+                child: _recordBookFields(),
+              ),
+            ],
+            if (widget.isClassSchedule) ...[
+              DropdownButton<String>(
+                value: scoringTypeFieldController.text.isEmpty
+                    ? null
+                    : scoringTypeFieldController.text,
+                onChanged: (String? newValue) {
+                  setState(() {
+                    scoringTypeFieldController.text = newValue!;
+                  });
+                },
+                items: <String>['Екзамен', 'Залік', 'Інше']
+                    .map<DropdownMenuItem<String>>((String value) {
+                  return DropdownMenuItem<String>(
+                    value: value,
+                    child: Text(value),
+                  );
+                }).toList(),
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  ElevatedButton(
+                    onPressed: () async {
+                      DateTime? date = await selectDate(context);
+                      setState(() {
+                        selectedDate = date;
+                      });
+                    },
+                    child: const Text('Обрати дату'),
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.delete),
+                    onPressed: () {
+                      setState(() {
+                        selectedDate = DateTime.fromMillisecondsSinceEpoch(
+                            978307200000,
+                            isUtc: true);
+                      });
+                    },
+                  ),
+                ],
+              ),
+              Text(selectedDate != null &&
+                      !selectedDate!.isAtSameMomentAs(
+                          DateTime.fromMillisecondsSinceEpoch(978307200000,
+                              isUtc: true))
+                  ? '${selectedDate!.year.toString().padLeft(4, '0')}-${selectedDate!.month.toString().padLeft(2, '0')}-${selectedDate!.day.toString().padLeft(2, '0')} ${selectedDate!.hour.toString().padLeft(2, '0')}:${selectedDate!.minute.toString().padLeft(2, '0')}'
+                  : ''),
+            ],
           ],
         ),
       ),

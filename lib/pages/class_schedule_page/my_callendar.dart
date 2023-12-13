@@ -30,12 +30,13 @@ class MyCalendarState extends State<MyCalendar> {
 
   Color getHighlightColorForCourses(DateTime date) {
     for (var course in widget.courses) {
-      if (isSameDay(course.recordBookSelectedDateField!, date)) {
+      if (isSameDay(course.recordBookSelectedDateField!, date) &&
+          course.isEvent == true) {
         switch (course.scoringTypeField) {
           case 'Екзамен':
             return Colors.red;
           case 'Залік':
-            return Colors.yellow;
+            return Colors.yellow[800]!;
           default:
             return Colors.green;
         }
@@ -52,7 +53,7 @@ class MyCalendarState extends State<MyCalendar> {
           case 'Екзамен':
             return Colors.red;
           case 'Залік':
-            return Colors.yellow[700]!;
+            return Colors.yellow[800]!;
           default:
             return Colors.green;
         }

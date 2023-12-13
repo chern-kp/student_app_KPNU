@@ -32,7 +32,7 @@ class _NewEventDialogState extends State<NewEventDialog> {
   String? selectedSemesterPage;
   DateTime? eventDateStart;
   DateTime? eventDateEnd;
-  String? selectedScoringType = 'Екзамен';
+  String? selectedScoringType = 'Інше';
 
   @override
   void initState() {
@@ -80,11 +80,11 @@ class _NewEventDialogState extends State<NewEventDialog> {
             context: context,
             builder: (BuildContext context) {
               return AlertDialog(
-                title: const Text('Error'),
+                title: const Text('Помилка'),
                 content: Text(e.toString()),
                 actions: <Widget>[
                   TextButton(
-                    child: const Text('Close'),
+                    child: const Text('Закрити'),
                     onPressed: () {
                       Navigator.of(context).pop();
                     },
@@ -101,7 +101,7 @@ class _NewEventDialogState extends State<NewEventDialog> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: const Text('New Event'),
+      title: const Text('Нова Подія'),
       content: SingleChildScrollView(
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -117,7 +117,7 @@ class _NewEventDialogState extends State<NewEventDialog> {
             TextField(
               controller: eventNameController,
               decoration: const InputDecoration(
-                labelText: 'Event Name',
+                labelText: 'Назва',
               ),
             ),
             DropdownButton<String>(
@@ -138,12 +138,12 @@ class _NewEventDialogState extends State<NewEventDialog> {
             TextField(
               controller: eventTypeController,
               decoration: const InputDecoration(
-                labelText: 'Event Type',
+                labelText: 'Тип',
               ),
               enabled: selectedScoringType == 'Інше',
             ),
             ElevatedButton(
-              child: const Text('Select Start Date'),
+              child: const Text('Дата початку'),
               onPressed: () async {
                 eventDateStart = await selectDate(context);
                 setState(() {});
@@ -153,7 +153,7 @@ class _NewEventDialogState extends State<NewEventDialog> {
                 ? '${eventDateStart!.year.toString().padLeft(4, '0')}-${eventDateStart!.month.toString().padLeft(2, '0')}-${eventDateStart!.day.toString().padLeft(2, '0')} ${eventDateStart!.hour.toString().padLeft(2, '0')}:${eventDateStart!.minute.toString().padLeft(2, '0')}'
                 : ''),
             ElevatedButton(
-              child: const Text('Select End Date'),
+              child: const Text('Дата кінця'),
               onPressed: () async {
                 eventDateEnd = await selectDate(context);
                 setState(() {});
