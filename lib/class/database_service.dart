@@ -7,8 +7,8 @@ class DatabaseService {
     //шлях до документу "student" - "%user%"
     final docRef = FirebaseFirestore.instance.collection("student").doc(user);
     final Map<String, dynamic> studentData = {
-      'emailField': user,
-      'currentSemesterField': "Семестер 1"
+      'E-mail': user,
+      'Current Semester': "Семестр 1"
     };
     return docRef.set(studentData).then((_) {
       return createSemesterCollection(user);
@@ -17,12 +17,12 @@ class DatabaseService {
 
   static Future<void> createSemesterCollection(var user) {
     List<Future> tasks = [];
-    for (int i = 1; i <= 10; i++) {
+    for (int i = 1; i <= 8; i++) {
       tasks.add(FirebaseFirestore.instance
           .collection("student")
           .doc(user)
           .collection('semester')
-          .doc('Семестер ')
+          .doc('Семестр $i')
           .set({}));
     }
     return Future.wait(tasks);

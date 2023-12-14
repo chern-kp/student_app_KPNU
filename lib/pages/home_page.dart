@@ -75,7 +75,7 @@ class HomePage extends StatelessWidget {
                 listOfData: facultyList,
                 chosenValueInDatabase: selectedSemester,
                 chosenField: 'Current Semester'),
-            const SizedBox(height: 25),
+            const SizedBox(height: 75),
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: MyButton(
@@ -83,6 +83,7 @@ class HomePage extends StatelessWidget {
                 text: 'Індивідуальний Навчальний План',
               ),
             ),
+            const SizedBox(height: 25),
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: MyButton(
@@ -90,6 +91,7 @@ class HomePage extends StatelessWidget {
                 text: 'Залікова Книжка Студента',
               ),
             ),
+            const SizedBox(height: 25),
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: MyButton(

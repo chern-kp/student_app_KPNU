@@ -55,19 +55,19 @@ class ClassSchedulePageState extends State<ClassSchedulePage> {
       items: const <DropdownMenuItem<SortOption>>[
         DropdownMenuItem<SortOption>(
           value: SortOption.byNameAtoZ,
-          child: Text('Alphabetical A to Z'),
+          child: Text('За алфавітом (А до Я)'),
         ),
         DropdownMenuItem<SortOption>(
           value: SortOption.byNameZtoA,
-          child: Text('Alphabetical Z to A'),
+          child: Text('За алфавітом (Я до А)'),
         ),
         DropdownMenuItem<SortOption>(
           value: SortOption.byStartDate,
-          child: Text('By Start Date'),
+          child: Text('По даті початку'),
         ),
         DropdownMenuItem<SortOption>(
           value: SortOption.byEndDate,
-          child: Text('By End Date'),
+          child: Text('По даті кінця'),
         ),
       ],
     );
@@ -291,7 +291,14 @@ class ClassSchedulePageState extends State<ClassSchedulePage> {
                             child: Text('Delete from Database',
                                 textAlign: TextAlign.center)),
                         onPressed: () async {
-                          // TODO: Add delete from database functionality
+                          if (item is Course) {
+                            await DatabaseService.deleteCourse(
+                                user!.email!, item.nameField!);
+                          } else if (item is EventSchedule) {
+                            await DatabaseService.deleteEvent(
+                                user!.email!, item.eventName!);
+                          }
+                          updateState();
                           if (context.mounted) {
                             Navigator.of(context).pop();
                           }

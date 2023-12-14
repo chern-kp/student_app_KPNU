@@ -314,31 +314,46 @@ class _RecordBookPageState extends State<RecordBookPage> {
               BorderRadius.circular(15.0), // This line adds rounded corners
         ),
         elevation: 3.0,
-        child: Container(
-          padding: const EdgeInsets.all(10),
-          decoration: BoxDecoration(
-            border: Border.all(
-              color: borderColor, // Border color
-              width: 5.0, // Border width
+        child: Stack(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(10),
+              decoration: BoxDecoration(
+                border: Border.all(
+                  color: borderColor, // Border color
+                  width: 5.0, // Border width
+                ),
+                //color: Color.fromARGB(255, 255, 128, 74),
+                borderRadius:
+                    BorderRadius.circular(10), // Match the Card's borderRadius
+              ),
+              child: SingleChildScrollView(
+                child: Column(
+                  children: [
+                    Center(
+                        child: Text(
+                      course.nameField!,
+                      style: const TextStyle(fontSize: 18),
+                    )),
+                    course.isRecordBookFilled ?? false
+                        ? _buildFilledCourseDetails(course, borderColor)
+                        : _buildEmptyCourseButton(course),
+                  ],
+                ),
+              ),
             ),
-            //color: Color.fromARGB(255, 255, 128, 74),
-            borderRadius:
-                BorderRadius.circular(10), // Match the Card's borderRadius
-          ),
-          child: SingleChildScrollView(
-            child: Column(
-              children: [
-                Center(
-                    child: Text(
-                  course.nameField!,
-                  style: const TextStyle(fontSize: 18),
-                )),
-                course.isRecordBookFilled ?? false
-                    ? _buildFilledCourseDetails(course, borderColor)
-                    : _buildEmptyCourseButton(course),
-              ],
-            ),
-          ),
+            if (!(course.isRecordBookFilled ?? false))
+              Positioned(
+                bottom: 0,
+                right: 0,
+                child: IconButton(
+                  icon: const Icon(Icons.delete),
+                  onPressed: () {
+                    showDeleteDialog(context, course, selectedSemesterPage!);
+                  },
+                ),
+              ),
+          ],
         ),
       ),
     );
