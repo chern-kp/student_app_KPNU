@@ -4,7 +4,7 @@ import 'package:intl/intl.dart';
 import '../../class/course_class.dart';
 import '../../class/event_class.dart';
 
-//TODO
+//TODO edit
 class CalendarDialog extends StatelessWidget {
   final DateTime selectedDate;
   final List<Course> courses;
