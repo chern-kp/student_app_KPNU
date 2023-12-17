@@ -567,7 +567,7 @@ class _RecordBookPageState extends State<RecordBookPage> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text('Delete Course'),
+          title: const Text('Видалити елемент?'),
           actions: <Widget>[
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -579,7 +579,7 @@ class _RecordBookPageState extends State<RecordBookPage> {
                       builder: (context) => ElevatedButton(
                         style: Theme.of(context).elevatedButtonTheme.style,
                         child: const Center(
-                            child: Text('Delete from Page',
+                            child: Text('Видалити зі сторінки',
                                 textAlign: TextAlign.center)),
                         onPressed: () async {
                           course.isRecordBookFilled = false;
@@ -604,7 +604,7 @@ class _RecordBookPageState extends State<RecordBookPage> {
                       builder: (context) => ElevatedButton(
                         style: Theme.of(context).elevatedButtonTheme.style,
                         child: const Center(
-                            child: Text('Delete from Database',
+                            child: Text('Повністтю видалити елемент',
                                 textAlign: TextAlign.center)),
                         onPressed: () async {
                           await DatabaseService.deleteCourse(
@@ -625,7 +625,7 @@ class _RecordBookPageState extends State<RecordBookPage> {
               ],
             ),
             TextButton(
-              child: const Text('Close'),
+              child: const Text('Закрити'),
               onPressed: () {
                 Navigator.of(context).pop();
               },

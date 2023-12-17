@@ -40,6 +40,8 @@ class _NewEventDialogState extends State<NewEventDialog> {
     if (widget.isEdit && widget.event != null) {
       eventNameController.text = widget.event!.eventName ?? '';
       eventTypeController.text = widget.event!.eventType ?? '';
+      eventDateStart = widget.event!.eventDateStart;
+      eventDateEnd = widget.event!.eventDateEnd;
     }
     selectedSemesterPage = widget.selectedSemester;
   }

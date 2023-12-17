@@ -257,30 +257,34 @@ class ClassSchedulePageState extends State<ClassSchedulePage> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text('Delete Item'),
+          title: const Text('Видалити елемент?'),
           actions: <Widget>[
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Expanded(
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Builder(
-                      builder: (context) => ElevatedButton(
-                        style: Theme.of(context).elevatedButtonTheme.style,
-                        child: const Center(
-                            child: Text('Delete from Page',
-                                textAlign: TextAlign.center)),
-                        onPressed: () async {
-                          // TODO: Add delete from page functionality
-                          if (context.mounted) {
-                            Navigator.of(context).pop();
-                          }
-                        },
+                if (item is Course)
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Builder(
+                        builder: (context) => ElevatedButton(
+                          style: Theme.of(context).elevatedButtonTheme.style,
+                          child: const Center(
+                              child: Text('Видалити зі сторінки',
+                                  textAlign: TextAlign.center)),
+                          onPressed: () async {
+                            item.isEvent = false;
+                            await DatabaseService.createOrUpdateCourse(
+                                user!.email!, item, selectedSemester!);
+                            updateState();
+                            if (context.mounted) {
+                              Navigator.of(context).pop();
+                            }
+                          },
+                        ),
                       ),
                     ),
                   ),
-                ),
                 Expanded(
                   child: Padding(
                     padding: const EdgeInsets.all(8.0),
@@ -288,7 +292,7 @@ class ClassSchedulePageState extends State<ClassSchedulePage> {
                       builder: (context) => ElevatedButton(
                         style: Theme.of(context).elevatedButtonTheme.style,
                         child: const Center(
-                            child: Text('Delete from Database',
+                            child: Text('Повністтю видалити елемент',
                                 textAlign: TextAlign.center)),
                         onPressed: () async {
                           if (item is Course) {
@@ -310,7 +314,7 @@ class ClassSchedulePageState extends State<ClassSchedulePage> {
               ],
             ),
             TextButton(
-              child: const Text('Close'),
+              child: const Text('Закрити'),
               onPressed: () {
                 Navigator.of(context).pop();
               },
