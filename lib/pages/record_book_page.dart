@@ -613,7 +613,6 @@ class _RecordBookPageState extends State<RecordBookPage> {
                             coursesFuture =
                                 generateCourses(selectedSemesterPage!);
                           });
-                          // Use the context from the Builder widget
                           if (context.mounted) {
                             Navigator.of(context).pop();
                           }
@@ -625,7 +624,8 @@ class _RecordBookPageState extends State<RecordBookPage> {
               ],
             ),
             TextButton(
-              child: const Text('Закрити'),
+              child:
+                  const Text('Закрити', style: TextStyle(color: Colors.brown)),
               onPressed: () {
                 Navigator.of(context).pop();
               },

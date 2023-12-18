@@ -36,21 +36,20 @@ class CalendarDialog extends StatelessWidget {
     }).toList();
 
     return AlertDialog(
-      title: const Text('Selected Date'),
+      title: Text(
+          'Події для дати: ${DateFormat('dd.MM.yyyy').format(selectedDate)}'),
       content: SingleChildScrollView(
         child: ListBody(
           children: [
             for (var course in selectedCourses)
-              ListTile(
-                title: Text(course.nameField!),
-                subtitle: Text(
-                    'Record Book Selected Date: ${DateFormat.yMMMd().format(course.recordBookSelectedDateField!)}\nScoring Type: ${course.scoringTypeField!}'),
+              _buildListItemDesign(
+                course.nameField!,
+                'Дата і час: ${DateFormat('yyyy-MM-dd HH:mm').format(course.recordBookSelectedDateField!)}\nТип: ${course.scoringTypeField!}',
               ),
             for (var event in selectedEvents)
-              ListTile(
-                title: Text(event.eventName!),
-                subtitle: Text(
-                    'Event Type: ${event.eventType!}\nStart Date: ${DateFormat.yMMMd().format(event.eventDateStart!)}\nEnd Date: ${DateFormat.yMMMd().format(event.eventDateEnd!)}'),
+              _buildListItemDesign(
+                event.eventName!,
+                'Тип: ${event.eventType!}\nДата і час початку: ${DateFormat('yyyy-MM-dd HH:mm').format(event.eventDateStart!)}\nДата і час кінця: ${DateFormat('yyyy-MM-dd HH:mm').format(event.eventDateEnd!)}',
               ),
           ],
         ),
@@ -63,6 +62,29 @@ class CalendarDialog extends StatelessWidget {
           },
         ),
       ],
+    );
+  }
+
+  Widget _buildListItemDesign(String title, String subtitle) {
+    BorderRadius borderRadius = BorderRadius.circular(8.0);
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4.0, horizontal: 8.0),
+      child: Card(
+        elevation: 5.0,
+        child: Container(
+          decoration: BoxDecoration(
+            border: Border.all(
+              color: Colors.grey[700]!,
+              width: 2,
+            ),
+            borderRadius: borderRadius,
+          ),
+          child: ListTile(
+            title: Text(title),
+            subtitle: Text(subtitle),
+          ),
+        ),
+      ),
     );
   }
 }

@@ -314,7 +314,8 @@ class ClassSchedulePageState extends State<ClassSchedulePage> {
               ],
             ),
             TextButton(
-              child: const Text('Закрити'),
+              child:
+                  const Text('Закрити', style: TextStyle(color: Colors.brown)),
               onPressed: () {
                 Navigator.of(context).pop();
               },
@@ -352,10 +353,7 @@ class ClassSchedulePageState extends State<ClassSchedulePage> {
                 ),
                 IconButton(
                   icon: const Icon(Icons.delete),
-                  onPressed: () {
-                    // Show delete dialog when delete button is clicked
-                    showDeleteDialog(context, item);
-                  },
+                  onPressed: () => onDelete(),
                 ),
               ],
             ),
@@ -370,9 +368,20 @@ class ClassSchedulePageState extends State<ClassSchedulePage> {
       String subtitle =
           'Дата і час: ${item.recordBookSelectedDateField?.year.toString().padLeft(4, '0')}-${item.recordBookSelectedDateField?.month.toString().padLeft(2, '0')}-${item.recordBookSelectedDateField?.day.toString().padLeft(2, '0')} ${item.recordBookSelectedDateField?.hour.toString().padLeft(2, '0')}:${item.recordBookSelectedDateField?.minute.toString().padLeft(2, '0')}\nТип: ${item.scoringTypeField!}';
       return _buildListItemDesign(item.nameField!, subtitle, () {
-        // TODO: Add edit functionality
-      }, () async {
-        // TODO: Add delete functionality
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return NewCourseDialog(
+              isClassSchedule: true,
+              isRecordBook: false,
+              currentSemester: selectedSemester,
+              isEdit: true,
+              course: item,
+            );
+          },
+        );
+      }, () {
+        showDeleteDialog(context, item);
       }, item);
     } else if (item is EventSchedule) {
       String subtitle = 'Тип: ${item.eventType!}';
@@ -396,8 +405,8 @@ class ClassSchedulePageState extends State<ClassSchedulePage> {
             );
           },
         );
-      }, () async {
-        // TODO: Add delete functionality
+      }, () {
+        showDeleteDialog(context, item);
       }, item);
     } else {
       throw Exception('Unknown type in combinedList');
