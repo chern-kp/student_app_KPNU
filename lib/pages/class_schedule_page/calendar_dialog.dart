@@ -1,24 +1,29 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 import '../../class/course_class.dart';
 import '../../class/event_class.dart';
+import 'class_list_view_builder.dart';
 
-//TODO edit
 class CalendarDialog extends StatelessWidget {
   final DateTime selectedDate;
   final List<Course> courses;
   final List<EventSchedule> events;
+  final String? selectedSemester;
 
   const CalendarDialog({
     Key? key,
     required this.selectedDate,
     required this.courses,
     required this.events,
+    this.selectedSemester,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    User? user = FirebaseAuth.instance.currentUser;
+
     List<Course> selectedCourses = courses.where((course) {
       return course.recordBookSelectedDateField!.day == selectedDate.day &&
           course.recordBookSelectedDateField!.month == selectedDate.month &&
@@ -38,53 +43,28 @@ class CalendarDialog extends StatelessWidget {
     return AlertDialog(
       title: Text(
           'Події для дати: ${DateFormat('dd.MM.yyyy').format(selectedDate)}'),
-      content: SingleChildScrollView(
-        child: ListBody(
+      content: Container(
+        width: double.maxFinite,
+        child: ListView(
+          shrinkWrap: true,
           children: [
-            for (var course in selectedCourses)
-              _buildListItemDesign(
-                course.nameField!,
-                'Дата і час: ${DateFormat('yyyy-MM-dd HH:mm').format(course.recordBookSelectedDateField!)}\nТип: ${course.scoringTypeField!}',
-              ),
-            for (var event in selectedEvents)
-              _buildListItemDesign(
-                event.eventName!,
-                'Тип: ${event.eventType!}\nДата і час початку: ${DateFormat('yyyy-MM-dd HH:mm').format(event.eventDateStart!)}\nДата і час кінця: ${DateFormat('yyyy-MM-dd HH:mm').format(event.eventDateEnd!)}',
-              ),
+            ClassListView(
+              combinedList: [...selectedCourses, ...selectedEvents],
+              updateState: () {},
+              user: user,
+              selectedSemester: selectedSemester,
+            ),
           ],
         ),
       ),
       actions: <Widget>[
         TextButton(
-          child: const Text('OK'),
+          child: const Text('Зберегти', style: TextStyle(color: Colors.brown)),
           onPressed: () {
             Navigator.of(context).pop();
           },
         ),
       ],
-    );
-  }
-
-  Widget _buildListItemDesign(String title, String subtitle) {
-    BorderRadius borderRadius = BorderRadius.circular(8.0);
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 4.0, horizontal: 8.0),
-      child: Card(
-        elevation: 5.0,
-        child: Container(
-          decoration: BoxDecoration(
-            border: Border.all(
-              color: Colors.grey[700]!,
-              width: 2,
-            ),
-            borderRadius: borderRadius,
-          ),
-          child: ListTile(
-            title: Text(title),
-            subtitle: Text(subtitle),
-          ),
-        ),
-      ),
     );
   }
 }

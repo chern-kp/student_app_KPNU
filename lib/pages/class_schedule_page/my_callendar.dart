@@ -8,8 +8,13 @@ import 'calendar_dialog.dart';
 class MyCalendar extends StatefulWidget {
   final List<Course> courses;
   final List<EventSchedule> events;
+  final String? selectedSemester;
 
-  const MyCalendar({super.key, required this.courses, required this.events});
+  const MyCalendar(
+      {super.key,
+      required this.courses,
+      required this.events,
+      this.selectedSemester});
 
   @override
   MyCalendarState createState() => MyCalendarState();
@@ -157,6 +162,7 @@ class MyCalendarState extends State<MyCalendar> {
               selectedDate: selectedDay,
               courses: widget.courses,
               events: widget.events,
+              selectedSemester: widget.selectedSemester,
             );
           },
         );

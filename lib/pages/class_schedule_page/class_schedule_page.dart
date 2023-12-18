@@ -8,6 +8,7 @@ import 'package:student_app/pages/class_schedule_page/my_callendar.dart';
 import 'package:student_app/pages/class_schedule_page/new_event_dialog.dart';
 
 import '../new_course_dialog.dart';
+import 'class_list_view_builder.dart';
 
 class ClassSchedulePage extends StatefulWidget {
   const ClassSchedulePage({Key? key}) : super(key: key);
@@ -194,7 +195,12 @@ class ClassSchedulePageState extends State<ClassSchedulePage> {
           _buildDropdownMenu(),
           _sortDropDownMenu(),
           _addNewEventButton(context),
-          _buildCourseList(courses, events),
+          ClassListView(
+            combinedList: _combineLists(_filterCourses(courses), events),
+            updateState: updateState,
+            user: user,
+            selectedSemester: selectedSemester,
+          ),
         ],
       ),
     );
@@ -204,6 +210,7 @@ class ClassSchedulePageState extends State<ClassSchedulePage> {
     return MyCalendar(
       courses: courses,
       events: events,
+      selectedSemester: selectedSemester,
     );
   }
 
