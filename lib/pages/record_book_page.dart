@@ -310,8 +310,7 @@ class _RecordBookPageState extends State<RecordBookPage> {
       padding: const EdgeInsets.all(8.0),
       child: Card(
         shape: RoundedRectangleBorder(
-          borderRadius:
-              BorderRadius.circular(15.0), // This line adds rounded corners
+          borderRadius: BorderRadius.circular(15.0),
         ),
         elevation: 3.0,
         child: Stack(
@@ -320,12 +319,10 @@ class _RecordBookPageState extends State<RecordBookPage> {
               padding: const EdgeInsets.all(10),
               decoration: BoxDecoration(
                 border: Border.all(
-                  color: borderColor, // Border color
-                  width: 5.0, // Border width
+                  color: borderColor,
+                  width: 5.0,
                 ),
-                //color: Color.fromARGB(255, 255, 128, 74),
-                borderRadius:
-                    BorderRadius.circular(10), // Match the Card's borderRadius
+                borderRadius: BorderRadius.circular(10),
               ),
               child: SingleChildScrollView(
                 child: Column(

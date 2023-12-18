@@ -43,7 +43,7 @@ class CalendarDialog extends StatelessWidget {
     return AlertDialog(
       title: Text(
           'Події для дати: ${DateFormat('dd.MM.yyyy').format(selectedDate)}'),
-      content: Container(
+      content: SizedBox(
         width: double.maxFinite,
         child: ListView(
           shrinkWrap: true,

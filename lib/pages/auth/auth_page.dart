@@ -12,11 +12,9 @@ class AuthPage extends StatelessWidget {
       body: StreamBuilder<User?>(
         stream: FirebaseAuth.instance.authStateChanges(),
         builder: (context, snapshot) {
-          //if user logged in he will be redirected to home page
           if (snapshot.hasData) {
             return HomePage();
           }
-          //if user not logged
           return const LoginOrRegisterPage();
         },
       ),

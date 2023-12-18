@@ -19,8 +19,7 @@ class HomePage extends StatelessWidget {
   late Future<String> selectedSemester =
       DatabaseService.getStudentField(user.email, 'Current Semester');
 
-  final user = FirebaseAuth.instance
-      .currentUser!; //user here is the instance of class User from firebase auth package. To get the email address itself we use "user.email".
+  final user = FirebaseAuth.instance.currentUser!;
 
   void coursesSchedulePageButton(BuildContext context) {
     Navigator.push(
@@ -54,9 +53,9 @@ class HomePage extends StatelessWidget {
       future: Future.wait([facultyList, selectedSemester]),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return CircularProgressIndicator();
+          return const CircularProgressIndicator();
         } else if (snapshot.hasError) {
-          return Text('Error: ${snapshot.error}');
+          return Text('Помилка: ${snapshot.error}');
         } else {
           return Scaffold(
             backgroundColor: Colors.white,

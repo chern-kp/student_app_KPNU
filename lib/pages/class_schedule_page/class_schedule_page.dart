@@ -177,7 +177,7 @@ class ClassSchedulePageState extends State<ClassSchedulePage> {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(child: CircularProgressIndicator());
         } else if (snapshot.hasError) {
-          return Center(child: Text('Error: ${snapshot.error}'));
+          return Center(child: Text('Помилка: ${snapshot.error}'));
         } else {
           List<Course> courses = snapshot.data![0];
           List<EventSchedule> events = snapshot.data![1];
@@ -229,12 +229,6 @@ class ClassSchedulePageState extends State<ClassSchedulePage> {
     );
   }
 
-  Widget _buildCourseList(List<Course> courses, List<EventSchedule> events) {
-    List<Course> filteredCourses = _filterCourses(courses);
-    List<dynamic> combinedList = _combineLists(filteredCourses, events);
-    return _buildListView(combinedList);
-  }
-
   List<Course> _filterCourses(List<Course> courses) {
     return courses.where((course) {
       return !isDefaultDate(course.recordBookSelectedDateField) &&
@@ -245,18 +239,6 @@ class ClassSchedulePageState extends State<ClassSchedulePage> {
   List<dynamic> _combineLists(
       List<Course> filteredCourses, List<EventSchedule> events) {
     return [...filteredCourses, ...events];
-  }
-
-  Widget _buildListView(List<dynamic> combinedList) {
-    return ListView.builder(
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
-      itemCount: combinedList.length,
-      itemBuilder: (context, index) {
-        var item = combinedList[index];
-        return _buildListItem(item);
-      },
-    );
   }
 
   void showDeleteDialog(BuildContext context, dynamic item) {
@@ -331,93 +313,6 @@ class ClassSchedulePageState extends State<ClassSchedulePage> {
         );
       },
     );
-  }
-
-  Widget _buildListItemDesign(String title, String subtitle, Function onEdit,
-      Function onDelete, dynamic item) {
-    BorderRadius borderRadius = BorderRadius.circular(8.0);
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 4.0, horizontal: 8.0),
-      child: Card(
-        elevation: 5.0,
-        child: Container(
-          decoration: BoxDecoration(
-            border: Border.all(
-              color: Colors.grey[700]!,
-              width: 2,
-            ),
-            borderRadius: borderRadius,
-          ),
-          child: ListTile(
-            title: Text(title),
-            subtitle: Text(subtitle),
-            trailing: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                IconButton(
-                  icon: const Icon(Icons.edit),
-                  onPressed: () => onEdit(),
-                ),
-                IconButton(
-                  icon: const Icon(Icons.delete),
-                  onPressed: () => onDelete(),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildListItem(dynamic item) {
-    if (item is Course) {
-      String subtitle =
-          'Дата і час: ${item.recordBookSelectedDateField?.year.toString().padLeft(4, '0')}-${item.recordBookSelectedDateField?.month.toString().padLeft(2, '0')}-${item.recordBookSelectedDateField?.day.toString().padLeft(2, '0')} ${item.recordBookSelectedDateField?.hour.toString().padLeft(2, '0')}:${item.recordBookSelectedDateField?.minute.toString().padLeft(2, '0')}\nТип: ${item.scoringTypeField!}';
-      return _buildListItemDesign(item.nameField!, subtitle, () {
-        showDialog(
-          context: context,
-          builder: (BuildContext context) {
-            return NewCourseDialog(
-              isClassSchedule: true,
-              isRecordBook: false,
-              currentSemester: selectedSemester,
-              isEdit: true,
-              course: item,
-            );
-          },
-        );
-      }, () {
-        showDeleteDialog(context, item);
-      }, item);
-    } else if (item is EventSchedule) {
-      String subtitle = 'Тип: ${item.eventType!}';
-      if (!isDefaultDate(item.eventDateStart)) {
-        subtitle +=
-            '\nДата і час початку: ${item.eventDateStart?.year.toString().padLeft(4, '0')}-${item.eventDateStart?.month.toString().padLeft(2, '0')}-${item.eventDateStart?.day.toString().padLeft(2, '0')} ${item.eventDateStart?.hour.toString().padLeft(2, '0')}:${item.eventDateStart?.minute.toString().padLeft(2, '0')}';
-      }
-      if (!isDefaultDate(item.eventDateEnd)) {
-        subtitle +=
-            '\nДата і час кінця: ${item.eventDateEnd?.year.toString().padLeft(4, '0')}-${item.eventDateEnd?.month.toString().padLeft(2, '0')}-${item.eventDateEnd?.day.toString().padLeft(2, '0')} ${item.eventDateEnd?.hour.toString().padLeft(2, '0')}:${item.eventDateEnd?.minute.toString().padLeft(2, '0')}';
-      }
-      return _buildListItemDesign(item.eventName!, subtitle, () {
-        showDialog(
-          context: context,
-          builder: (BuildContext context) {
-            return NewEventDialog(
-              isEdit: true,
-              event: item,
-              selectedSemester: selectedSemester,
-              onUpdate: updateState,
-            );
-          },
-        );
-      }, () {
-        showDeleteDialog(context, item);
-      }, item);
-    } else {
-      throw Exception('Unknown type in combinedList');
-    }
   }
 
   @override

@@ -7,8 +7,7 @@ import 'package:student_app/components/dropdownmenu_design.dart';
 
 class DropdownMenuUserSemester extends StatefulWidget {
   final Future<List<String>> listOfData;
-  late Future<String>
-      chosenValueInDatabase; //i need to pass late Future<String> selectedFaculty
+  late Future<String> chosenValueInDatabase;
   final String? chosenField;
 
   DropdownMenuUserSemester(
@@ -23,32 +22,26 @@ class DropdownMenuUserSemester extends StatefulWidget {
 }
 
 class _DropdownMenuUserSemesterState extends State<DropdownMenuUserSemester> {
-  final user = FirebaseAuth.instance
-      .currentUser!; //user here is the instance of class User from firebase auth package. To get the email address itself we use "user.email".
+  final user = FirebaseAuth.instance.currentUser!;
 
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
-      //First future builder - until we get list of faculties, we will show CircularProgressIndicator
-      future: widget
-          .listOfData, //when we get list of faculties, it will save to "snapshot" variable, and later will be used in dropdown menu
+      future: widget.listOfData,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          //if problems with internet connection
           return const CircularProgressIndicator();
         } else if (snapshot.hasError) {
-          return Text('Error: ${snapshot.error}');
+          return Text('Помилка: ${snapshot.error}');
         } else if (snapshot.hasData) {
-          //if everything is ok
           List<String>? dataList = snapshot.data;
-          //Second future builder - we are getting selected faculty from student document, until we get it, we will show CircularProgressIndicator
           return FutureBuilder<String?>(
             future: widget.chosenValueInDatabase,
             builder: (BuildContext context, AsyncSnapshot<String?> snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
                 return const CircularProgressIndicator();
               } else if (snapshot.hasError) {
-                return Text('Error: ${snapshot.error}');
+                return Text('Помилка: ${snapshot.error}');
               } else {
                 return DropdownMenuDesign(
                   items: dataList!,

@@ -4,7 +4,6 @@ import 'package:student_app/class/event_class.dart';
 
 class DatabaseService {
   static Future<void> createStudentDocument(var user) {
-    //шлях до документу "student" - "%user%"
     final docRef = FirebaseFirestore.instance.collection("student").doc(user);
     final Map<String, dynamic> studentData = {
       'E-mail': user,
@@ -28,7 +27,6 @@ class DatabaseService {
     return Future.wait(tasks);
   }
 
-  //*Firestore - "student" collection - set/update the field of the document whe pass as parameter
   static Future<void> setStudentFields(
       var user, String value, String field) async {
     final docRef = FirebaseFirestore.instance.collection('student').doc(user);
@@ -38,7 +36,6 @@ class DatabaseService {
     await docRef.set(data);
   }
 
-  //*Firestore - "student" collection - get the field of the document whe pass as parameter
   static Future<String> getStudentField(var user, String field) async {
     DocumentSnapshot snapshot =
         await FirebaseFirestore.instance.collection('student').doc(user).get();
@@ -66,23 +63,6 @@ class DatabaseService {
     return semesterList;
   }
 
-  // CREATE
-  static Future<void> createOrUpdateCourse(
-      var user, Course course, String semester) async {
-    if (course.nameField!.trim().isEmpty) {
-      throw Exception('Назва курсу не може бути порожньою!');
-    }
-    final docRef = FirebaseFirestore.instance
-        .collection("student")
-        .doc(user)
-        .collection("semester")
-        .doc(semester)
-        .collection("Courses")
-        .doc(course.nameField);
-    return docRef.set(course.toJsonCourse());
-  }
-
-// get all courses
   static Future<List<Course>> getAllCourses(
       String userEmail, String semester) async {
     QuerySnapshot querySnapshot = await FirebaseFirestore.instance
@@ -102,6 +82,21 @@ class DatabaseService {
     }
   }
 
+  static Future<void> createOrUpdateCourse(
+      var user, Course course, String semester) async {
+    if (course.nameField!.trim().isEmpty) {
+      throw Exception('Назва курсу не може бути порожньою!');
+    }
+    final docRef = FirebaseFirestore.instance
+        .collection("student")
+        .doc(user)
+        .collection("semester")
+        .doc(semester)
+        .collection("Courses")
+        .doc(course.nameField);
+    return docRef.set(course.toJsonCourse());
+  }
+
   static Future<void> deleteCourse(var user, String courseName) async {
     try {
       var currentSemester = await getStudentField(user, 'Current Semester');
@@ -115,6 +110,26 @@ class DatabaseService {
           .delete();
     } catch (e) {
       rethrow;
+    }
+  }
+
+  static Future<List<EventSchedule>> getAllEvents(
+      String userEmail, String semester) async {
+    QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+        .collection("student")
+        .doc(userEmail)
+        .collection("semester")
+        .doc(semester)
+        .collection("Events")
+        .get();
+
+    if (querySnapshot.docs.isNotEmpty) {
+      return querySnapshot.docs
+          .map((doc) =>
+              EventSchedule.fromJsonEvent(doc.data() as Map<String, dynamic>))
+          .toList();
+    } else {
+      return [];
     }
   }
 
@@ -142,30 +157,10 @@ class DatabaseService {
           .collection("semester")
           .doc(currentSemester)
           .collection("Events")
-          .doc(eventName) // Use event name as document ID
+          .doc(eventName)
           .delete();
     } catch (e) {
       rethrow;
-    }
-  }
-
-  static Future<List<EventSchedule>> getAllEvents(
-      String userEmail, String semester) async {
-    QuerySnapshot querySnapshot = await FirebaseFirestore.instance
-        .collection("student")
-        .doc(userEmail)
-        .collection("semester")
-        .doc(semester)
-        .collection("Events")
-        .get();
-
-    if (querySnapshot.docs.isNotEmpty) {
-      return querySnapshot.docs
-          .map((doc) =>
-              EventSchedule.fromJsonEvent(doc.data() as Map<String, dynamic>))
-          .toList();
-    } else {
-      return [];
     }
   }
 }

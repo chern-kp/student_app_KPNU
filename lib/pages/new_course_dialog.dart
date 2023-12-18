@@ -1,4 +1,4 @@
-// ignore_for_file: must_be_immutable, use_build_context_synchronously
+// ignore_for_file: use_build_context_synchronously, must_be_immutable
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -156,7 +156,6 @@ class _NewCourseDialogState extends State<NewCourseDialog> {
             recordBookScoreField:
                 int.tryParse(recordBookScoreFieldController.text) ?? 0,
             recordBookSelectedDateField: selectedDate,
-            //If the date is default course always will save with isEvent = false.
             isEvent: getIsEvent(),
           );
           if (widget.isEdit &&
@@ -272,7 +271,6 @@ class _NewCourseDialogState extends State<NewCourseDialog> {
           ),
         ],
       ),
-      //display date in "YYYY-MM-DD HH:MM" format
       Text(selectedDate != null &&
               !selectedDate!.isAtSameMomentAs(
                   DateTime.fromMillisecondsSinceEpoch(978307200000,

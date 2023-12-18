@@ -14,12 +14,10 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-  //textField controllers
   final passwordController = TextEditingController();
 
   final emailController = TextEditingController();
 
-// sign user in method
   void signUserIn(BuildContext context) async {
     final scaffoldMessenger = ScaffoldMessenger.of(context);
     try {
@@ -58,8 +56,7 @@ class _LoginPageState extends State<LoginPage> {
     var user = emailController.text;
     if (await DatabaseService.checkStudentDocument(user)) {
     } else {
-      await DatabaseService.createStudentDocument(
-          user); //in database_service class
+      await DatabaseService.createStudentDocument(user);
     }
   }
 
@@ -87,7 +84,6 @@ class _LoginPageState extends State<LoginPage> {
                       hintText: "Пароль",
                       obscureText: true),
                   const SizedBox(height: 25),
-                  //sign in button
                   MyButton(onTap: () => signUserIn(context), text: 'Увійти'),
                   const SizedBox(height: 25),
                   GestureDetector(

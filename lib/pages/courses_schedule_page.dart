@@ -255,7 +255,7 @@ class _CoursesSchedulePageState extends State<CoursesSchedulePage> {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(child: CircularProgressIndicator());
         } else if (snapshot.hasError) {
-          return Text('Error: ${snapshot.error}');
+          return Text('Помилка: ${snapshot.error}');
         } else {
           return ListView.builder(
             itemCount: snapshot.data.length,
