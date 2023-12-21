@@ -6,15 +6,9 @@ import 'package:student_app/class/database_service.dart';
 import 'package:student_app/components/dropdownmenu_design.dart';
 
 class DropdownMenuUserSemester extends StatefulWidget {
-  final Future<List<String>> listOfData;
-  late Future<String> chosenValueInDatabase;
   final String? chosenField;
 
-  DropdownMenuUserSemester(
-      {super.key,
-      required this.listOfData,
-      required this.chosenValueInDatabase,
-      required this.chosenField});
+  DropdownMenuUserSemester({super.key, required this.chosenField});
 
   @override
   State<DropdownMenuUserSemester> createState() =>
@@ -23,11 +17,21 @@ class DropdownMenuUserSemester extends StatefulWidget {
 
 class _DropdownMenuUserSemesterState extends State<DropdownMenuUserSemester> {
   final user = FirebaseAuth.instance.currentUser!;
+  late Future<List<String>> listOfData;
+  late Future<String> chosenValueInDatabase;
+
+  @override
+  void initState() {
+    super.initState();
+    listOfData = DatabaseService.getSemesterList(user.email);
+    chosenValueInDatabase =
+        DatabaseService.getStudentField(user.email, widget.chosenField!);
+  }
 
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
-      future: widget.listOfData,
+      future: listOfData,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const CircularProgressIndicator();
@@ -36,7 +40,7 @@ class _DropdownMenuUserSemesterState extends State<DropdownMenuUserSemester> {
         } else if (snapshot.hasData) {
           List<String>? dataList = snapshot.data;
           return FutureBuilder<String?>(
-            future: widget.chosenValueInDatabase,
+            future: chosenValueInDatabase,
             builder: (BuildContext context, AsyncSnapshot<String?> snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
                 return const CircularProgressIndicator();
@@ -50,7 +54,7 @@ class _DropdownMenuUserSemesterState extends State<DropdownMenuUserSemester> {
                     DatabaseService.setStudentFields(
                         user.email, selectedItem!, widget.chosenField!);
                     setState(() {
-                      widget.chosenValueInDatabase = Future.value(selectedItem);
+                      chosenValueInDatabase = Future.value(selectedItem);
                     });
                   },
                 );
