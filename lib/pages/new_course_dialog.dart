@@ -198,38 +198,53 @@ class _NewCourseDialogState extends State<NewCourseDialog> {
   Widget _coursesScheduleFields() {
     return Column(
       children: <Widget>[
-        TextField(
-          controller: hoursLectionsFieldController,
-          decoration: const InputDecoration(
-            labelText: 'Лекції (год.)',
-          ),
-          keyboardType: TextInputType.number,
-          inputFormatters: <TextInputFormatter>[
-            FilteringTextInputFormatter.digitsOnly
-          ],
-        ),
-        TextField(
-          controller: hoursPracticesFieldController,
-          decoration: const InputDecoration(
-            labelText: 'Практичні/Семінарські (год.)',
+        SizedBox(
+          width: 250,
+          child: TextField(
+            controller: hoursLectionsFieldController,
+            decoration: const InputDecoration(
+              labelText: 'Лекції (год.)',
+            ),
+            keyboardType: TextInputType.number,
+            inputFormatters: <TextInputFormatter>[
+              FilteringTextInputFormatter.digitsOnly
+            ],
           ),
         ),
-        TextField(
-          controller: hoursLabsFieldController,
-          decoration: const InputDecoration(
-            labelText: 'Лабораторні (год.)',
+        SizedBox(
+          width: 250,
+          child: TextField(
+            controller: hoursPracticesFieldController,
+            decoration: const InputDecoration(
+              labelText: 'Практичні/Семінарські (год.)',
+            ),
           ),
         ),
-        TextField(
-          controller: hoursCourseworkFieldController,
-          decoration: const InputDecoration(
-            labelText: 'Курсові (год.)',
+        SizedBox(
+          width: 250,
+          child: TextField(
+            controller: hoursLabsFieldController,
+            decoration: const InputDecoration(
+              labelText: 'Лабораторні (год.)',
+            ),
           ),
         ),
-        TextField(
-          controller: hoursIndividualTotalFieldController,
-          decoration: const InputDecoration(
-            labelText: 'Самостійна робота студента',
+        SizedBox(
+          width: 250,
+          child: TextField(
+            controller: hoursCourseworkFieldController,
+            decoration: const InputDecoration(
+              labelText: 'Курсові (год.)',
+            ),
+          ),
+        ),
+        SizedBox(
+          width: 250,
+          child: TextField(
+            controller: hoursIndividualTotalFieldController,
+            decoration: const InputDecoration(
+              labelText: 'Самостійна робота студента',
+            ),
           ),
         ),
       ],
@@ -238,16 +253,24 @@ class _NewCourseDialogState extends State<NewCourseDialog> {
 
   Widget _recordBookFields() {
     return Column(children: <Widget>[
-      TextField(
+      SizedBox(
+        width: 250,
+        child: TextField(
           controller: recordBookTeacherFieldController,
           decoration: const InputDecoration(
             labelText: 'Викладач',
-          )),
-      TextField(
+          ),
+        ),
+      ),
+      SizedBox(
+        width: 250,
+        child: TextField(
           controller: recordBookScoreFieldController,
           decoration: const InputDecoration(
             labelText: 'Оцінка',
-          )),
+          ),
+        ),
+      ),
       Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
@@ -304,7 +327,7 @@ class _NewCourseDialogState extends State<NewCourseDialog> {
           children: <Widget>[
             Text(widget.isEdit
                 ? 'Змінити освіtній елемент'
-                : 'Додати новий освітній елемент'),
+                : 'Додати новий освіtній елемент'),
             const SizedBox(height: 5),
             if (!widget.isEdit) ...[
               DropdownMenuChooseSemester(
@@ -316,10 +339,13 @@ class _NewCourseDialogState extends State<NewCourseDialog> {
                 },
               ),
             ],
-            TextField(
-              controller: nameFieldController,
-              decoration: const InputDecoration(
-                labelText: 'Назва освітнього елементу',
+            SizedBox(
+              width: 250,
+              child: TextField(
+                controller: nameFieldController,
+                decoration: const InputDecoration(
+                  labelText: 'Назва освітнього елементу',
+                ),
               ),
             ),
             if (!widget.isClassSchedule) ...[

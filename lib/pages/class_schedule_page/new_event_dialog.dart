@@ -117,10 +117,13 @@ class _NewEventDialogState extends State<NewEventDialog> {
                 });
               },
             ),
-            TextField(
-              controller: eventNameController,
-              decoration: const InputDecoration(
-                labelText: 'Назва',
+            SizedBox(
+              width: 250,
+              child: TextField(
+                controller: eventNameController,
+                decoration: const InputDecoration(
+                  labelText: 'Назва',
+                ),
               ),
             ),
             DropdownButton<String>(
@@ -138,12 +141,15 @@ class _NewEventDialogState extends State<NewEventDialog> {
                 );
               }).toList(),
             ),
-            TextField(
-              controller: eventTypeController,
-              decoration: const InputDecoration(
-                labelText: 'Тип',
+            SizedBox(
+              width: 250,
+              child: TextField(
+                controller: eventTypeController,
+                decoration: const InputDecoration(
+                  labelText: 'Тип',
+                ),
+                enabled: selectedScoringType == 'Інше',
               ),
-              enabled: selectedScoringType == 'Інше',
             ),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
