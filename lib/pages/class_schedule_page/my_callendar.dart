@@ -142,6 +142,7 @@ class MyCalendarState extends State<MyCalendar> {
       lastDay: DateTime.utc(2030, 3, 14),
       focusedDay: _focusedDay,
       calendarFormat: _calendarFormat,
+      startingDayOfWeek: StartingDayOfWeek.monday,
       selectedDayPredicate: (day) {
         return isSameDay(_selectedDay, day);
       },
