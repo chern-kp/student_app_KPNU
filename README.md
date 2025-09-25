@@ -16,7 +16,7 @@ Android Studio - The integrated development environment (IDE).
 - "firebase_core" (2.16.0)
 - "table_calendar" (3.0.9) - A calendar widget required for the "Academic Schedule" service.
 - "intl" (0.18.1) - A library necessary for using the Ukrainian language in the application.
-- 
+
 ### Features
 The application provides the user with access to three services within a single platform.
 
